@@ -258,6 +258,41 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .deltas .g{background:#c8f5cd;color:#1d6b2c}.deltas .r{background:#ffd0cb;color:#9b2318}
 .keep{display:flex;flex-direction:column;gap:4px;background:#fff;border-radius:14px;padding:10px 12px;text-align:left;font-weight:800;font-size:13px}
 .keep b{font-family:var(--f-d);font-weight:400;font-size:15px}
+.lifehud{display:flex;flex-direction:column;gap:3px;background:#fff;border-radius:0 12px 12px 0;padding:5px 6px;box-shadow:0 3px 0 rgba(0,0,0,.18);font-family:var(--f-d);font-size:12.5px;line-height:1.1;width:44px}
+.lifehud span{white-space:nowrap}.lifehud .bad{color:#d0392b;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.4}}
+.inv{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.slot{position:relative;aspect-ratio:1;border-radius:14px;background:#fff;border:3px solid var(--rc,#e6d6b6);box-shadow:inset 0 -5px 0 color-mix(in srgb,var(--rc,#ccc) 30%,transparent),0 3px 0 rgba(0,0,0,.12);display:grid;place-items:center}
+.slot span{font-size:30px;line-height:1}.slot i{position:absolute;bottom:2px;left:0;right:0;font-size:10px;font-style:normal;text-align:center}
+.slot b{position:absolute;top:-6px;right:-6px;background:#3bb273;color:#fff;border-radius:50%;width:20px;height:20px;font-size:12px;display:grid;place-items:center;border:2px solid #fff}
+.slot.empty{border:2.5px dashed #e3d1ad;background:transparent;box-shadow:none}
+.slot.sel{transform:scale(1.08);box-shadow:0 0 0 3px #fff,0 0 14px 4px var(--rc)}
+.slot.can{animation:wig .6s infinite}
+@keyframes wig{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.effs{display:flex;flex-wrap:wrap;gap:5px;background:#fff;border-radius:14px;padding:8px 10px;font-weight:800;font-size:12px}
+.effs b{width:100%;font-family:var(--f-d);font-weight:400;font-size:14px}.effs span{background:#f6ecd6;border-radius:99px;padding:3px 8px}
+.it.selit{border-width:3px;border-style:solid}
+.boxopen{display:grid;place-items:center;gap:6px;padding:20px 0}
+.gift{font-size:96px;animation:shake .25s infinite}
+@keyframes shake{0%{transform:rotate(-10deg) scale(1)}50%{transform:rotate(10deg) scale(1.1)}100%{transform:rotate(-10deg) scale(1)}}
+.reveal{position:relative;height:130px;display:grid;place-items:center}
+.reveal .rays{position:absolute;width:150px;height:150px;border-radius:50%;background:repeating-conic-gradient(var(--rc) 0 12deg,transparent 12deg 30deg);opacity:.55;animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.reveal .ie{position:relative;font-size:80px;animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.rtag{align-self:center;color:#fff;font-family:var(--f-d);padding:4px 14px;border-radius:99px;border:3px solid #23262f;letter-spacing:1px}
+.lkin{font:900 17px var(--f-b);padding:10px 12px;border-radius:12px;border:3px solid #23262f;width:100%;box-sizing:border-box}
+.lkh{font-family:var(--f-d);font-weight:400;font-size:15px;text-align:left}
+.lkg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.lkg button{width:42px;height:42px;border-radius:12px;background:#fff;border:3px solid #e3d1ad;font-size:24px}
+.lkg button.on{border-color:#23262f;box-shadow:0 0 0 3px #ffb23f}
+.lkg .dot{border-radius:50%;font-size:14px}.lkg .lk{opacity:.55}
+.fmile{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.fmile span{background:#fff;border-radius:12px;padding:4px 0;font-size:20px;opacity:.5}.fmile small{display:block;font-size:11px;font-weight:900}
+.fmile .got{opacity:1;background:#c8f5cd}.fmile .rdy{opacity:1;animation:wig .6s infinite}
+.fpill.glow{animation:pulse 1s infinite}
+.gbadge{position:absolute;bottom:-4px;right:-6px;background:#ff3d6e;color:#fff;font:900 11px var(--f-b);font-style:normal;padding:2px 5px;border-radius:99px;border:2px solid #fff}
+.sb{overflow:visible!important}
 </style>
 <style>body:has(.modal:not([hidden])) .dlg{visibility:hidden}</style>
 </head>
@@ -313,13 +348,14 @@ const DISH={
 const ZONES=[
   {name:'Tu local',e:'🥤',col:'#f2a541',dishes:['soda','fries','burger']},
   {name:'Mamma Mia',e:'🍕',col:'#d1495b',dishes:['wine','pizza','pasta'],cash:300,base:1.1,runway:200,buy:2500},
-  {name:'Sushi Zen',e:'🍣',col:'#3a86c8',dishes:['tea','sushi','ramen'],cash:2e4,base:1.9,runway:420,buy:2.5e4},
-  {name:'El Güey',e:'🌮',col:'#3bb273',dishes:['marga','taco','burrito'],cash:1e6,base:2.6,runway:700,buy:2.5e5}];
+  {name:'Sushi Zen',e:'🍣',col:'#3a86c8',dishes:['tea','sushi','ramen'],cash:2e4,base:1.9,runway:420,buy:1.8e4},
+  {name:'El Güey',e:'🌮',col:'#3bb273',dishes:['marga','taco','burrito'],cash:1e6,base:2.6,runway:700,buy:1.5e5}];
 const MILES=[10,25,50,75,100,150,200,300];
 const milesOf=L=>MILES.filter(m=>L>=m).length;
 const qual=L=>0.62*Math.log2(1+L);
 const fairOf=(d,L)=>DISH[d].p*(1+0.11*(L-1))*Math.pow(1.8,milesOf(L));
-const cookOf=(d,L,S0)=>DISH[d].t/(1+0.45*milesOf(L))/(((S0||{}).up||{})['c_'+d]||1);
+const lifeCook=S0=>{const L=S0&&S0.life;if(!L)return 1;return(1.15-((L.hap??65)/100)*.3)/((L.cb||0)>Date.now()?1.25:1)};
+const cookOf=(d,L,S0)=>DISH[d].t/(1+0.45*milesOf(L))/(((S0||{}).up||{})['c_'+d]||1)*lifeCook(S0)/((S0&&S0.it&&S0.it.ck)||1);
 const upCost=(d,L)=>Math.ceil(DISH[d].p*1.3*Math.pow(1.115,L-1)*(1+0.15*milesOf(L)));
 const chefCost=n=>Math.ceil(60*Math.pow(3.2,n-1));
 const seatCost=n=>Math.ceil(400*Math.pow(6,n-4));
@@ -397,7 +433,7 @@ function gumbel(){return-Math.log(-Math.log(Math.random()+1e-9)+1e-9)}
 
 const rivalCash0=(j,S)=>ZONES[j].cash*(1+S.fr*3);
 const rivalFixed=(j,S)=>rivalCash0(j,S)/ZONES[j].runway;
-function myUtil(S,R,d){const s=S.st[d];return qual(s.lvl)+0.005*S.fame+(S.life?S.life.rep*.003:0)+(R.ad>0?0.5:0)+0.07*(myDishes(S).length-1)-2.4*((S.smod&&S.smod.ps)||1)*(s.r-1)+(S.life?(S.life.pop||0)*.004:0)}
+function myUtil(S,R,d){const s=S.st[d];return qual(s.lvl)+0.005*S.fame+(S.life?S.life.rep*.003:0)+(R.ad>0?0.5:0)+0.07*(myDishes(S).length-1)-2.4*((S.smod&&S.smod.ps)||1)*(s.r-1)+(S.life?(S.life.pop||0)*.006:0)}
 function rivalUtil(S,j){const z=S.zones[j];return ZONES[j].base+0.2*z.lvl+0.15*S.fr-2.4*((S.smod&&S.smod.ps)||1)*(z.r-1)+((S.smod&&S.smod.rv)||0)-((R0&&R0.sab&&R0.sab[j]>0)?4:0)}
 let R0=null;
 
@@ -431,8 +467,8 @@ function step(S,R,dt){
   R.t+=dt;R.tick++;buildGrid(S);
   if(R.turbo>0)R.turbo-=dt;if(R.bribe>0)R.bribe-=dt;for(const k in R.sab)if(R.sab[k]>0)R.sab[k]-=dt;if(R.rush>0)R.rush-=dt;if(R.ad>0)R.ad-=dt;
   // ritmo de llegada
-  const lam=(0.6+0.0015*S.fame+0.12*(ownedZones(S).length-1))*(R.rush>0?2.6:1)*((S.up&&S.up.gSpawn)||1)*((S.smod&&S.smod.sp)||1)*(1+((S.life&&S.life.pop)||0)/250);
-  R.spawnAcc+=dt*lam;while(R.spawnAcc>=1){R.spawnAcc-=1;spawnCustomer(S,R)}
+  const lam=(0.6+0.0015*S.fame+0.12*(ownedZones(S).length-1))*(R.rush>0?2.6:1)*((S.up&&S.up.gSpawn)||1)*((S.smod&&S.smod.sp)||1)*(1+((S.life&&S.life.pop)||0)/125)*((S.it&&S.it.sp)||1);
+  R.lam=lam;R.spawnAcc+=dt*lam;while(R.spawnAcc>=1){R.spawnAcc-=1;spawnCustomer(S,R)}
   // crítico ocasional
   R.critic-=dt;if(R.critic<=0){R.critic=90+Math.random()*90;if(S.served>15){const c=spawnCustomer(S,R,{vip:true});c.e='🧐';c.vip=true;if(R.onNews)R.onNews('🧐 ¡Ha llegado un crítico gastronómico a la calle!')}}
   // clientes
@@ -485,7 +521,7 @@ function leave(S,R,c){const j=c.target;c.path=null;if(j>=0&&R.seats[j][c.seat]==
   const o=R.orders.find(o=>o.c===c);if(o)o.state='x';c.state='out'}
 function serve(S,R,c){const d=c.dish,s=S.st[d],fair=fairOf(d,s.lvl),price=fair*s.r*(1+S.fr);
   const fast=c.wait<12;let tip=fast&&s.r<=1.05?0.15:0;
-  const amt=price*(1+tip)*(c.vip?3:1)*((S.up&&S.up['m_'+d])||1)*((S.up&&S.up.gProfit)||1)*((S.up&&S.up.gProfitTmp)||1)*((S.smod&&S.smod.pm)||1);
+  const amt=price*(1+tip)*(c.vip?3:1)*((S.up&&S.up['m_'+d])||1)*((S.up&&S.up.gProfit)||1)*((S.up&&S.up.gProfitTmp)||1)*((S.smod&&S.smod.pm)||1)*((S.it&&S.it.pm)||1);
   const g=GEO[c.target].seats[c.seat];earn(S,R,amt,g.x,g.y-14);
   S.served++;c.food=d;
   if(s.r>1.45){S.fame=Math.max(0,S.fame-0.6);c.mood='😒'}
@@ -494,11 +530,11 @@ function serve(S,R,c){const d=c.dish,s=S.st[d],fair=fairOf(d,s.lvl),price=fair*s
   if(c.vip&&R.onNews)R.onNews(c.wait<20?'🧐 El crítico sale encantado: +12 de fama':'🧐 El crítico se ha ido regular');
   R.salesWin.push({t:R.t,j:0});
   c.state='eat';c.eat=1.6}
-function rivalSale(S,R,j){const z=S.zones[j],amt=rivalFixed(j,S)*6*z.r;z.cash+=amt;R.salesWin.push({t:R.t,j})}
+function rivalSale(S,R,j){const z=S.zones[j],amt=rivalFixed(j,S)*z.r*3.4/Math.max(.35,R.lam||.6);z.cash+=amt;R.salesWin.push({t:R.t,j})}
 function rivalTick(S,R,dt){
   R.salesWin=R.salesWin.filter(s=>R.t-s.t<40);const tot=R.salesWin.length||1;
   for(let j=1;j<4;j++){const z=S.zones[j];if(z.own)continue;
-    if(!z.open){if(Date.now()-z.closedAt>180000){z.open=1;z.cash=rivalCash0(j,S)*.6;z.lvl+=2;z.r=0.9;if(R.onNews)R.onNews(`${ZONES[j].e} ¡${ZONES[j].name} ha reabierto con más fuerza!`)}continue}
+    if(!z.open){if(Date.now()-z.closedAt>360000){z.open=1;z.cash=rivalCash0(j,S)*.6;z.lvl+=2;z.r=0.9;if(R.onNews)R.onNews(`${ZONES[j].e} ¡${ZONES[j].name} ha reabierto con más fuerza!`)}continue}
     const share=R.salesWin.filter(s=>s.j===j).length/tot;
     z.cash-=rivalFixed(j,S)*dt;
     z.t=(z.t||0)+dt;if(z.t>=7){z.t=0;
@@ -573,6 +609,7 @@ const MA={close:closeModal};
 function shade(hex,f){const n=parseInt(hex.slice(1),16),r=n>>16,g=n>>8&255,b=n&255;const m=v=>Math.round(f>0?v+(255-v)*f:v*(1+f));return`rgb(${m(r)},${m(g)},${m(b)})`}
 
 
+let TEAM={apron:'#ff8a3d',hat:'#ffffff'};
 // ---------- MOTOR 3D ----------
 const stageEl=$('#stage'),cv=$('#cv');
 const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;
@@ -682,14 +719,14 @@ function chibi(kind){const g=new THREE.Group(),root=new THREE.Group();g.add(root
   [legL,legR].forEach(l=>{const sh=mesh(G.box,'#2a1a10',0,-.4,.05,.14,.08,.22);l.add(sh)});
   const torso=new THREE.Group();hips.add(torso);
   const body=mesh(G.sph,shirt,0,.24,0,.3);body.scale.set(.3,.34,.26);torso.add(body);
-  if(chef)torso.add(mesh(G.box,kind==='rchef'?'#bbbbbb':'#ff8a3d',0,.18,.2,.34,.38,.06));
+  if(chef)torso.add(mesh(G.box,kind==='rchef'?'#bbbbbb':TEAM.apron,0,.18,.2,.34,.38,.06));
   const armL=limb(shirt,.3,.07,-.33,.42),armR=limb(shirt,.3,.07,.33,.42);torso.add(armL,armR);
   armL.children[1].material=mat(skin);armR.children[1].material=mat(skin);
   const head=new THREE.Group();head.position.y=.82;torso.add(head);
   head.add(mesh(G.sph,skin,0,0,0,.36));
   [-.13,.13].forEach(x=>{const ey=mesh(G.sph,'#1a1010',x,.02,.32,.05);ey.scale.set(.05,.065,.04);head.add(ey)});
   head.add(mesh(G.sph,'#ff9a8a',-.21,-.07,.27,.055),mesh(G.sph,'#ff9a8a',.21,-.07,.27,.055));
-  if(chef){head.add(mesh(G.cyl,'#ffffff',0,.36,0,.25,.24,.25),mesh(G.sph,'#ffffff',0,.54,0,.31,.2,.31))}
+  if(chef){const hc=kind==='rchef'?'#ffffff':TEAM.hat;head.add(mesh(G.cyl,hc,0,.36,0,.25,.24,.25),mesh(G.sph,hc,0,.54,0,.31,.2,.31))}
   else{head.add(mesh(G.hemi,hair,0,.04,-.03,.38));if(Math.random()<.35)head.add(mesh(G.sph,hair,0,-.05,-.3,.2));if(vip)head.add(mesh(G.cyl,'#1a1a1a',0,.42,0,.26,.32,.26),mesh(G.cyl,'#1a1a1a',0,.27,0,.42,.04,.42),mesh(G.cyl,'#c0392b',0,.3,0,.27,.06,.27))}
   g.add(blob(.4));g.scale.setScalar(1.3);g.userData={root,hips,legL,legR,armL,armR,torso,head,ry:0};return g}
 function poseChibi(g,mode,t,dt){const u=g.userData;let lL=0,lR=0,aL=0,aR=0,hy=.42,tl=0,bob=0,hd=0;
@@ -955,7 +992,7 @@ function renderSheet(force){if(!sheetKind||(pressing&&!force))return;const el=$(
       <div class="it"><span class="ic">🪑</span><span class="tx"><b>Mesas: ${S.seats} por local</b><small>Más clientes sentados a la vez</small></span>${S.seats<6?`<button class="cb ${S.money>=seatCost(S.seats)?'':'no'}" data-a="seats">AMPLIAR<small>${fmtM(seatCost(S.seats))} €</small></button>`:'<button class="cb no">MÁX</button>'}</div>
       <div class="it"><span class="ic">🎈</span><span class="tx"><b>Cartel gigante</b><small>${R.ad>0?`¡Activo! ${Math.ceil(R.ad)} s`:'+atractivo 60 s'}</small></span><button class="cb o ${S.money>=adCost()&&!(R.ad>0)?'':'no'}" data-a="ad">PONER<small>${fmtM(adCost())} €</small></button></div></div>`}
   if(sheetKind==='calle'){const sh=shares();
-    h=hdr('🏙️','La calle','Quién se lleva a los clientes')+`<div class="share">${[0,1,2,3].map(j=>{const own=S.zones[j].own,v=sh[j];return v>0.001?`<div style="flex:${v};background:${own?'#ff8a3d':WALLC[j]}">${v>.12?(own?'TÚ ':'')+Math.round(v*100)+'%':''}</div>`:''}).join('')||'<div style="flex:1;background:#bfae8e">Esperando…</div>'}</div><div class="list">`;
+    h=hdr('🏙️','La calle','Si un rival baja del 25 % de clientes, pierde dinero y cierra')+`<div class="share">${[0,1,2,3].map(j=>{const own=S.zones[j].own,v=sh[j];return v>0.001?`<div style="flex:${v};background:${own?'#ff8a3d':WALLC[j]}">${v>.12?(own?'TÚ ':'')+Math.round(v*100)+'%':''}</div>`:''}).join('')||'<div style="flex:1;background:#bfae8e">Esperando…</div>'}</div><div class="list">`;
     for(let j=1;j<4;j++){const z=S.zones[j],Z=ZONES[j],cost=Z.buy*(1+S.fr*3);
       if(z.own){h+=`<div class="it"><span class="ic">${Z.e}</span><span class="tx"><b>${Z.name} · ¡TUYO!</b><small>Pared fuera y platos nuevos</small></span></div>`;continue}
       if(!z.open){const left=Math.max(0,180-(Date.now()-z.closedAt)/1000);
@@ -1011,7 +1048,7 @@ function openSet(){openModal(`<h2>Ajustes</h2>
   <button class="tog ${S.music?'on':''}" data-m="tMusic"><span>🎵 Música</span><i></i></button>
   <button class="tog ${S.sound?'on':''}" data-m="tSound"><span>🔊 Sonido</span><i></i></button>
   <button class="cb b" data-m="help">CÓMO SE JUEGA</button>
-  <p style="font-size:12px;color:#8a6a40">Versión 9 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
+  <p style="font-size:12px;color:#8a6a40">Versión 10 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
   <button class="lnk" style="color:#d8352a" data-m="wipe">Borrar partida</button>
   <button class="cb" data-m="close">SEGUIR</button>`)}
 MA.tMusic=()=>{S.music=!S.music;music();openSet();save()};MA.tSound=()=>{S.sound=!S.sound;music();openSet();save()};
@@ -1139,7 +1176,7 @@ const ACTS=[
  {id:'duel',ic:'⚔️',n:'Duelo de cocina con Kenji',d:'Minijuego: cocina más rápido que él',cd:300,ok:()=>open(2)||F().duelWon,f:()=>startDuel()}];
 function actLeft(a){return Math.max(0,((LF().cd[a.id]||0)-Date.now())/1000)}
 function doAct(id){const a=ACTS.find(x=>x.id===id);if(!a||!a.ok())return;if(actLeft(a)>0){toast('⏳ Aún no');return}const c=a.cost?a.cost():0;if(S.money<c){toast('Te faltan '+fmtM(c-S.money)+' €');return}
-  S.money-=c;LF().cd[id]=Date.now()+a.cd*1000;closeSheet();sfx.unlock();a.f();save()}
+  S.money-=c;LF().cd[id]=Date.now()+a.cd*1000*(typeof itemCd==='function'?itemCd():1);closeSheet();sfx.unlock();a.f();save()}
 // ---------- duelo ----------
 let duel=null;
 function startDuel(){duel={me:0,ken:0,t:10,goal:28};openModal(`<div class="who" style="--pc:#3f86d6"><span>🧑🏻‍🍳</span><b>Duelo contra Kenji</b></div><p>¡Toca la sartén lo más rápido que puedas! Primero en llegar a ${duel.goal} platos gana.</p>
@@ -1280,10 +1317,10 @@ function car(id){const L=L2();return L.car[id]=L.car[id]||{lv:0,xp:0}}
 function carLeft(id){return Math.max(0,((L2().cd['car_'+id]||0)-Date.now())/1000)}
 let curCar=null;
 function workCareer(id){const C=CAREERS[id],c=car(id);if(carLeft(id)>0){toast('⏳ Aún no');return}if(c.lv>=C.lv.length-1){toast('¡Ya estás en lo más alto!');return}
-  const L=L2();L.cd['car_'+id]=Date.now()+C.cd*1000;closeSheet();const sc=pk(C.sc);curCar={id,sc};const low=L.hap<20;
+  const L=L2();L.cd['car_'+id]=Date.now()+C.cd*1000*itemCd();closeSheet();const sc=pk(C.sc);curCar={id,sc};const low=L.hap<20;
   openModal(`<div class="who" style="--pc:#ff8a3d"><span>${C.ic}</span><b>${C.lv[c.lv]||C.n}</b></div><p>${sc[0]}</p>${low?'<p class="note" style="color:#c0392b">😩 Estás quemado/a: menos probabilidades de éxito. Descansa.</p>':''}<div class="choice">${sc[1].map((o,i)=>`<button data-m="carPick" data-i="${i}"><span>${o[0]}</span><span style="font-size:15px">${o[1]}<small>${Math.round(o[2]*(low?.6:1)*100)} % de éxito</small></span></button>`).join('')}</div>`)}
 MA.carPick=b=>{if(!curCar)return;const {id,sc}=curCar,o=sc[1][+b.dataset.i],C=CAREERS[id],c=car(id),L=L2();curCar=null;closeModal();
-  const okk=Math.random()<o[2]*(L.hap<20?.6:1);
+  const okk=Math.random()<o[2]*(L.hap<20?.6:1)+itemLuck();
   withRes(okk?C.ic:'💥',okk?'¡Éxito!':'Desastre…',()=>{hap(-6);let t;
     if(okk){c.xp+=(c.lv?34:55)+rint(14);gain(ECO(4+c.lv*4));pop(2+c.lv);if(id==='infl')L.foll+=Math.round(Math.pow(10,c.lv)*(1+Math.random()));t=pk(C.ok)}
     else{c.xp+=6;t=pk(C.ko);if(Math.random()<.4)pop(-2)}
@@ -1316,7 +1353,7 @@ const GIGS=[
    [2,()=>withRes('🐕','Paseo glorioso',()=>{gain(ECO(4));hap(10);return'Los perros te adoran. Uno te trae un zapato de regalo (no es tuyo).'})],
    [1,()=>withRes('💘','¡Flechazo canino!',()=>{hap(12);L2().f2.dogMeet=1;return'Tu perro y el de alguien muy guapo se enamoran. Os intercambiáis teléfonos «por los perros».'})]])},
  {id:'lot',ic:'🎰',n:'Comprar lotería',d:'1 entre muchísimos… pero ¿y si?',cd:90,cost:()=>ECO(3),f:()=>{const r=Math.random();
-   if(r<.03){withRes('🤑','¡¡¡TE HA TOCADO!!!',()=>{gain(ECO(250));hap(30);L2().f2.lot=1;return'¡El GORDO! Tu abuela se desmaya. Tu primo Jonatan ya te está pidiendo dinero.'});return}
+   if(r<.03+itemLuck()*.1){withRes('🤑','¡¡¡TE HA TOCADO!!!',()=>{gain(ECO(250));hap(30);L2().f2.lot=1;return'¡El GORDO! Tu abuela se desmaya. Tu primo Jonatan ya te está pidiendo dinero.'});return}
    if(r<.25){withRes('🎟️','Te toca la pedrea',()=>{gain(ECO(5));return'Recuperas lo invertido y un poco más. Lo celebras como si fuera el Gordo.'});return}
    withRes('🗑️','Nada',()=>{hap(-2);return'Ni el reintegro. El lotero te mira con pena.'})}},
  {id:'lab',ic:'🧪',n:'Ensayo clínico de un yogur',d:'Te pagan bien… efectos secundarios: ¿?',cd:260,f:()=>{const e=pk(['hablas en verso durante un día entero','ves a todo el mundo con bigote','solo puedes andar hacia atrás','tu piel brilla un poco en la oscuridad','entiendes lo que dicen las palomas']);
@@ -1327,7 +1364,7 @@ const GIGS=[
    [1,()=>withRes('💔','Lío en la isla',()=>{pop(15);rep(-10);return'Te enrollas con otro concursante delante de las cámaras. Audiencia récord.'})]])}];
 function gigLeft(g){return Math.max(0,((L2().cd['g_'+g.id]||0)-Date.now())/1000)}
 function doGig(id){const g=GIGS.find(x=>x.id===id);if(!g)return;if(gigLeft(g)>0){toast('⏳ Aún no');return}const c=g.cost?g.cost():0;if(S.money<c){toast('Te faltan '+fmtM(c-S.money)+' €');return}
-  S.money-=c;L2().cd['g_'+id]=Date.now()+g.cd*1000;closeSheet();g.f()}
+  S.money-=c;L2().cd['g_'+id]=Date.now()+g.cd*1000*itemCd();closeSheet();g.f()}
 
 // ---- INVERSIONES ----
 const ASSETS=[{id:'pat',ic:'🥔',n:'Patatas S.A.',d:'Aburrida pero segura',vol:.025,dr:.002},{id:'cro',ic:'🪙',n:'CroquetaCoin',d:'Puede multiplicarse… o desaparecer',vol:.14,dr:.004},{id:'mar',ic:'🚀',n:'Marte Inmobiliaria',d:'Pisos en Marte. ¿Qué podría salir mal?',vol:.06,dr:.004}];
@@ -1493,14 +1530,14 @@ eventTick=function(dt){if(R.prem>0){R.prem-=dt;if(R.prem<=0)S.up.gProfitTmp=1}
 function polTax(dt){const pl=car('pol').lv;if(pl<3)return;for(const j of [1,2,3]){const z=S.zones[j];if(z.open&&!z.own)z.cash-=rivalFixed(j,S)*.12*(pl-2)*dt}}
 
 // ---- panel Vida ----
-const VT=[['vida','👤 Vida'],['car','🎬 Carrera'],['gig','💸 Curros'],['inv','📈 Inversión'],['acc','⚡ Barrio'],['ach','🏆 Logros'],['diario','📔 Diario'],['hist','📜 Historia']];
+const VT=[['vida','👤 Vida'],['obj','🎒 Objetos'],['car','🎬 Carrera'],['gig','💸 Curros'],['inv','📈 Inversión'],['acc','⚡ Barrio'],['ach','🏆 Logros'],['diario','📔 Diario'],['hist','📜 Historia']];
 const bar=(v,c)=>`<div class="hp"><i style="width:${cl(v,0,100)}%;background:${c}"></i></div>`;
 const _rs3=renderSheet;renderSheet=function(force){$('#sheet').classList.toggle('tall',sheetKind==='vida');
   if(sheetKind!=='vida'||['acc','diario','hist'].includes(vtab)){if(sheetKind==='vida'){_rs3(force);const v=$('#sheet .vtabs');if(v)v.outerHTML=tabsH()}else _rs3(force);return}
-  if(pressing&&!force)return;const L=L2(),st=curStreet();let h=hdr('👤','Tu vida',`${L.age} años · Día ${L.day} · ${st.e} ${st.n}`)+tabsH()+'<div class="list">';
-  if(vtab==='vida'){const lv=L.love;
-    h+=`<div class="statc"><div><span>⭐</span><b>Popularidad</b><em>${Math.round(L.pop)}</em>${bar(L.pop,'#ffb23f')}<small>+${Math.round(L.pop/2.5)} % clientes en tu restaurante</small></div>
-     <div><span>😊</span><b>Felicidad</b><em>${Math.round(L.hap)}</em>${bar(L.hap,L.hap<20?'#ff5a4e':'#5fd068')}<small>${L.hap<20?'¡Quemado/a! Descansa o vete de vacaciones':'Baja al trabajar; sube con amor, fiestas y vacaciones'}</small></div>
+  if(pressing&&!force)return;const L=L2(),st=curStreet();let h=hdr((L.look&&L.look.av)||'👤',(L.look&&L.look.name)||'Tu vida',`${L.age} años · Día ${L.day} · ${st.e} ${st.n}`)+tabsH()+'<div class="list">';
+  if(vtab==='vida'){const lv=L.love;h+=`<button class="cb b" data-a="look">✏️ PERSONALIZAR PERSONAJE</button>`;
+    h+=`<div class="statc"><div><span>⭐</span><b>Popularidad</b><em>${Math.round(L.pop)}</em>${bar(L.pop,'#ffb23f')}<small>+${Math.round(L.pop/1.25)} % clientes en tu restaurante</small></div>
+     <div><span>😊</span><b>Felicidad</b><em>${Math.round(L.hap)}</em>${bar(L.hap,L.hap<20?'#ff5a4e':'#5fd068')}<small>${L.hap<20?'¡Quemado/a! Tu cocina va lenta. Descansa':'Tu cocina va un '+Math.abs(Math.round((1/(1.15-L.hap/100*.3)-1)*100))+' % más '+(L.hap>=50?'rápida':'lenta')+' por tu ánimo'}</small></div>
      <div><span>${L.rep>=0?'😇':'😈'}</span><b>${repName(L.rep)}</b><em>${L.rep>0?'+':''}${Math.round(L.rep)}</em><div class="repbar"><i style="left:${(L.rep+100)/2}%"></i></div><small>Cambia los eventos y el final</small></div></div>`;
     h+=`<div class="it love"><span class="ic">${lv?lv.e:'💘'}</span><span class="tx"><b>${lv?lv.n+' · '+LOVE_LV[lv.lv]:'Sin pareja'}</b><small>${lv?lv.bio:'El amor sube la felicidad cada día'}</small></span>${
       !lv?`<button class="cb o" data-a="love:find">BUSCAR<small>Fogón Match</small></button>`:lv.lv===2?`<span class="btns"><button class="cb o" data-a="love:date">CITA</button><button class="cb" data-a="love:ring">💍<small>${fmtM(ECO(40))} €</small></button></span>`:lv.lv===3?`<span class="btns"><button class="cb o" data-a="love:date">CITA</button><button class="cb" data-a="love:wed">💒 BODA<small>${fmtM(ECO(60))} €</small></button></span>`:`<button class="cb o" data-a="love:date">CITA</button>`}</div>`;
@@ -1514,6 +1551,7 @@ const _rs3=renderSheet;renderSheet=function(force){$('#sheet').classList.toggle(
      `<div class="it"><span class="ic">🏠</span><span class="tx"><b>Pisos en alquiler · tienes ${L.pisos}</b><small>Renta fija cada día: ${fmtM(L.rent)} €</small></span><button class="cb o" data-a="inv:piso">COMPRAR<small>${fmtM(pisoCost())} €</small></button></div>`+
      `<div class="it"><span class="ic">💡</span><span class="tx"><b>Startup de tu primo</b><small>${L.stup?`«${L.stup.n}»: se decide el día ${L.stup.day}`:'20 % x12 · 30 % x1,5 · 50 % lo pierdes todo'}</small></span><button class="cb ${L.stup?'no':'o'}" data-a="inv:stup">${L.stup?'⏳':'INVERTIR'}<small>${L.stup?'':fmtM(ECO(60))+' €'}</small></button></div>`}
   if(vtab==='ach')h+=`<p class="note">${Object.keys(L.ach).length} de ${ACH.length} desbloqueados · cada logro da dinero y popularidad</p>`+ACH.map((a,i)=>`<div class="story-it ${L.ach[i]?'':'lock'}"><span>${L.ach[i]?a[0]:'🔒'}</span><span><b>${a[1]}</b><small>${a[2]}</small></span></div>`).join('');
+  if(vtab==='obj')h+=objH();
   $('#sheet').innerHTML=h+'</div>'};
 function tabsH(){return`<div class="vtabs">${VT.map(([k,n])=>`<button data-a="vtab:${k}" class="${vtab===k?'on':''}">${n}</button>`).join('')}</div>`}
 act=(function(prev){return function(a){const p=a.split(':');
@@ -1536,6 +1574,115 @@ let mT=0;setInterval(()=>{if(document.hidden)return;mT++;if(mT%6===0)mktTick();p
   const L=L2(),ready=Object.keys(CAREERS).some(id=>carLeft(id)<=0&&car(id).lv<CAREERS[id].lv.length-1)||GIGS.some(g=>gigLeft(g)<=0);
   const vb=document.querySelector('[data-sheet="vida"]');if(vb){let b=vb.querySelector('.badge');if(ready&&!b){b=document.createElement('i');b.className='badge';b.textContent='!';vb.appendChild(b)}else if(!ready&&b)b.remove()}},500);
 for(let i=0;i<30;i++)mktTick();
+
+// ================= LA VIDA MANDA: decisión diaria + HUD =================
+const DAYOPT=[
+ {ic:'📚',n:'Curso de cocina online',s:'Cocina un 25 % más rápido todo el día',f:()=>{L2().cb=Date.now()+150000;return'Aprendes a cortar cebolla sin llorar. Tus cocineros te miran con respeto.'}},
+ {ic:'📣',n:'Repartir flyers por el barrio',s:'Avalancha de clientes ahora',f:()=>{R.rush=Math.max(R.rush||0,30);hap(-3);return'Le das un flyer hasta a un perro. El perro viene a comer.'}},
+ {ic:'🛋️',n:'Maratón de series',s:'+15 felicidad',f:()=>{hap(15);return'Te ves 9 capítulos seguidos. Netflix te pregunta si sigues vivo/a.'}},
+ {ic:'🏋️',n:'Ir al gimnasio',s:'+8 felicidad · +2 popularidad',f:()=>{hap(8);pop(2);return'Levantas pesas y te haces un selfie sudado. 40 likes.'}},
+ {ic:'💤',n:'Dormir 12 horas',s:'+12 felicidad',f:()=>{hap(12);return'Sueñas que eres una croqueta. Te despiertas renovado/a.'}},
+ {ic:'🧹',n:'Limpieza a fondo del local',s:'+8 fama',f:()=>{S.fame=Math.min(400,S.fame+8);return'Encuentras 3 € y una tortilla de 2021 detrás de la nevera.'}},
+ {ic:'📱',n:'Subir un TikTok cocinando',s:'Popularidad (o vergüenza)',f:()=>Math.random()<.7?(pop(5),'1,2 millones de visitas. Tu forma de dar la vuelta a la tortilla es tendencia.'):(pop(-1),hap(-4),'Se te cae el móvil en la freidora. El último vídeo es épico, pero el móvil no sobrevive.')},
+ {ic:'👵',n:'Comer con la abuela',s:'Abuela ❤️ · +6 felicidad',f:()=>{rel('abu',8);hap(6);return'Te pone tres platos y te riñe por estar delgado/a.'}},
+ {ic:'🍻',n:'Cañas con un rival',s:'Mejora la relación con un rival',f:()=>{const k=pk(['mas','ken','gue']);rel(k,12);return`Acabas cantando rancheras con ${CAST[k].n}. Quizá no sea tan mala persona.`}},
+ {ic:'🎲',n:'Bingo del barrio',s:'Puede caer dinero',f:()=>Math.random()<.4?(gain(ECO(15)),'¡BINGO! Las abuelas te odian.'):(hap(2),'No cantas ni línea. Pero las abuelas te invitan a churros.')},
+ {ic:'💘',n:'Día romántico',s:'+15 felicidad',ok:()=>(L2().love||{}).lv>=2,f:()=>{hap(15);return`Picnic con ${L2().love.n}. Llevas croquetas en forma de corazón.`}},
+ {ic:'🎬',n:'Ensayar tu papel',s:'Avanza tu carrera de actor',ok:()=>car('actor').lv>=1,f:()=>{car('actor').xp=Math.min(99,car('actor').xp+20);return'Ensayas delante del espejo. Hasta el espejo aplaude.'}},
+ {ic:'🧘',n:'Yoga con tu cabra',s:'+15 felicidad · +3 popularidad',ok:()=>L2().f2.goat,f:()=>{hap(15);pop(3);return'La cabra hace el saludo al sol mejor que tú.'}},
+ {ic:'🐪',n:'Pasear a Paco el camello',s:'+10 popularidad',ok:()=>L2().f2.camel,f:()=>{pop(10);return'Medio barrio te sigue con el móvil. Paco escupe a un paparazzi.'}}];
+let dayOpts=null;
+const _dt2=dayTick;dayTick=function(dt){const d0=L2().day;_dt2(dt);if(L2().day!==d0)L2().pendDay=1};
+function showDay(){const L=L2();L.pendDay=0;dayOpts=DAYOPT.filter(o=>!o.ok||o.ok()).sort(()=>Math.random()-.5).slice(0,3);sfx.open();
+  openModal(`<div class="emo">☀️</div><h2>Día ${L.day} · ${L.age} años</h2><p style="font-size:14px">${L.hap<25?'😩 Te levantas hecho polvo… ':'😊 '}¿Qué haces hoy antes de abrir?</p><div class="choice">${dayOpts.map((o,i)=>`<button data-m="dayPick" data-i="${i}"><span>${o.ic}</span><span style="font-size:15px">${o.n}<small>${o.s}</small></span></button>`).join('')}</div>`)}
+MA.dayPick=b=>{const o=dayOpts&&dayOpts[+b.dataset.i];closeModal();if(o)withRes(o.ic,o.n,o.f);dayOpts=null};
+// HUD de vida en pantalla
+(function(){const vb=document.querySelector('[data-sheet="vida"]');if(!vb)return;const h=document.createElement('div');h.id='lifeHud';h.className='lifehud';vb.insertAdjacentElement('afterend',h)})();
+function paintHud(){const h=$('#lifeHud');if(!h)return;const L=L2();const t=`<span>⭐${Math.round(L.pop)}</span><span class="${L.hap<20?'bad':''}">${L.hap<20?'😩':L.hap>70?'😄':'🙂'}${Math.round(L.hap)}</span><span>🎂${L.age}</span>`;if(h.innerHTML!==t)h.innerHTML=t}
+setInterval(()=>{if(document.hidden)return;paintHud();const L=L2();if(L.pendDay&&$('#modal').hidden&&!dlgOn&&!sheetKind&&!curEv&&S.story&&S.story.intro)showDay()},500);
+
+// ================= OBJETOS, CAJAS, FUSIÓN, PERSONALIZACIÓN, ESTRELLAS =================
+const RAR=[{n:'Común',c:'#8d939e',v:.05},{n:'Raro',c:'#3f86d6',v:.10},{n:'Épico',c:'#9b59d6',v:.20},{n:'Legendario',c:'#f5a524',v:.35},{n:'Mítico',c:'#ff3d6e',v:.60}];
+const POW={pm:{e:'💰',d:v=>`+${Math.round(v*100)} % ganancias`,n:['Hucha de cerdito','Cartera de cuero','Caja registradora de oro','Cofre pirata','Grifo de dinero infinito']},
+ sp:{e:'🧲',d:v=>`+${Math.round(v*100)} % clientes`,n:['Cartel luminoso','Altavoz de feria','Imán gigante','Faro de croquetas','Agujero negro de clientes']},
+ ck:{e:'🍳',d:v=>`+${Math.round(v*100)} % velocidad de cocina`,n:['Sartén antiadherente','Cuchillo japonés','Wok volcánico','Fogón de dragón','Cocina cuántica']},
+ td:{e:'🔥',d:v=>`+${Math.round(v*200)} % duración del turbo y del gentío`,n:['Mechero','Guindilla','Bidón de gasolina','Núcleo de reactor','Sol en un bote']},
+ pp:{e:'🕶️',d:v=>`+${Math.round(v*20)} ⭐ popularidad cada día`,n:['Gafas de sol','Alfombra roja','Micrófono de oro','Estrella de la Fama','Corona de celebrity']},
+ lk:{e:'🍀',d:v=>`+${Math.round(v*40)} % suerte (carreras y lotería)`,n:['Trébol de 4 hojas','Herradura','Gato de la suerte','Dado trucado','Pata de unicornio']},
+ cd:{e:'🕰️',d:v=>`−${Math.round(v*50)} % de espera en acciones`,n:['Despertador','Reloj de arena','Agenda mágica','Máquina del tiempo','Reloj de Cronos']}};
+const COMBO=[['🥄','Cucharón',0],['🍴','Tenedor',0],['🪄','Varita',1],['🔱','Tridente',0],['🏺','Ánfora',1],['💎','Gema',1],['🧿','Amuleto',0],['👑','Corona',1]],ADJ=[['de barrio','brillante','épico','legendario','mítico'],['de barrio','brillante','épica','legendaria','mítica']];
+function I3(){const L=L2();L.items=L.items||[];L.eq=L.eq||[];if(L.boxes==null)L.boxes=0;L.look=L.look||{name:'',av:'🧑‍🍳',apron:'#ff8a3d',hat:'#ffffff'};if(L.achBox==null)L.achBox=0;return L}
+I3();
+let iid=Date.now();
+function mkItem(r,p){const it={id:++iid,r,p};if(p.length===1){it.e=POW[p[0]].e;it.n=POW[p[0]].n[r]}else{const c=pk(COMBO);it.e=c[0];it.n=c[1]+' '+ADJ[c[2]][r]}if(r>=3)L2().f2.leg=1;return it}
+function rollRar(){const x=Math.random();return x<.03+itemLuck()*.05?3:x<.15?2:x<.42?1:0}
+const eqItems=()=>{const L=I3();return L.items.filter(i=>L.eq.includes(i.id))};
+function powSum(){const t={};for(const it of eqItems())for(const p of it.p)(t[p]=t[p]||[]).push(RAR[it.r].v);return t}
+function itemLuck(){const t=powSum();return Math.min(.3,(t.lk||[]).reduce((a,v)=>a+v*.4,0))}
+function itemCd(){const t=powSum();return Math.max(.4,(t.cd||[]).reduce((a,v)=>a*(1-v*.5),1))}
+function itemTd(){const t=powSum();return 1+(t.td||[]).reduce((a,v)=>a+v*2,0)}
+function itemPP(){const t=powSum();return(t.pp||[]).reduce((a,v)=>a+v*20,0)}
+function applyItems(){const t=powSum(),m=k=>(t[k]||[]).reduce((a,v)=>a*(1+v),1);S.it={pm:m('pm'),sp:m('sp'),ck:m('ck')}}
+applyItems();
+// turbo más largo
+const _ub=useBoost;useBoost=function(k){const before=R[k];_ub(k);if(R[k]===BOOST[k].dur&&before!==R[k]){R[k]*=itemTd();if(itemTd()>1)toast(`🔥 Tus objetos alargan el ${k==='turbo'?'turbo':'gentío'}: ${Math.round(R[k])} s`)}};
+function giveBox(why,n=1){const L=I3();L.boxes+=n;sfx.unlock();toast(`🎁 <b>¡Caja de regalo!</b> ${why}`,3200);save()}
+// abrir caja con animación
+function openBox(){const L=I3();if(L.boxes<=0){toast('No tienes cajas');return}if(L.items.length>=16){toast('🎒 Mochila llena: fusiona o tira algo');return}
+  L.boxes--;const r=rollRar(),it=mkItem(r,[pk(Object.keys(POW))]);L.items.push(it);if(L.eq.length<4)L.eq.push(it.id);applyItems();save();closeSheet();
+  openModal(`<div class="boxopen"><div class="gift">🎁</div><p class="note">Abriendo…</p></div>`);sfx.open();
+  setTimeout(()=>{if($('#modal').hidden)return;sfx.big();$('#card').innerHTML=`<div class="reveal" style="--rc:${RAR[r].c}"><div class="rays"></div><div class="ie">${it.e}</div></div><div class="rtag" style="background:${RAR[r].c}">${RAR[r].n.toUpperCase()}</div><h2>${it.n}</h2><p>${it.p.map(p=>POW[p].d(RAR[r].v)).join('<br>')}</p>${L.eq.includes(it.id)?'<p class="note">✅ Equipado automáticamente</p>':'<p class="note">Equípalo en 👤 → 🎒 Objetos</p>'}<button class="cb" data-m="close">¡GENIAL!</button>${L.boxes>0?`<button class="cb o" data-m="box2">ABRIR OTRA (${L.boxes})</button>`:''}`;if(r>=3)burst(VW/2,VH*.4,40,'✨')},1300)}
+MA.box2=()=>{closeModal();openBox()};
+let selIt=null;
+function objAct(k,x){const L=I3();
+  if(k==='open'){openBox();return false}
+  if(k==='sel'){const id=+x;selIt=selIt===id?null:id;sfx.tap();return true}
+  if(k==='eq'){const id=+x;if(L.eq.includes(id))L.eq=L.eq.filter(e=>e!==id);else{if(L.eq.length>=4){toast('Solo 4 objetos equipados. Quita uno primero');return true}L.eq.push(id)}applyItems();sfx.tap();save();return true}
+  if(k==='merge'){const a=L.items.find(i=>i.id===selIt),b=L.items.find(i=>i.id===+x);if(!a||!b||a===b||a.r!==b.r||a.r>=4)return true;
+    const p=[...new Set([...a.p,...b.p])].slice(0,4),wasEq=L.eq.includes(a.id)||L.eq.includes(b.id),n=mkItem(a.r+1,p);
+    L.items=L.items.filter(i=>i!==a&&i!==b);L.eq=L.eq.filter(e=>e!==a.id&&e!==b.id);L.items.push(n);if(wasEq||L.eq.length<4)L.eq.push(n.id);selIt=null;applyItems();save();closeSheet();sfx.big();
+    openModal(`<div class="reveal" style="--rc:${RAR[n.r].c}"><div class="rays"></div><div class="ie">${n.e}</div></div><div class="rtag" style="background:${RAR[n.r].c}">¡FUSIÓN ${RAR[n.r].n.toUpperCase()}!</div><h2>${n.n}</h2><p>${n.p.map(q=>POW[q].d(RAR[n.r].v)).join('<br>')}</p><button class="cb" data-m="close">¡BRUTAL!</button>`);burst(VW/2,VH*.4,30,'✨');return false}
+  if(k==='del'){const id=+x;L.items=L.items.filter(i=>i.id!==id);L.eq=L.eq.filter(e=>e!==id);selIt=null;applyItems();gain(ECO(3));save();return true}
+  return true}
+function objH(){const L=I3(),t=powSum(),sel=L.items.find(i=>i.id===selIt);
+  let h=`<div class="it boxit"><span class="ic">🎁</span><span class="tx"><b>Cajas de regalo: ${L.boxes}</b><small>Ganas cajas cada 3 logros, cada 5 días, con las ⭐ estrellas y comprando locales</small></span><button class="cb ${L.boxes?'o':'no'}" data-a="obj:open">ABRIR</button></div>`;
+  const eff=Object.keys(t).map(p=>{const v=t[p];const tot=p==='pm'||p==='sp'||p==='ck'?v.reduce((a,x)=>a*(1+x),1)-1:v.reduce((a,x)=>a+x,0);return`<span>${POW[p].e} ${POW[p].d(p==='cd'?1-itemCd():tot).replace(/^[+−]/,m=>m)}</span>`});
+  h+=`<div class="effs"><b>Poderes activos (${L.eq.length}/4)</b>${eff.length?eff.join(''):'<span>Nada equipado todavía</span>'}</div>`;
+  h+=`<p class="note">${sel?`Toca otro objeto <b style="color:${RAR[sel.r].c}">${RAR[sel.r].n}</b> para FUSIONARLOS: sube de rareza y suma los dos poderes.`:'Toca un objeto para verlo. Dos iguales de rareza se fusionan en uno mejor con los poderes de ambos.'}</p><div class="inv">`;
+  h+=L.items.slice().sort((a,b)=>b.r-a.r).map(i=>{const eq=L.eq.includes(i.id),can=sel&&sel!==i&&sel.r===i.r&&i.r<4;return`<button class="slot ${eq?'eq':''} ${sel===i?'sel':''} ${can?'can':''}" style="--rc:${RAR[i.r].c}" data-a="${can?'obj:merge:'+i.id:'obj:sel:'+i.id}"><span>${i.e}</span><i>${i.p.map(p=>POW[p].e).join('')}</i>${eq?'<b>✓</b>':''}</button>`}).join('')+[...Array(Math.max(0,16-L.items.length))].map(()=>'<div class="slot empty"></div>').join('')+'</div>';
+  if(sel)h+=`<div class="it selit" style="border-color:${RAR[sel.r].c}"><span class="ic">${sel.e}</span><span class="tx"><b>${sel.n}</b><small style="color:${RAR[sel.r].c}">${RAR[sel.r].n}</small><small>${sel.p.map(p=>POW[p].d(RAR[sel.r].v)).join(' · ')}</small></span><span class="btns"><button class="cb ${L.eq.includes(sel.id)?'':'o'}" data-a="obj:eq:${sel.id}">${L.eq.includes(sel.id)?'QUITAR':'EQUIPAR'}</button><button class="cb no" data-a="obj:del:${sel.id}">VENDER</button></span></div>`;
+  return h}
+// ---- personalización ----
+const AVS=['🧑‍🍳','👩‍🍳','👨‍🍳','👩🏽‍🍳','👨🏾‍🍳','🧑🏻‍🍳','🧔','👱‍♀️','🧑‍🎤','🤠','🥷','🧛','🧙','👽','🤖','🐸','🐱','🐷'];
+const APR=['#ff8a3d','#e9574f','#3f86d6','#3bb273','#9b59d6','#ff7ab8','#23262f','#ffd84d'],HATS=[['#ffffff',0],['#23262f',0],['#e9574f',0],['#3f86d6',0],['#ff7ab8',0],['#ffd84d',1]];
+function applyLook(){const L=I3(),lk=L.look;TEAM.apron=lk.apron;TEAM.hat=lk.hat;for(const ch of R.chefs){const o=ENT.get(ch);if(o){scene.remove(o.g);ENT.delete(ch)}}const s=document.querySelector('[data-sheet="vida"] span');if(s)s.textContent=lk.av}
+function openLook(){const L=I3(),lk=L.look;closeSheet();openModal(`<h2>✏️ Tu personaje</h2><input id="lkName" class="lkin" maxlength="16" placeholder="Tu nombre" value="${(lk.name||'').replace(/"/g,'')}">
+  <b class="lkh">Cara</b><div class="lkg">${AVS.map(a=>`<button data-m="lkAv" data-v="${a}" class="${lk.av===a?'on':''}">${a}</button>`).join('')}</div>
+  <b class="lkh">Delantal del equipo</b><div class="lkg">${APR.map(c=>`<button data-m="lkAp" data-v="${c}" class="dot ${lk.apron===c?'on':''}" style="background:${c}"></button>`).join('')}</div>
+  <b class="lkh">Gorro de cocinero</b><div class="lkg">${HATS.map(([c,lock])=>{const lo=lock&&!L.f2.leg;return`<button data-m="lkHat" data-v="${c}" class="dot ${lk.hat===c?'on':''} ${lo?'lk':''}" style="background:${c}">${lo?'🔒':''}</button>`}).join('')}</div><p class="note">🔒 Gorro de oro: consigue un objeto Legendario</p>
+  <button class="cb" data-m="lkOk">GUARDAR</button>`)}
+MA.lkAv=b=>{I3().look.av=b.dataset.v;document.querySelectorAll('[data-m="lkAv"]').forEach(x=>x.classList.toggle('on',x===b))};
+MA.lkAp=b=>{I3().look.apron=b.dataset.v;document.querySelectorAll('[data-m="lkAp"]').forEach(x=>x.classList.toggle('on',x===b))};
+MA.lkHat=b=>{if(b.classList.contains('lk')){toast('🔒 Consigue un objeto Legendario');return}I3().look.hat=b.dataset.v;document.querySelectorAll('[data-m="lkHat"]').forEach(x=>x.classList.toggle('on',x===b))};
+MA.lkOk=()=>{const L=I3();L.look.name=($('#lkName').value||'').trim().slice(0,16);applyLook();closeModal();sfx.unlock();toast(`${L.look.av} ¡Así me gusta${L.look.name?', '+L.look.name:''}!`);save()};
+applyLook();
+// ---- ESTRELLAS (fama) con utilidad ----
+const FSTEP=40;
+function famePanel(){const f=Math.floor(S.fame),nx=Math.min(400,((S.fameBox||0)+1)*FSTEP),bonus=Math.round(0.0015*S.fame/0.6*100);
+  openModal(`<div class="emo">⭐</div><h2>Fama: ${f}</h2><p>Tu fama trae <b>+${bonus} % clientes</b> y hace que te elijan antes que a los rivales.</p>
+   <div class="fmile">${[...Array(10)].map((_,i)=>{const v=(i+1)*FSTEP,got=(S.fameBox||0)>i;return`<span class="${got?'got':S.fame>=v?'rdy':''}">${got?'✅':'🎁'}<small>${v}</small></span>`}).join('')}</div>
+   ${(S.fameBox||0)<10?`<div class="mbar"><i style="width:${Math.min(100,(S.fame-(S.fameBox||0)*FSTEP)/FSTEP*100)}%"></i><span>Siguiente caja a ${nx} ⭐</span></div>`:'<p class="note">¡Todas las cajas de esta calle conseguidas!</p>'}
+   <p class="note">Cada ${FSTEP} estrellas: una 🎁 caja de regalo. Al abrir franquicia conservas la mitad y vuelves a ganar las cajas que te falten.</p><button class="cb" data-m="close">VALE</button>`)}
+document.querySelector('.fpill').addEventListener('click',()=>{sfx.tap();famePanel()});document.querySelector('.fpill').style.cursor='pointer';
+// ---- recompensas: logros, días, fama, locales ----
+const _rs5=act;act=function(a){const p=a.split(':');if(p[0]==='obj')return objAct(p[1],p[2]);if(p[0]==='look'){openLook();return false}
+  const r=_rs5(a);if(p[0]==='buy'&&r)giveBox('Por comprar un local');return r};
+const _dt3=dayTick;dayTick=function(dt){const d0=L2().day;_dt3(dt);const L=L2();if(L.day!==d0){const pp=itemPP();if(pp)pop(pp);if(L.day%5===0)giveBox('Por sobrevivir 5 días más')}};
+setInterval(()=>{if(document.hidden)return;const L=I3();const n=Object.keys(L.ach).length,want=Math.floor(n/3);if(want>L.achBox){giveBox('Por conseguir 3 logros',want-L.achBox);L.achBox=want}
+  S.fameBox=S.fameBox||0;while(S.fameBox<10&&S.fame>=(S.fameBox+1)*FSTEP){S.fameBox++;giveBox(`Por llegar a ${S.fameBox*FSTEP} ⭐`)}
+  const fp=document.querySelector('.fpill');if(fp)fp.classList.toggle('glow',S.fameBox<10&&S.fame>=(S.fameBox+1)*FSTEP-5);
+  const vb=document.querySelector('[data-sheet="vida"]');if(vb){let g=vb.querySelector('.gbadge');if(L.boxes>0&&!g){g=document.createElement('i');g.className='gbadge';vb.appendChild(g)}if(g){if(L.boxes>0)g.textContent='🎁'+L.boxes;else g.remove()}}},700);
+if(!I3().f2.starter){I3().f2.starter=1;I3().boxes+=1}
 
 </script>
 <script>
