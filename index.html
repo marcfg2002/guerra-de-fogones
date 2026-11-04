@@ -315,7 +315,7 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .dthc{background:#fff;border-radius:12px;padding:6px 10px;font-weight:800;font-size:15px}.dthc small{display:block;font-size:12px;color:#7a6a50}
 /*fitfix*/.topbar{padding-top:max(8px,env(safe-area-inset-top,0px))!important}
 .dock{padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
-#app{position:fixed!important;left:0!important;right:0!important;top:0!important;bottom:0!important;max-width:none!important;padding:0!important}html,body{background:#23262f!important}
+#app{position:fixed!important;left:0!important;right:0!important;top:0!important;bottom:0!important;height:auto!important;margin:0!important;max-width:none!important;padding:0!important}html,body{background:#23262f!important;height:100%!important}
 .sheet:not(.open){visibility:hidden;transition:transform .28s,visibility 0s .28s}
 /*v7*/
 .stepn{font:900 12px var(--f-b);color:#9a7b4f;text-transform:uppercase;letter-spacing:.5px}
@@ -1086,7 +1086,7 @@ function openSet(){openModal(`<h2>Ajustes</h2>
   <button class="tog ${S.music?'on':''}" data-m="tMusic"><span>🎵 Música</span><i></i></button>
   <button class="tog ${S.sound?'on':''}" data-m="tSound"><span>🔊 Sonido</span><i></i></button>
   <button class="cb b" data-m="help">CÓMO SE JUEGA</button>
-  <p style="font-size:12px;color:#8a6a40">Versión 27.3 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
+  <p style="font-size:12px;color:#8a6a40">Versión 27.4 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
   <button class="lnk" style="color:#d8352a" data-m="wipe">Borrar partida</button>
   <button class="cb" data-m="close">SEGUIR</button>`)}
 MA.tMusic=()=>{S.music=!S.music;music();openSet();save()};MA.tSound=()=>{S.sound=!S.sound;music();openSet();save()};
@@ -2016,7 +2016,7 @@ SE('paps2','pap',3,()=>celebK().some(k=>(V5().rel[k]??-999)>=40),()=>{const k=pk
  ['📢','Desmentirlo','Honrado','Comunicado oficial',()=>{rep(5);pop(4);return'Publicas un comunicado. Nadie te cree, pero quedas como un señor/a.'}]]);
 setInterval(()=>{if(!document.hidden)celebUnlock()},2000);
 
-setTimeout(()=>{fitApp();resize()},600);setTimeout(()=>{fitApp();resize()},2000);function fitApp(){const a=document.getElementById('app'),sa=navigator.standalone||matchMedia('(display-mode: standalone)').matches,port=innerHeight>innerWidth;let h='';if(sa&&port){const H=Math.max(innerHeight,screen.height);if(H>innerHeight+4)h=H+'px'}a.style.setProperty('bottom',h?'auto':'',h?'important':'');a.style.setProperty('height',h,h?'important':'');document.documentElement.style.height=h;document.body.style.height=h}fitApp();addEventListener('resize',()=>{fitApp();resize()});addEventListener('orientationchange',()=>setTimeout(()=>{fitApp();resize()},300));setTimeout(()=>{fitApp();resize()},400);
+setTimeout(()=>{fitApp();resize()},600);setTimeout(()=>{fitApp();resize()},2000);function fitApp(){const a=document.getElementById('app'),sa=navigator.standalone||matchMedia('(display-mode: standalone)').matches;a.style.removeProperty('height');a.style.removeProperty('bottom');const b=a.getBoundingClientRect().bottom;if(sa&&innerHeight>innerWidth&&screen.height>b+4){a.style.setProperty('bottom','auto','important');a.style.setProperty('height',screen.height+'px','important')}window._fitInfo=`pantalla ${screen.height} · ventana ${innerHeight} · juego ${Math.round(a.getBoundingClientRect().height)}${sa?' · app':''}`}fitApp();addEventListener('resize',()=>{fitApp();resize()});addEventListener('orientationchange',()=>setTimeout(()=>{fitApp();resize()},300));setTimeout(()=>{fitApp();resize()},400);
 
 // ================= VIDA 7: todo lo nuevo de la vida, sobre el restaurante de siempre =================
 // ---------- utilidades ----------
@@ -2212,6 +2212,7 @@ renderSheet=(function(prev){return function(force){prev(force);if(sheetKind!=='v
 act=(function(prev){return function(a){if(a==='plan:of'){closeSheet();ofHub();return false}return prev(a)}})(act);
 // ---------- ajustes: clave de Gemini ----------
 openSet=(function(prev){return function(){prev();const c=$('#card');if(!c)return;const ref=[...c.querySelectorAll('p,.note')].find(e=>/Versión/.test(e.textContent));(ref||c.lastElementChild).insertAdjacentHTML(ref?'beforebegin':'afterend',`<b class="lkh">🤖 IA (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com). Se guarda solo en este móvil.'}</p><input id="gk7" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc7(S.gemKey||'')}"><button class="cb" data-m="gk7">GUARDAR CLAVE</button>`)}})(openSet);
+openSet=(function(prev){return function(){prev();const c=$('#card');if(c)c.insertAdjacentHTML('beforeend',`<p class="note" style="font-size:11px;opacity:.6">${window._fitInfo||''}</p>`)}})(openSet);
 MA.gk7=()=>{S.gemKey=$('#gk7').value.trim();save();closeModal();toast(S.gemKey?'🤖 IA activada':'IA desactivada')};
 // ---------- zoom con dos dedos ----------
 let ZOOM=1.15;fitCam=function(){camBase.pitch=1.0;camBase.d=40;const a=camera.aspect||.6,hw=VIS_W/ZOOM/2,hh=hw/a;for(const c of [camera,tmpC]){c.left=-hw;c.right=hw;c.top=hh;c.bottom=-hh;c.near=.5;c.far=300;c.updateProjectionMatrix()}zMin=Wz(-20)+hh/Math.sin(camBase.pitch)*.9;zMax=Wz(VH+20)-hh/Math.sin(camBase.pitch)*.95;clampCam()};
