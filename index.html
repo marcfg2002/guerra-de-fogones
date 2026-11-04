@@ -357,6 +357,8 @@ body.isnight .dock,body.isnight .pbar,body.isnight .clock,body.isnight .side{vis
 .wb.up{background:#5fd068}.wb.lock{background:#ffb23f}.wb.seat{background:#4aa8ff}.wb.buy{background:#ff5a4e;font-size:13px}
 .wb{padding:2px 6px!important;min-width:0!important;border-width:2.5px!important;border-radius:10px!important}.wb b{font-size:11.5px!important}.wb i{font-size:10px!important}
 #app{position:fixed!important;left:0!important;right:0!important;top:0!important;bottom:auto!important;max-width:none!important;padding:0!important}html,body{background:#23262f!important}
+.seg3{display:flex;gap:5px}.seg3.wrap{flex-wrap:wrap}.seg3 button{flex:1;min-width:30%;padding:9px 6px;border-radius:12px;background:#fff;border:3px solid #e3d1ad;font-family:var(--f-d);font-size:13.5px;color:#2a1405}.seg3 button.on{border-color:#2a1405;background:#fff3c4;box-shadow:0 0 0 3px #ffb23f}
+.review{background:#fff;border-radius:14px;padding:10px 12px;font-family:var(--f-d);font-size:15px;line-height:1.25;text-align:center}.review small{display:block;font-family:var(--f-b);font-size:11px;color:#8a6a40;font-weight:800}
 </style>
 </head>
 <body>
@@ -947,7 +949,7 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 17 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 18 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
@@ -979,6 +981,67 @@ function paintGuide(){const g=guideStep(),el=$('#guide');const wasH=el.hidden;if
   const t=!done&&g.tgt();if(t&&t.getBoundingClientRect){const r=t.getBoundingClientRect();if(r.width){hand.style.display='block';hand.style.left=(r.left+r.width/2-14)+'px';hand.style.top=(r.bottom-6)+'px';return}}hand.style.display='none'}
 $('#guide').addEventListener('click',e=>{if(!e.target.closest('#gOk'))return;const g=guideStep();if(!g||!g.ok())return;RUN.money+=g.rw*mult();SV.g++;sfx.big();burst((LAY.xL+LAY.xR)/2,-2,20,'💰');save();paintGuide()});
 setInterval(()=>{if(!document.hidden)paintGuide()},300);
+
+// ================= IDENTIDAD: nombre, género, orientación, transición · IA personalizada =================
+const GEN={m:{n:'Hombre',e:'👨‍🍳',pr:'él'},f:{n:'Mujer',e:'👩‍🍳',pr:'ella'},n:{n:'No binario',e:'🧑‍🍳',pr:'elle'}};
+const ORI={het:'Hetero',gay:'Gay / Lesbiana',bi:'Bisexual',pan:'Pansexual',ace:'Asexual'};
+const ID=()=>{const L=LF();L.id=L.id||{g:'n',o:'bi',made:0,out:0};return L.id};
+// texto con el género del personaje: "cansado/a" → cansado / cansada / cansade
+function gtxt(s){const g=ID().g;return String(s).replace(/\b(\p{L}+?)o\/a(s?)\b/gu,(_,w,pl)=>w+(g==='m'?'o':g==='f'?'a':'e')+pl).replace(/\bel\/la\b/g,g==='m'?'el':g==='f'?'la':'le').replace(/\bun\/una\b/g,g==='m'?'un':g==='f'?'una':'une')}
+const _res=res;res=function(ic,t,fn){return _res(ic,gtxt(t),()=>gtxt(fn()||''))};
+// ---- creación de personaje ----
+let CR=null;
+function createChar(first){const L=LF(),id=ID();CR={name:L.name||'',g:id.g,o:id.o,av:L.av||GEN[id.g].e};paintCreate(first)}
+function paintCreate(first){const b=(k,v,lab,cur)=>`<button data-m="cr" data-k="${k}" data-v="${v}" class="${cur===v?'on':''}">${lab}</button>`;
+  openModal(`<h2>${first?'👶 Crea tu personaje':'✏️ Tu personaje'}</h2>
+   <input id="crName" class="lkin" maxlength="16" placeholder="¿Cómo te llamas?" value="${esc(CR.name)}">
+   <b class="lkh">Género</b><div class="seg3">${Object.entries(GEN).map(([k,g])=>b('g',k,g.n,CR.g)).join('')}</div>
+   <b class="lkh">Te atraen…</b><div class="seg3 wrap">${Object.entries(ORI).map(([k,o])=>b('o',k,o,CR.o)).join('')}</div>
+   <b class="lkh">Cara</b><div class="lkg">${AVS.concat(['👩🏽‍🍳','👨🏻‍🍳','🧑🏾‍🍳','👩🏼‍🦰','🧑🏻‍🦱','👨🏿']).map(a=>`<button data-m="cr" data-k="av" data-v="${a}" class="${CR.av===a?'on':''}">${a}</button>`).join('')}</div>
+   <p class="note">Tu género y orientación cambian con quién ligas, cómo te hablan y lo que te pasa. Puedes cambiarlo cuando quieras.</p>
+   <button class="cb" data-m="crOk">${first?'¡EMPEZAR MI VIDA!':'GUARDAR'}</button>`)}
+MA.cr=b=>{CR.name=$('#crName').value;CR[b.dataset.k]=b.dataset.v;if(b.dataset.k==='g'&&AVS.includes(CR.av)&&['🧑‍🍳','👩‍🍳','👨‍🍳'].includes(CR.av))CR.av=GEN[CR.g].e;paintCreate(!ID().made)};
+MA.crOk=()=>{const L=LF(),id=ID();CR.name=$('#crName').value.trim().slice(0,16);L.name=CR.name;L.av=CR.av;const wasG=id.g;id.g=CR.g;id.o=CR.o;const first=!id.made;id.made=1;closeModal();save();
+  if(first){logL('👶',gtxt(`Empieza la vida de ${L.name||'un/una chef'}.`));toast(`${L.av} ¡Hola, ${L.name||'chef'}!`)}if(!$('#night').hidden)renderNight()};
+editLook=()=>createChar(false);
+// ---- ligar según tu orientación ----
+const LOV2=[['Rocío','👩🏽','f','domadora de calamares'],['Iker','🧔🏻','m','campeón de petanca'],['Vera','👩🏻‍🦰','f','habla con las plantas (y le contestan)'],['Dani','🧑🏽','n','tiene 14 gatos y un pódcast'],['Nuria','👩🏼','f','abogada de famosos y de palomas'],
+ ['Hugo','👨🏻','m','DJ que solo pone pasodobles'],['Alba','👱🏻‍♀️','f','astronauta en paro'],['Leo','👨🏾','m','poeta de la mayonesa'],['Carla','👩🏾','f','bombera y repostera'],['Álex','🧑🏼','n','imitador de pájaros'],
+ ['Marcos','🧑🏻','m','influencer de calcetines'],['Sam','🧑🏽‍🦱','n','tatuador de croquetas'],['Lucía','👩🏻','f','campeona de karaoke'],['Pablo','👨🏽','m','bombero que llora con Disney'],['Noa','🧑🏻‍🦰','n','diseñadora de videojuegos'],['Irene','👩🏽‍🦱','f','dentista que odia el azúcar']];
+function likes(p){const id=ID();if(id.o==='bi'||id.o==='pan'||id.o==='ace')return true;if(id.g==='n')return true;if(id.o==='het')return p[2]!==id.g;return p[2]===id.g||p[2]==='n'}
+CARDS.find(c=>c.id==='date0').f=()=>{const pool=LOV2.filter(likes);const ms=pool.sort(()=>Math.random()-.5).slice(0,3).map(p=>[p[0],p[1],p[3]]);window._ms=ms;
+  openModal(`<div class="emo">💘</div><h2>Fogón Match</h2><p class="note">Buscando: ${ORI[ID().o].toLowerCase()}${ID().o==='ace'?' · romance sin prisas':''}</p><div class="choice">${ms.map((m,i)=>`<button data-m="lovePick" data-i="${i}"><span>${m[1]}</span><span style="font-size:15px">${m[0]}<small>${m[2]}</small></span></button>`).join('')}</div>`)};
+// ---- cartas de identidad ----
+CARDS.push(
+ {id:'idg',cat:'soc',ic:'🏳️‍⚧️',n:'Explorar tu identidad de género',d:'Tu cuerpo, tu nombre, tus pronombres',e:1,f:()=>{const id=ID();openModal(`<div class="emo">🏳️‍⚧️</div><h2>¿Quién eres de verdad?</h2><p>Llevas un tiempo pensándolo. ¿Qué quieres hacer?</p><div class="choice">
+   ${Object.entries(GEN).filter(([k])=>k!==id.g).map(([k,g])=>`<button data-m="trans" data-v="${k}"><span>${g.e}</span><span style="font-size:15px">Transicionar: vivir como ${g.n.toLowerCase()}<small>Pronombres: ${g.pr} · puedes cambiar tu nombre</small></span></button>`).join('')}
+   <button data-m="trans" data-v="="><span>🫶</span><span style="font-size:15px">Estoy bien como estoy<small>Pero ha sido bonito pensarlo</small></span></button></div>`)}},
+ {id:'out',cat:'soc',ok:()=>ID().o!=='het'&&!ID().out,ic:'🏳️‍🌈',n:'Salir del armario con la familia',d:'Cena con la abuela… con anuncio',e:1,f:()=>res('🏳️‍🌈','¡Fuera del armario!',()=>{ID().out=1;relv('abu',15);hap(25);pop(3);logL('🏳️‍🌈','Sales del armario con tu familia.');return`Lo sueltas entre el primero y el segundo plato. La abuela Lola deja el tenedor y dice: «Cariño, lo sabía desde que tenías 6 años. ¿Me pasas la sal?». Luego te abraza tan fuerte que te cruje la espalda.`})},
+ {id:'pride',cat:'fun',ok:()=>ID().o!=='het'||ID().g!=='m'&&ID().trans,ic:'🌈',n:'Ir a la fiesta del Orgullo',d:'Mañana tu local se llena de gente',e:1,f:()=>res('🌈','¡Orgullo!',()=>{hap(20);pop(5);tom('spawn',1.5,'🌈 Fiesta del Orgullo: +50 % clientes');return'Montas una carroza con forma de croqueta gigante. Ganas el premio a la carroza más sabrosa.'})});
+MA.trans=b=>{const id=ID(),v=b.dataset.v;closeModal();if(v==='=')return res('🫶','Te quieres tal y como eres',()=>{hap(10);return'Te miras al espejo, te guiñas un ojo y te vas a dormir tan a gusto.'});
+  const old=id.g;id.g=v;id.trans=1;const L=LF();if(['🧑‍🍳','👩‍🍳','👨‍🍳'].includes(L.av))L.av=GEN[v].e;
+  res('🦋','¡Empieza tu nueva etapa!',()=>{hap(30);pop(4);relv('abu',10);logL('🦋',`Empiezas tu transición. Pronombres: ${GEN[v].pr}.`);
+    return`Se lo cuentas a todo el barrio. La abuela Lola encarga una tarta que pone «¡Felicidades, ${L.name||'cariño'}!». Tus cocineros te hacen un pasillo de honor con cucharones. ${ST().riv[0][2]} te manda flores (y un descuento en pizzas). Puedes cambiarte el nombre cuando quieras en ✏️.`});
+  setTimeout(()=>{if($('#modal').hidden)createChar(false)},50)};
+// ---- IA más personalizada ----
+const ctxMe=()=>{const L=LF(),id=ID();return{nombre:L.name||'sin nombre',genero:GEN[id.g].n,pronombres:GEN[id.g].pr,orientacion:ORI[id.o],edad:L.age,carrera:L.car?carTitle():'ninguna',pareja:L.love?L.love.n+' ('+L.love.bio+')':'nadie',hijos:L.kids.map(k=>k.n),casa:HOUSES[L.house][1],felicidad:Math.round(L.hap),calle:ST().n,diario:L.log.slice(0,4).map(e=>e.t)}};
+const RULES='Escribe en español de España, humor absurdo y blanco, nada sexual explícito, sin marcas ni famosos reales. Usa SIEMPRE el género gramatical correcto del protagonista según sus pronombres (él=masculino, ella=femenino, elle=neutro con -e). Trata la identidad y la orientación con naturalidad y cariño, nunca como chiste.';
+async function aiText(task,max=220){if(!aiOn())return null;const r=await aiCall(`${RULES}\nProtagonista: ${JSON.stringify(ctxMe())}\nTarea: ${task}\nDevuelve SOLO JSON: {"texto":"máximo ${max} caracteres"}`);return r&&typeof r.texto==='string'?esc(r.texto.slice(0,max+40)):null}
+function aiRes(ic,t,task,effect,fallback){if(!aiOn())return res(ic,t,()=>{effect();return fallback()});openModal(`<div class="emo">${ic}</div><h2>${gtxt(t)}</h2><p class="note">✨ Pensando qué pasa…</p>`);let done=false;
+  const fin=txt=>{if(done)return;done=true;closeModal();res(ic,t,()=>{effect();return txt||fallback()})};aiText(task).then(fin);setTimeout(()=>fin(null),7000)}
+// cena con la abuela y citas, escritas por la IA
+CARDS.find(c=>c.id==='abu').f=()=>{let g=0;aiRes('👵','Cena con la abuela','La abuela Lola (abuela cariñosa, cotilla y muy graciosa) le dice algo al protagonista durante la cena: un consejo, un cotilleo del barrio o un recuerdo del abuelo Paco, relacionado con su vida actual.',()=>{relv('abu',10);hap(6);g=gain(ECO(4))},()=>pk(['«Massimo y yo fuimos novios un verano. Calla.»','«Tu abuelo Paco escondía la receta por el barrio…»','«Un cliente contento trae a dos amigos.»'])+` Te mete ${fmtM(g)} € en el bolsillo.`)};
+const _dn=dateNight;dateNight=function(){const L=LF();if(!aiOn()||!L.love)return _dn();const lv=L.love;const ok=Math.random()<.75;
+  aiRes(ok?'💞':'😬',ok?'¡Cita perfecta!':'Cita rara',`Describe una cita ${ok?'que sale genial':'que sale rara y graciosa'} entre el protagonista y ${lv.n} (${lv.bio}). Concreta el sitio y un detalle absurdo.`,
+   ()=>{if(ok){hap(12);lv.x=(lv.x||0)+1;if(lv.lv<2){lv.lv=2;logL('💘','Empiezas a salir con '+lv.n+'.')}}else hap(-4)},()=>ok?`${lv.n} se ríe hasta de tu chiste de la croqueta.`:`Se te cae la sopa encima de ${lv.n}.`)};
+// la IA conoce tu identidad en el evento de cada noche
+const _aiN=aiNight;aiNight=async function(){const oc=aiCall;aiCall=p=>oc(p.replace('Inventa algo NUEVO',`${RULES}\nEl protagonista es: ${JSON.stringify(ctxMe())}.\nInventa algo NUEVO`));try{await _aiN()}finally{aiCall=oc}};
+// reseña del día escrita por un crítico
+const _ed=endDay;endDay=function(){_ed();if(!aiOn())return;const s=R.stats;aiText(`Eres Paca Gourmet, crítica gastronómica exigente y teatral. Escribe una reseña de UNA frase del día de hoy en el restaurante del protagonista: ${s.served} clientes servidos, ${s.lost} se fueron, ${s.angry} enfadados, ${RUN.dayStars} estrellas.`,160).then(t=>{const p=document.querySelector('#card .stars');if(t&&p)p.insertAdjacentHTML('afterend',`<p class="review">🧐 «${t}»<small>— Paca Gourmet</small></p>`)})};
+// primera vez: crear personaje
+const _sn=startNight;startNight=function(){_sn();if(!ID().made)setTimeout(()=>createChar(true),400)};
+setTimeout(()=>{if(SV.seen&&!ID().made&&$('#modal').hidden)createChar(true)},1500);
+MA.close=(function(prev){return()=>{prev();if(!ID().made&&RUN.day===1&&R.t<5)setTimeout(()=>createChar(true),200)}})(MA.close);
 
 </script>
 <script>
