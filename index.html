@@ -359,6 +359,8 @@ body.isnight .dock,body.isnight .pbar,body.isnight .clock,body.isnight .side{vis
 #app{position:fixed!important;left:0!important;right:0!important;top:0!important;bottom:auto!important;max-width:none!important;padding:0!important}html,body{background:#23262f!important}
 .seg3{display:flex;gap:5px}.seg3.wrap{flex-wrap:wrap}.seg3 button{flex:1;min-width:30%;padding:9px 6px;border-radius:12px;background:#fff;border:3px solid #e3d1ad;font-family:var(--f-d);font-size:13.5px;color:#2a1405}.seg3 button.on{border-color:#2a1405;background:#fff3c4;box-shadow:0 0 0 3px #ffb23f}
 .review{background:#fff;border-radius:14px;padding:10px 12px;font-family:var(--f-d);font-size:15px;line-height:1.25;text-align:center}.review small{display:block;font-family:var(--f-b);font-size:11px;color:#8a6a40;font-weight:800}
+.illw{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.illb{background:#7cd36b;color:#14361a;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:900}.illb.pand{background:#ff8a7a;color:#4a120c}
+.illc{background:#e8ffe0;border:2.5px dashed #5fd068;border-radius:14px;padding:9px 11px;font-weight:800;font-size:13.5px;line-height:1.3}
 </style>
 </head>
 <body>
@@ -862,7 +864,7 @@ const CARDS=[
 const HOUSES=[['🛏️','Sofá de la abuela',0],['🏚️','Piso con 6 erasmus',20],['🏢','Estudio de 20 m²',60],['🏠','Piso con terraza',180],['🏡','Chalet con piscina',600],['🏰','Mansión',2000],['🛥️','Yate',8000],['🌕','Base lunar',30000]];
 const rj=()=>RUN.riv.findIndex(r=>r.open&&!r.own);
 const val=(v,L)=>typeof v==='function'?v(L):v;
-function drawCards(){const L=LF();const pool=CARDS.filter(c=>!c.ok||c.ok(L));const must=pool.filter(c=>['car0','car','wed','work'].includes(c.id));const rest=pool.filter(c=>!must.includes(c)).sort(()=>Math.random()-.5);
+function drawCards(){const L=LF();CARDS.forEach(c=>c.used=0);const pool=CARDS.filter(c=>!c.ok||c.ok(L));const must=pool.filter(c=>['car0','car','wed','work'].includes(c.id));const rest=pool.filter(c=>!must.includes(c)).sort(()=>Math.random()-.5);
   const cats=new Set(must.map(c=>c.cat));const pick=[...must];for(const c of rest){if(pick.length>=7)break;if(cats.has(c.cat)&&Math.random()<.6)continue;cats.add(c.cat);pick.push(c)}
   // amigos famosos
   for(const k of L.friends){if((L.rel[k]||0)>=25)pick.push({id:'cel_'+k,cat:'cel',ic:CAST[k].e,n:'Invitar a '+CAST[k].n+' mañana',d:'¡Paparazzi y colas infinitas!',e:1,f:()=>res(CAST[k].e,CAST[k].n+' viene mañana',()=>{tom('celeb',1,`${CAST[k].e} ¡${CAST[k].n} en tu local!`);relv(k,5);return'Dice que se pasará a la hora de comer. Avisa a la cocina: viene la prensa detrás.'})})}
@@ -949,7 +951,7 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 20 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 21 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
@@ -1043,6 +1045,52 @@ const _ed=endDay;endDay=function(){_ed();if(!aiOn())return;const s=R.stats;aiTex
 const _sn=startNight;startNight=function(){_sn();if(!ID().made)setTimeout(()=>createChar(true),400)};
 setTimeout(()=>{if(SV.seen&&!ID().made&&$('#modal').hidden)createChar(true)},1500);
 MA.close=(function(prev){return()=>{prev();if(!ID().made&&RUN.day===1&&R.t<5)setTimeout(()=>createChar(true),200)}})(MA.close);
+
+// ================= ENFERMEDADES ABSURDAS Y PANDEMIAS =================
+const ILLS={
+ croq:{e:'🍤',n:'Croquetitis aguda',d:'Solo puedes decir la palabra «croqueta».',day:()=>{tom('money',1.1,'🍤 Tu croquetitis vende: +10 %');hap(-3)}},
+ hipo:{e:'😵‍💫',n:'Hipo cuántico',d:'Cada hipo te teletransporta tres metros a la izquierda.',day:()=>tom('cook',.85,'😵‍💫 Hipo cuántico: cocina −15 %')},
+ verso:{e:'🎭',n:'Fiebre del verso',d:'Solo puedes hablar en verso. Rima hasta tu «buenos días».',day:()=>{tom('fan',2,'🎭 Vienen fans de tus versos');hap(2)}},
+ bigo:{e:'🥸',n:'Bigotitis espontánea',d:'Te crece un bigote cada mañana, aunque te afeites.',day:()=>pop(2)},
+ pollo:{e:'🐔',n:'Gripe del pollo cantor',d:'Cacareas al amanecer. Y a mediodía. Y en las citas.',day:()=>{hp(-4);tom('spawn',.85,'🐔 Cacareas y espantas: −15 % clientes')}},
+ zomb:{e:'🧟',n:'Zombitis leve',d:'Andas lento y te apetecen sesos… de cordero, tranqui.',day:()=>{tom('cook',.8,'🧟 Cocinas a ritmo zombi: −20 %');pop(3)}},
+ nost:{e:'📼',n:'Nostalgia crónica de los 2000',d:'Solo escuchas canciones del verano de 2006 y llevas pantalón pirata.',day:()=>hap(-5)},
+ brill:{e:'✨',n:'Brillitis',d:'Brillas en la oscuridad. Ahorras en luz.',day:()=>{gain(ECO(2));tom('spawn',1.1,'✨ La gente viene a verte brillar: +10 %')}},
+ rev:{e:'🪞',n:'Síndrome del espejo',d:'Todo lo haces al revés. Has servido la sopa en el plato boca abajo.',day:()=>tom('cook',.9,'🪞 Cocinas al revés: −10 %')},
+ lun:{e:'🤧',n:'Alergia a los lunes',d:'Estornudas cada vez que alguien dice «lunes».',day:()=>hap(-2)},
+ gig:{e:'🦒',n:'Cuello de jirafa temporal',d:'El cuello te mide un metro. Ves las mesas desde arriba.',day:()=>tom('cook',1.15,'🦒 Lo ves todo desde arriba: cocina +15 %')},
+ eco:{e:'🗣️',n:'Eco personal',d:'Todo lo que dices se repite tres veces… veces… veces.',day:()=>hap(-1)}};
+const PANDS=[['🐦','Gripe Palomar','Las palomas estornudan purpurina y todo el mundo se queda en casa.',{spawn:.7}],['🥱','Bostezo Contagioso','Todo el país bosteza a la vez. Los cocineros también.',{cook:.8}],
+ ['💃','Fiebre del Baile','Nadie puede parar de bailar. Entran clientes, pero sirven bailando.',{spawn:1.25,cook:.85}],['🧀','Peste del Queso','Todo huele a queso. TODO. Los clientes regatean del mareo.',{money:.85}],
+ ['😂','Risa Incontrolable','Nadie puede parar de reírse. Vienen a comer solo por las risas.',{spawn:1.15}],['🐌','Lentitis Galopante','Todo el mundo se mueve a cámara lenta durante días.',{spawn:.85,cook:.85}]];
+const PANDLAB={spawn:'clientes',cook:'velocidad de cocina',money:'ganancias'};
+function IL(){const L=LF();L.f=L.f||{};return L}
+// ---- contagio: las noches locas tienen riesgo ----
+for(const id of ['party','date','of','lab','scratch'])(c=>{if(!c)return;const f=c.f;c.f=(...a)=>{IL().f.risk=(IL().f.risk||0)+(id==='lab'?2:1);return f(...a)}})(CARDS.find(c=>c.id===id));
+let illNews=null;
+const _sl=sleep;sleep=function(){const L=IL();illNews=null;
+  // pandemia activa
+  if(L.pand){const P=PANDS[L.pand.i];Object.entries(P[3]).forEach(([k,v])=>tom(k,v,`${P[0]} ${P[1]}: ${v>1?'+':'−'}${Math.round(Math.abs(v-1)*100)} % ${PANDLAB[k]}`));L.pand.d--;if(L.pand.d<=0){illNews=`🎉 ¡Se acabó la ${P[1]}! El barrio lo celebra con una verbena.`;L.pand=null}}
+  else if(RUN.day>3&&Math.random()<.06){const i=rint(PANDS.length),P=PANDS[i];L.pand={i,d:3+rint(3)};AINEWS=`¡PANDEMIA! ${P[0]} La ${P[1]} llega a ${ST().n}: ${P[2]}`;logL(P[0],'Empieza la pandemia de '+P[1]+'.');Object.entries(P[3]).forEach(([k,v])=>tom(k,v,`${P[0]} ${P[1]}: ${v>1?'+':'−'}${Math.round(Math.abs(v-1)*100)} % ${PANDLAB[k]}`))}
+  // enfermedad del personaje
+  if(L.ill){const I=ILLS[L.ill.k];I.day();L.ill.d--;if(L.ill.d<=0){illNews=`💪 Te has curado de la ${I.n.toLowerCase()}. Ya puedes decir palabras normales.`;logL('💪','Te curas de '+I.n+'.');L.ill=null}}
+  else{const p=.05+(L.f.risk||0)*.12+(L.pand?.25:0)+(L.hp<40?.1:0);if(Math.random()<p){const ks=Object.keys(ILLS),k=pk(ks);L.ill={k,d:2+rint(3)};const I=ILLS[k];I.day();illNews=`🤒 <b>¡Te has contagiado de ${I.n}!</b> ${I.e} ${I.d}`;logL(I.e,'Contagio: '+I.n+'.')}}
+  L.f.risk=0;_sl();
+  if(illNews){const p=document.querySelector('#card .headline');if(p)p.insertAdjacentHTML('afterend',`<div class="illc">${gtxt(illNews)}</div>`)}};
+// ---- cartas: curarse y aprovechar la pandemia ----
+CARDS.push(
+ {id:'doc',cat:'fun',ok:()=>!!IL().ill,ic:'🩺',n:L=>'Ir al médico',d:()=>'Curar tu '+ILLS[IL().ill.k].n.toLowerCase()+' · '+fmtM(ECO(6))+' €',e:1,f:()=>{const c=ECO(6),L=IL();if(RUN.money<c)return toast('Te faltan '+fmtM(c-RUN.money)+' €');lose(c);const I=ILLS[L.ill.k];L.ill=null;
+   res('🩺','Diagnóstico',()=>{hp(10);return`El médico mira tu ${I.n.toLowerCase()}, consulta un libro de 1820 y te receta ${pk(['tres croquetas en ayunas','bailar una sardana al revés','dormir abrazado/a a una barra de pan','gritar «¡ÑAM!» al amanecer'])}. Mano de santo: ¡curado/a!`})}},
+ {id:'abuR',cat:'fam',ok:()=>!!IL().ill,ic:'👵',n:'Remedio de la abuela',d:'Gratis · 60 % de que funcione',e:1,f:()=>{const L=IL(),I=ILLS[L.ill.k];if(Math.random()<.6){L.ill=null;res('👵','¡Funciona!',()=>{relv('abu',6);return`La abuela te frota el pecho con Vicks, te da un caldo con 14 ajos y te tapa con 6 mantas. Te curas de la ${I.n.toLowerCase()} por puro miedo.`})}
+   else res('👵','No ha funcionado',()=>{hp(-3);return'El caldo con 14 ajos solo ha servido para que no se te acerque nadie en tres días.'})}},
+ {id:'mask',cat:'rest',ok:()=>!!IL().pand,ic:'😷',n:'Vender mascarillas de croqueta',d:'Negocio de pandemia',e:1,f:()=>{const P=PANDS[IL().pand.i];res('😷','Mascarillas de croqueta',()=>{const g=gain(ECO(12));rep(-3);return`Vendes mascarillas con forma de croqueta «contra la ${P[1]}». No sirven para nada, pero huelen bien. Ganas ${fmtM(g)} €.`})}},
+ {id:'deliv',cat:'rest',ok:()=>!!IL().pand,ic:'🛵',n:'Reparto a domicilio',d:'Mañana: +40 % clientes pese a la pandemia',e:1,f:()=>res('🛵','¡Reparto a domicilio!',()=>{tom('spawn',1.4,'🛵 Reparto a domicilio: +40 % clientes');hap(-2);return'Te pasas la noche montando una app de reparto. El logo es una croqueta con casco.'})},
+ {id:'vacc',cat:'soc',ok:()=>!!IL().pand,ic:'💉',n:'Inventar una vacuna casera',d:'¿Héroe del barrio o desastre?',e:2,f:()=>{const L=IL(),P=PANDS[L.pand.i];if(Math.random()<.4){L.pand=null;res('🦸','¡HAS SALVADO EL BARRIO!',()=>{pop(20);RUN.fame+=30;logL('🦸','Acabas con la '+P[1]+' con tu vacuna casera.');return`Tu vacuna (caldo, pimentón y un chupito de orujo) acaba con la ${P[1]}. Te hacen una estatua de croqueta en la plaza.`})}
+   else res('🧪','Efecto secundario',()=>{const ks=Object.keys(ILLS),k=pk(ks);L.ill={k,d:2};return`La vacuna no cura la ${P[1]}, pero te contagia de ${ILLS[k].n.toLowerCase()}. ${ILLS[k].d}`})}});
+// ---- se ve en la noche ----
+const _rn=renderNight;renderNight=function(){_rn();const L=IL(),s=document.querySelector('.nst small');if(!s)return;let t='';if(L.ill){const I=ILLS[L.ill.k];t+=`<span class="illb">${I.e} ${I.n} · ${L.ill.d} noche${L.ill.d>1?'s':''}</span>`}if(L.pand){const P=PANDS[L.pand.i];t+=`<span class="illb pand">${P[0]} Pandemia: ${P[1]} · ${L.pand.d} días</span>`}if(t)s.insertAdjacentHTML('afterend',`<div class="illw">${t}</div>`)};
+// las cartas de cura/pandemia salen siempre que toque
+const _dc=drawCards;drawCards=function(){_dc();const L=IL();const add=id=>{const c=CARDS.find(c=>c.id===id);if(c&&(!c.ok||c.ok(L))&&!NCARDS.includes(c))NCARDS.splice(AIEV?1:0,0,c)};if(L.ill){add('doc');add('abuR')}if(L.pand){add('deliv');pk([()=>add('mask'),()=>add('vacc')])()}};
 
 </script>
 <script>
