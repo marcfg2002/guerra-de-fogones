@@ -949,7 +949,7 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 18 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 19 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
@@ -984,7 +984,7 @@ setInterval(()=>{if(!document.hidden)paintGuide()},300);
 
 // ================= IDENTIDAD: nombre, género, orientación, transición · IA personalizada =================
 const GEN={m:{n:'Hombre',e:'👨‍🍳',pr:'él'},f:{n:'Mujer',e:'👩‍🍳',pr:'ella'},n:{n:'No binario',e:'🧑‍🍳',pr:'elle'}};
-const ORI={het:'Hetero',gay:'Gay / Lesbiana',bi:'Bisexual',pan:'Pansexual',ace:'Asexual'};
+const ORI={het:'Hetero',gay:'Gay / Lesbiana',bi:'Bisexual',pan:'Pansexual',ace:'Asexual',cro:'Solo croquetas 🍤'};
 const ID=()=>{const L=LF();L.id=L.id||{g:'n',o:'bi',made:0,out:0};return L.id};
 // texto con el género del personaje: "cansado/a" → cansado / cansada / cansade
 function gtxt(s){const g=ID().g;return String(s).replace(/\b(\p{L}+?)o\/a(s?)\b/gu,(_,w,pl)=>w+(g==='m'?'o':g==='f'?'a':'e')+pl).replace(/\bel\/la\b/g,g==='m'?'el':g==='f'?'la':'le').replace(/\bun\/una\b/g,g==='m'?'un':g==='f'?'una':'une')}
@@ -1008,9 +1008,10 @@ editLook=()=>createChar(false);
 const LOV2=[['Rocío','👩🏽','f','domadora de calamares'],['Iker','🧔🏻','m','campeón de petanca'],['Vera','👩🏻‍🦰','f','habla con las plantas (y le contestan)'],['Dani','🧑🏽','n','tiene 14 gatos y un pódcast'],['Nuria','👩🏼','f','abogada de famosos y de palomas'],
  ['Hugo','👨🏻','m','DJ que solo pone pasodobles'],['Alba','👱🏻‍♀️','f','astronauta en paro'],['Leo','👨🏾','m','poeta de la mayonesa'],['Carla','👩🏾','f','bombera y repostera'],['Álex','🧑🏼','n','imitador de pájaros'],
  ['Marcos','🧑🏻','m','influencer de calcetines'],['Sam','🧑🏽‍🦱','n','tatuador de croquetas'],['Lucía','👩🏻','f','campeona de karaoke'],['Pablo','👨🏽','m','bombero que llora con Disney'],['Noa','🧑🏻‍🦰','n','diseñadora de videojuegos'],['Irene','👩🏽‍🦱','f','dentista que odia el azúcar']];
+const OBJS=[['Paco','🍳','sartén con bigote, muy antiadherente'],['Croqueta Rebeca','🍤','crujiente por fuera, tierna por dentro'],['Tostadora Romeo','🍞','escribe poesía cuando se calienta'],['Batidora Vanesa','🌀','intensa, siempre a tope'],['Cucharón Íñigo','🥄','te sostiene en los malos momentos'],['Microondas Lola','📦','te espera con lucecita a las 3 a. m.'],['Aceitera Gloria','🫒','suave, nunca se pega'],['Rodillo Kevin','🪵','plano pero sincero']];
 function likes(p){const id=ID();if(id.o==='bi'||id.o==='pan'||id.o==='ace')return true;if(id.g==='n')return true;if(id.o==='het')return p[2]!==id.g;return p[2]===id.g||p[2]==='n'}
-CARDS.find(c=>c.id==='date0').f=()=>{const pool=LOV2.filter(likes);const ms=pool.sort(()=>Math.random()-.5).slice(0,3).map(p=>[p[0],p[1],p[3]]);window._ms=ms;
-  openModal(`<div class="emo">💘</div><h2>Fogón Match</h2><p class="note">Buscando: ${ORI[ID().o].toLowerCase()}${ID().o==='ace'?' · romance sin prisas':''}</p><div class="choice">${ms.map((m,i)=>`<button data-m="lovePick" data-i="${i}"><span>${m[1]}</span><span style="font-size:15px">${m[0]}<small>${m[2]}</small></span></button>`).join('')}</div>`)};
+CARDS.find(c=>c.id==='date0').f=()=>{const cro=ID().o==='cro';const ms=cro?[...OBJS].sort(()=>Math.random()-.5).slice(0,3):LOV2.filter(likes).sort(()=>Math.random()-.5).slice(0,3).map(p=>[p[0],p[1],p[3]]);window._ms=ms;
+  openModal(`<div class="emo">💘</div><h2>Fogón Match</h2><p class="note">Buscando: ${ORI[ID().o].toLowerCase()}${ID().o==='ace'?' · romance sin prisas':ID().o==='cro'?' · tu familia está preocupada':''}</p><div class="choice">${ms.map((m,i)=>`<button data-m="lovePick" data-i="${i}"><span>${m[1]}</span><span style="font-size:15px">${m[0]}<small>${m[2]}</small></span></button>`).join('')}</div>`)};
 // ---- cartas de identidad ----
 CARDS.push(
  {id:'idg',cat:'soc',ic:'🏳️‍⚧️',n:'Explorar tu identidad de género',d:'Tu cuerpo, tu nombre, tus pronombres',e:1,f:()=>{const id=ID();openModal(`<div class="emo">🏳️‍⚧️</div><h2>¿Quién eres de verdad?</h2><p>Llevas un tiempo pensándolo. ¿Qué quieres hacer?</p><div class="choice">
@@ -1024,7 +1025,7 @@ MA.trans=b=>{const id=ID(),v=b.dataset.v;closeModal();if(v==='=')return res('�
     return`Se lo cuentas a todo el barrio. La abuela Lola encarga una tarta que pone «¡Felicidades, ${L.name||'cariño'}!». Tus cocineros te hacen un pasillo de honor con cucharones. ${ST().riv[0][2]} te manda flores (y un descuento en pizzas). Puedes cambiarte el nombre cuando quieras en ✏️.`});
   setTimeout(()=>{if($('#modal').hidden)createChar(false)},50)};
 // ---- IA más personalizada ----
-const ctxMe=()=>{const L=LF(),id=ID();return{nombre:L.name||'sin nombre',genero:GEN[id.g].n,pronombres:GEN[id.g].pr,orientacion:ORI[id.o],edad:L.age,carrera:L.car?carTitle():'ninguna',pareja:L.love?L.love.n+' ('+L.love.bio+')':'nadie',hijos:L.kids.map(k=>k.n),casa:HOUSES[L.house][1],felicidad:Math.round(L.hap),calle:ST().n,diario:L.log.slice(0,4).map(e=>e.t)}};
+const ctxMe=()=>{const L=LF(),id=ID();return{nota:id.o==='cro'?'solo le atraen los objetos de cocina (chiste absurdo del juego)':'',nombre:L.name||'sin nombre',genero:GEN[id.g].n,pronombres:GEN[id.g].pr,orientacion:ORI[id.o],edad:L.age,carrera:L.car?carTitle():'ninguna',pareja:L.love?L.love.n+' ('+L.love.bio+')':'nadie',hijos:L.kids.map(k=>k.n),casa:HOUSES[L.house][1],felicidad:Math.round(L.hap),calle:ST().n,diario:L.log.slice(0,4).map(e=>e.t)}};
 const RULES='Escribe en español de España, humor absurdo y blanco, nada sexual explícito, sin marcas ni famosos reales. Usa SIEMPRE el género gramatical correcto del protagonista según sus pronombres (él=masculino, ella=femenino, elle=neutro con -e). Trata la identidad y la orientación con naturalidad y cariño, nunca como chiste.';
 async function aiText(task,max=220){if(!aiOn())return null;const r=await aiCall(`${RULES}\nProtagonista: ${JSON.stringify(ctxMe())}\nTarea: ${task}\nDevuelve SOLO JSON: {"texto":"máximo ${max} caracteres"}`);return r&&typeof r.texto==='string'?esc(r.texto.slice(0,max+40)):null}
 function aiRes(ic,t,task,effect,fallback){if(!aiOn())return res(ic,t,()=>{effect();return fallback()});openModal(`<div class="emo">${ic}</div><h2>${gtxt(t)}</h2><p class="note">✨ Pensando qué pasa…</p>`);let done=false;
