@@ -605,7 +605,12 @@ function poseChibi(g,mode,t,dt){const u=g.userData;let lL=0,lR=0,aL=0,aR=0,hy=.4
 function turnTo(g,ang,dt){const u=g.userData;let d=ang-u.ry;while(d>Math.PI)d-=Math.PI*2;while(d<-Math.PI)d+=Math.PI*2;u.ry+=d*Math.min(1,dt*12);g.rotation.y=u.ry}
 
 // ================= VISTA 3D =================
-let staticG=null,dirty=true;const ENT=new Map(),STN=[];
+let staticG=null,dirty=true;
+function rivalSign(r,rv){return ctex(448,168,c=>{c.fillStyle='#fff3d6';c.strokeStyle='#2a1405';c.lineWidth=8;c.beginPath();c.roundRect?c.roundRect(6,6,436,156,24):c.rect(6,6,436,156);c.fill();c.stroke();
+  c.fillStyle='#2a1405';c.textAlign='center';c.textBaseline='middle';c.font='42px "Lilita One","Arial Rounded MT Bold",sans-serif';c.fillText((rv.open?r[1]+' ':'🔒 ')+r[0].toUpperCase(),224,52);
+  if(rv.open){c.fillStyle='#e9dcc0';c.beginPath();c.roundRect?c.roundRect(40,100,368,34,17):c.rect(40,100,368,34);c.fill();c.fillStyle=rv.hp>50?'#ff5a4e':'#ffb23f';c.beginPath();c.roundRect?c.roundRect(40,100,Math.max(34,368*rv.hp/100),34,17):c.rect(40,100,368*rv.hp/100,34);c.fill();
+    c.fillStyle='#2a1405';c.font='26px "Lilita One",sans-serif';c.fillText('❤️ '+Math.round(rv.hp)+'%'+(rv.promo?'  ·  2x1':''),224,118)}
+  else{c.fillStyle='#d0392b';c.font='30px "Lilita One",sans-serif';c.fillText('CERRADO · SE TRASPASA',224,118)}})}const ENT=new Map(),STN=[];
 function floorTex(a,b){return ctex(128,128,c=>{c.fillStyle=a;c.fillRect(0,0,128,128);c.fillStyle=b;c.fillRect(0,0,64,64);c.fillRect(64,64,64,64)})}
 function plane(tex,x0,x1,z0,z1,y,rep){const t=tex.clone();t.needsUpdate=true;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set((x1-x0)/rep,(z1-z0)/rep);const m=new THREE.Mesh(G.plane,new THREE.MeshLambertMaterial({map:t}));m.rotation.x=-Math.PI/2;m.position.set((x0+x1)/2,y,(z0+z1)/2);m.scale.set(x1-x0,z1-z0,1);m.receiveShadow=true;return m}
 const GRS={};function grassTex(c){return GRS[c]||(GRS[c]=ctex(128,128,x=>{x.fillStyle=c;x.fillRect(0,0,128,128);for(let i=0;i<70;i++){x.fillStyle='rgba(255,255,255,.08)';x.fillRect(Math.random()*128,Math.random()*128,3,6)}}))}
@@ -623,7 +628,7 @@ function buildStatic(){if(staticG)scene.remove(staticG);staticG=new THREE.Group(
   const wc='#fbf3e4',wall=(x0,z0,x1,z1)=>{A(mesh(G.box,wc,(x0+x1)/2,.35,(z0+z1)/2,Math.max(.2,x1-x0),.7,Math.max(.2,z1-z0)));A(mesh(G.box,st.wall,(x0+x1)/2,.72,(z0+z1)/2,Math.max(.22,x1-x0),.06,Math.max(.22,z1-z0)))};
   wall(L.xL-.1,-L.D-.1,L.xR+.1,-L.D+.1);wall(L.xL-.1,-L.D,L.xL+.1,0);wall(L.xR-.1,-L.D,L.xR+.1,0);wall(L.xL,-.1,-.75,.1);wall(.75,-.1,L.xR,.1);
   A(mesh(G.box,st.wall,0,1.25,0,1.7,.15,.25));
-  const sg=new THREE.Mesh(G.plane,new THREE.MeshBasicMaterial({map:labelTex(st.e+' TU LOCAL','#fff3d6','#2a1405',384,96,46),transparent:true}));sg.position.set(-2.2,1.25,.25);sg.scale.set(2.4,.6,1);sg.rotation.x=-.5;A(sg);
+  const sg=new THREE.Mesh(G.plane,new THREE.MeshBasicMaterial({map:labelTex(st.e+' TU LOCAL','#ffb23f','#2a1405',384,96,46),transparent:true,depthTest:false}));sg.position.set(0,1.9,.2);sg.scale.set(2.8,.7,1);sg.rotation.x=-.9;sg.renderOrder=3;A(sg);
   // cocina: encimeras + pase
   A(mesh(G.box,'#9aa3ad',(L.xL+L.xR)/2,.45,-L.D+.5,L.xR-L.xL-.2,.9,.8));
   A(mesh(G.box,'#c9a46b',(L.pass.x0+L.pass.x1+.6)/2-.3,.5,L.pass.z,L.pass.x1-L.pass.x0+.6,.08,.42));A(mesh(G.box,'#8a6a40',(L.pass.x0+L.pass.x1+.6)/2-.3,.24,L.pass.z,L.pass.x1-L.pass.x0+.6,.48,.36));
@@ -639,7 +644,7 @@ function buildStatic(){if(staticG)scene.remove(staticG);staticG=new THREE.Group(
     A(mesh(G.box,'#fbf3e4',cx,.8,7.3,5.4,1.6,1.6));A(mesh(G.box,col,cx,1.65,7.3,5.6,.14,1.8));for(let k=-2;k<=2;k++)A(mesh(G.box,k%2?'#fff8ec':col,cx+k*1.1,1.74,7.3,1.1,.05,1.6));
     const aw=new THREE.Mesh(G.box,new THREE.MeshLambertMaterial({map:ctex(128,32,x=>{for(let i=0;i<8;i++){x.fillStyle=i%2?col:'#fff8ec';x.fillRect(i*16,0,16,32)}})}));aw.position.set(cx,1.55,6.35);aw.scale.set(5.2,.1,.8);aw.rotation.x=-.35;A(aw);
     A(mesh(G.box,'#3a2a20',cx,.6,6.48,.9,1.2,.05));
-    const lb=new THREE.Mesh(G.plane,new THREE.MeshBasicMaterial({map:labelTex((rv.open?r[1]+' ':'🔒 ')+r[0].toUpperCase(),'#fff3d6','#2a1405',448,96,40),transparent:true}));lb.position.set(cx,2.3,7.3);lb.scale.set(4.4,.95,1);lb.rotation.x=-.95;lb.renderOrder=2;A(lb);
+    const lb=new THREE.Mesh(G.plane,new THREE.MeshBasicMaterial({map:rivalSign(r,rv),transparent:true}));lb.position.set(cx,2.5,7.3);lb.scale.set(4.4,1.65,1);lb.rotation.x=-.95;lb.renderOrder=2;A(lb);
     const ow=sprite(r[3],.9);ow.position.set(cx+2.3,2.2,7.1);A(ow)});
   scene.add(staticG);dirty=false;buildStations()}
 // ---- cocinas (dinámico: nivel) ----
@@ -716,7 +721,7 @@ function syncOverlay(){for(const b of OVB.values())b._seen=0;const m=RUN.money;
     else if(i===unlocked().length){const c=unlockCost(i);ovBtn('st'+i,`<b>🔓</b><i>${fmtM(c)}</i>`,m>=c?'lock ok':'lock',s.x,.4,s.z+(i%2?1.9:.9),()=>buyAct('unlock',i))}});
   if(LAY.nextSpot&&RUN.seats<LAY.maxSeats){const c=seatCost(RUN.seats);ovBtn('seat',`<b>＋ MESA</b><i>${fmtM(c)} €</i>`,m>=c?'seat ok':'seat',LAY.nextSpot.x,.6,LAY.nextSpot.z,()=>buyAct('seat'))}
   RUN.riv.forEach((rv,j)=>{if(rv.own)return;const x=rcx(j);if(!rv.open){const c=rivalBuy(j);ovBtn('rv'+j,`<b>🏚️ COMPRAR</b><i>${fmtM(c)} €</i>`,m>=c?'buy ok':'buy',x,3,7.6,()=>buyAct('rival',j))}
-    else ovBtn('hp'+j,`<em>❤️ ${ST().riv[j][0]}${rv.promo?' · 2x1':''}</em><span class="rhp"><i style="width:${rv.hp}%"></i></span>`,'hp',x,4.9,7.3,()=>openSheet('calle'))})}
+})}
   for(const [k,b] of OVB)if(!b._seen){b.remove();OVB.delete(k)}}
 // ---- compras ----
 function buyAct(k,x){let c=0;
@@ -942,7 +947,7 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 15 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 16 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
