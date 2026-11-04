@@ -293,6 +293,21 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .fpill.glow{animation:pulse 1s infinite}
 .gbadge{position:absolute;bottom:-4px;right:-6px;background:#ff3d6e;color:#fff;font:900 11px var(--f-b);font-style:normal;padding:2px 5px;border-radius:99px;border:2px solid #fff}
 .sb{overflow:visible!important}
+.it .arrow{font-family:var(--f-d);font-size:22px;color:#b9a07a}
+.it.lore{border:3px solid #c98a2c;background:#fff6df}
+.scr{position:relative;width:270px;height:270px;margin:0 auto;border-radius:16px;overflow:hidden;border:4px solid #23262f;background:#fffaf0;touch-action:none}
+.scrg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr)}.scrg span{display:grid;place-items:center;font-size:44px;border:1px dashed #eadbbf}
+.scrg span.w{background:#c8f5cd;animation:pop .5s}
+#scrC{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:pointer}
+.reels{display:flex;gap:8px;justify-content:center}.reels span{width:76px;height:86px;display:grid;place-items:center;font-size:48px;background:#fff;border:4px solid #23262f;border-radius:14px;box-shadow:inset 0 -8px 0 #f0e2c4}
+.catch{position:relative;height:340px;border-radius:16px;background:linear-gradient(#bfe6ff,#fff3d6);border:4px solid #23262f;overflow:hidden;touch-action:none}
+.catch span{position:absolute;left:0;top:0;font-size:38px;padding:4px;cursor:pointer;will-change:transform}
+.catch b{position:absolute;left:10px;top:6px;font-family:var(--f-d);font-weight:400;font-size:24px;z-index:2}.catch i{position:absolute;right:10px;top:6px;font-style:normal;font-family:var(--f-d);font-size:24px;z-index:2}
+.catch.boom{animation:shake .2s}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.mem button{aspect-ratio:1;border-radius:12px;background:linear-gradient(#ff9d5c,#ff7a2e);border:3px solid #23262f;box-shadow:0 3px 0 #23262f;font-size:0}
+.mem button span{opacity:0}.mem button.up{background:#fff;font-size:30px}.mem button.up span{opacity:1}.mem button.ok{background:#c8f5cd}
+.choice button[disabled]{opacity:.5}
 </style>
 <style>body:has(.modal:not([hidden])) .dlg{visibility:hidden}</style>
 </head>
@@ -1048,7 +1063,7 @@ function openSet(){openModal(`<h2>Ajustes</h2>
   <button class="tog ${S.music?'on':''}" data-m="tMusic"><span>🎵 Música</span><i></i></button>
   <button class="tog ${S.sound?'on':''}" data-m="tSound"><span>🔊 Sonido</span><i></i></button>
   <button class="cb b" data-m="help">CÓMO SE JUEGA</button>
-  <p style="font-size:12px;color:#8a6a40">Versión 10 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
+  <p style="font-size:12px;color:#8a6a40">Versión 11 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
   <button class="lnk" style="color:#d8352a" data-m="wipe">Borrar partida</button>
   <button class="cb" data-m="close">SEGUIR</button>`)}
 MA.tMusic=()=>{S.music=!S.music;music();openSet();save()};MA.tSound=()=>{S.sound=!S.sound;music();openSet();save()};
@@ -1541,7 +1556,7 @@ const _rs3=renderSheet;renderSheet=function(force){$('#sheet').classList.toggle(
      <div><span>${L.rep>=0?'😇':'😈'}</span><b>${repName(L.rep)}</b><em>${L.rep>0?'+':''}${Math.round(L.rep)}</em><div class="repbar"><i style="left:${(L.rep+100)/2}%"></i></div><small>Cambia los eventos y el final</small></div></div>`;
     h+=`<div class="it love"><span class="ic">${lv?lv.e:'💘'}</span><span class="tx"><b>${lv?lv.n+' · '+LOVE_LV[lv.lv]:'Sin pareja'}</b><small>${lv?lv.bio:'El amor sube la felicidad cada día'}</small></span>${
       !lv?`<button class="cb o" data-a="love:find">BUSCAR<small>Fogón Match</small></button>`:lv.lv===2?`<span class="btns"><button class="cb o" data-a="love:date">CITA</button><button class="cb" data-a="love:ring">💍<small>${fmtM(ECO(40))} €</small></button></span>`:lv.lv===3?`<span class="btns"><button class="cb o" data-a="love:date">CITA</button><button class="cb" data-a="love:wed">💒 BODA<small>${fmtM(ECO(60))} €</small></button></span>`:`<button class="cb o" data-a="love:date">CITA</button>`}</div>`;
-    h+=Object.keys(L.rel).map(k=>{const v=L.rel[k],c=CAST[k];return`<div class="it"><span class="ic">${c.e}</span><span class="tx"><b>${c.n} ${relFace(v)}</b>${bar((v+100)/2,v>=25?'#5fd068':v>-25?'#ffb23f':'#ff5a4e')}</span><span style="font-family:var(--f-d);font-size:15px">${v>0?'+':''}${v}</span></div>`}).join('');
+    h+=kidsH()+cluesH()+'<p class="note">Toca a alguien para hablar, regalar, pedir favores…</p>'+Object.keys(L.rel).map(k=>{const v=L.rel[k],c=CAST[k];return`<div class="it" data-a="rel:${k}"><span class="ic">${c.e}</span><span class="tx"><b>${c.n} ${relFace(v)}</b>${bar((v+100)/2,v>=25?'#5fd068':v>-25?'#ffb23f':'#ff5a4e')}</span><span style="font-family:var(--f-d);font-size:15px">${v>0?'+':''}${v} ›</span></div>`}).join('');
     const lg=S.legacy||{streets:0,best:0};h+=`<div class="it"><span class="ic">🏛️</span><span class="tx"><b>Tu legado</b><small>${lg.streets} calles conquistadas · récord de fama ${Math.round(Math.max(lg.best,S.fame))} · ${Object.keys(L.ach).length}/${ACH.length} logros</small></span></div>`}
   if(vtab==='car')h+=`<p class="note">Cada éxito te da dinero y ⭐ popularidad, y la popularidad llena tu restaurante.</p>`+Object.entries(CAREERS).map(([id,C])=>{const c=car(id),left=carLeft(id),mx=c.lv>=C.lv.length-1;
     return`<div class="it car"><span class="ic">${C.ic}</span><span class="tx"><b>${C.n} · Nv ${c.lv}</b><small><i>${C.lv[c.lv]}</i>${mx?' 👑':' → '+C.lv[c.lv+1]}</small>${bar(mx?100:c.xp,'#7c5cff')}<small>${C.perk}</small></span><button class="cb ${left>0||mx?'no':'o'}" data-a="car:${id}">${mx?'👑':left>0?'⏳ '+Math.ceil(left)+' s':c.lv?'CURRAR':'EMPEZAR'}</button></div>`}).join('');
@@ -1552,6 +1567,7 @@ const _rs3=renderSheet;renderSheet=function(force){$('#sheet').classList.toggle(
      `<div class="it"><span class="ic">💡</span><span class="tx"><b>Startup de tu primo</b><small>${L.stup?`«${L.stup.n}»: se decide el día ${L.stup.day}`:'20 % x12 · 30 % x1,5 · 50 % lo pierdes todo'}</small></span><button class="cb ${L.stup?'no':'o'}" data-a="inv:stup">${L.stup?'⏳':'INVERTIR'}<small>${L.stup?'':fmtM(ECO(60))+' €'}</small></button></div>`}
   if(vtab==='ach')h+=`<p class="note">${Object.keys(L.ach).length} de ${ACH.length} desbloqueados · cada logro da dinero y popularidad</p>`+ACH.map((a,i)=>`<div class="story-it ${L.ach[i]?'':'lock'}"><span>${L.ach[i]?a[0]:'🔒'}</span><span><b>${a[1]}</b><small>${a[2]}</small></span></div>`).join('');
   if(vtab==='obj')h+=objH();
+  if(vtab==='jue')h+=gamesH();
   $('#sheet').innerHTML=h+'</div>'};
 function tabsH(){return`<div class="vtabs">${VT.map(([k,n])=>`<button data-a="vtab:${k}" class="${vtab===k?'on':''}">${n}</button>`).join('')}</div>`}
 act=(function(prev){return function(a){const p=a.split(':');
@@ -1571,8 +1587,7 @@ endPd=function(cancel){pressing=false;if(pd){clearTimeout(pd.timer);const a=pd.a
 
 // ---- tics ----
 let mT=0;setInterval(()=>{if(document.hidden)return;mT++;if(mT%6===0)mktTick();polTax(.5);achTick();
-  const L=L2(),ready=Object.keys(CAREERS).some(id=>carLeft(id)<=0&&car(id).lv<CAREERS[id].lv.length-1)||GIGS.some(g=>gigLeft(g)<=0);
-  const vb=document.querySelector('[data-sheet="vida"]');if(vb){let b=vb.querySelector('.badge');if(ready&&!b){b=document.createElement('i');b.className='badge';b.textContent='!';vb.appendChild(b)}else if(!ready&&b)b.remove()}},500);
+  },500);
 for(let i=0;i<30;i++)mktTick();
 
 // ================= LA VIDA MANDA: decisión diaria + HUD =================
@@ -1683,6 +1698,182 @@ setInterval(()=>{if(document.hidden)return;const L=I3();const n=Object.keys(L.ac
   const fp=document.querySelector('.fpill');if(fp)fp.classList.toggle('glow',S.fameBox<10&&S.fame>=(S.fameBox+1)*FSTEP-5);
   const vb=document.querySelector('[data-sheet="vida"]');if(vb){let g=vb.querySelector('.gbadge');if(L.boxes>0&&!g){g=document.createElement('i');g.className='gbadge';vb.appendChild(g)}if(g){if(L.boxes>0)g.textContent='🎁'+L.boxes;else g.remove()}}},700);
 if(!I3().f2.starter){I3().f2.starter=1;I3().boxes+=1}
+
+// ================= VIDA 4: hijos, relaciones, lore, minijuegos =================
+function V4(){const L=I3();L.kids=L.kids||[];L.clues=L.clues||{};L.lore=L.lore||{};return L}
+V4();
+// ---------- BUGS ----------
+// los objetos (y los hijos) se aplican siempre, también tras abrir franquicia
+applyItems=function(){const t=powSum(),m=k=>(t[k]||[]).reduce((a,v)=>a*(1+v),1);const w=kidWork();S.it={pm:m('pm')*w.pm*(V4().clues.done?1.5:1),sp:m('sp'),ck:m('ck')*w.ck}};
+// ---------- HIJOS ----------
+const KNAMES=[['Lucas','👦'],['Martina','👧'],['Hugo','👦🏽'],['Lola','👧🏻'],['Thiago','👦🏻'],['Vega','👧🏽'],['Bruno','👦🏼'],['Carmen','👧🏼'],['Pepe Jr.','👶'],['Sira','👧🏾']];
+const TRAITS={gen:['🧠','Genio',1.6,'Calcula el cambio más rápido que la caja'],vag:['😴','Vago/a',.4,'Duerme en la cámara frigorífica'],art:['🎨','Artista',1,'Decora los platos como cuadros'],gam:['😈','Gamberro/a',.8,'Le echa sal al café de los clientes'],dul:['🥰','Un amor',1.2,'Los clientes dejan más propina'],inf:['📱','Influencer nato/a',1.1,'Sube a TikTok todo lo que pasa en la cocina']};
+const kAge=k=>Math.max(0,Math.floor((V4().day-k.born)/2));
+const kStage=a=>a<3?'Bebé':a<12?'Niño/a':a<18?'Adolescente':'Adulto/a';
+function kidWork(){let pm=1,ck=1;for(const k of (S.life&&S.life.kids)||[]){if(!k.work||kAge(k)<6)continue;const t=TRAITS[k.t][2];ck*=1+.07*t;pm*=1+.05*t}return{pm,ck}}
+function kidsH(){const L=V4(),lv=L.love;let h='';
+  if(L.kids.length)h+=L.kids.map((k,i)=>{const a=kAge(k),T=TRAITS[k.t];return`<div class="it" data-a="kid:${i}"><span class="ic">${a<3?'👶':k.e}</span><span class="tx"><b>${k.n} · ${a} años ${relFace(k.rel)}</b><small>${kStage(a)} · ${T[0]} ${T[1]}${k.work&&a>=6?' · 👨‍🍳 trabajando gratis':''}</small></span><span class="arrow">›</span></div>`}).join('');
+  if(lv&&lv.lv>=2&&L.kids.length<5)h+=`<button class="cb b" data-a="kid:new">👶 TENER UN HIJO CON ${lv.n.toUpperCase()} · ${fmtM(ECO(30))} €</button>`;
+  else if(!lv&&!L.kids.length)h+=`<p class="note">Consigue pareja para poder tener hijos (y ponerlos a trabajar gratis 😈).</p>`;
+  return h}
+let kidSel=null;
+function kidAct(x){const L=V4();
+  if(x==='new'){if((L.cd.kid||0)>Date.now()){toast('⏳ Esperad un poquito, que no sois conejos');return}const c=ECO(30);if(S.money<c){toast('Te faltan '+fmtM(c-S.money)+' €');return}S.money-=c;L.cd.kid=Date.now()+300000*itemCd();closeSheet();
+    if(Math.random()<.7){const used=L.kids.map(k=>k.n),nm=pk(KNAMES.filter(n=>!used.includes(n[0]))),t=pk(Object.keys(TRAITS));const k={n:nm[0],e:nm[1],born:L.day,t,rel:60,work:false};L.kids.push(k);
+      withRes('👶','¡Es '+(['👧','👧🏻','👧🏽','👧🏼','👧🏾'].includes(nm[1])?'una niña':'un niño')+'!',()=>{hap(25);pop(3);logL('👶','Nace '+k.n+'.');setTimeout(()=>burst(VW/2,VH*.4,30,'🍼'),300);return`Se llama <b>${k.n}</b>. La enfermera dice que ha nacido con cara de ${TRAITS[t][1].toLowerCase()}. La abuela Lola llora y ya le ha tejido un delantal.<br><br>Con 6 años podrá trabajar en tu restaurante (gratis, claro).`})}
+    else withRes('🍼','Todavía no…',()=>{hap(-4);return'Esta vez no ha habido suerte. Os vais a cenar croquetas para consolaros.'});return}
+  kidSel=+x;const k=L.kids[kidSel];if(!k)return;const a=kAge(k),T=TRAITS[k.t];closeSheet();
+  openModal(`<div class="who" style="--pc:#ff7ab8"><span>${a<3?'👶':k.e}</span><b>${k.n}, ${a} años</b></div><div class="relrow">${relFace(k.rel)} Relación: ${k.rel} · ${T[0]} ${T[1]}</div><p style="font-size:14px">${T[3]}.</p>
+   <div class="choice">
+    <button data-m="kd" data-v="play"><span>⚽</span><span style="font-size:15px">Jugar con ${k.n}<small>+relación · +felicidad</small></span></button>
+    <button data-m="kd" data-v="gift"><span>🎮</span><span style="font-size:15px">Regalarle una consola<small>${fmtM(ECO(10))} € · +relación</small></span></button>
+    ${a>=6?`<button data-m="kd" data-v="work"><span>${k.work?'🏖️':'👨‍🍳'}</span><span style="font-size:15px">${k.work?'Dejarle descansar':'Ponerle a trabajar GRATIS'}<small>${k.work?'Recupera la relación':'Cocina +'+Math.round(7*T[2])+' % · ganancias +'+Math.round(5*T[2])+' % · la relación baja cada día'}</small></span></button>`:`<button disabled><span>🔒</span><span style="font-size:15px">Trabajar<small>Con 6 años (le quedan ${6-a})</small></span></button>`}
+    <button data-m="kd" data-v="scold"><span>😠</span><span style="font-size:15px">Castigarle sin postre<small>−relación · +disciplina (dudosa)</small></span></button>
+   </div><button class="lnk" data-m="close">Cerrar</button>`)}
+MA.kd=b=>{const L=V4(),k=L.kids[kidSel];if(!k)return;const v=b.dataset.v,a=kAge(k);closeModal();
+  if(v==='play')withRes('⚽','Tarde con '+k.n,()=>{k.rel=cl(k.rel+10,-100,100);hap(8);return pk([`Jugáis al escondite en la cocina. ${k.n} se esconde en la nevera de las croquetas. Ganas tú, por hambre.`,`Hacéis una tarta juntos. Parece un zapato, pero sabe a gloria.`,`${k.n} te enseña un baile de TikTok. Lo haces fatal. Se ríe 20 minutos.`])});
+  if(v==='gift'){const c=ECO(10);if(S.money<c){toast('Te faltan '+fmtM(c-S.money)+' €');return}S.money-=c;withRes('🎮','¡Regalo!',()=>{k.rel=cl(k.rel+20,-100,100);return`${k.n} grita tan fuerte que se entera toda la calle. Durante 3 días no sale de su cuarto.`})}
+  if(v==='work'&&a>=6){k.work=!k.work;applyItems();withRes(k.work?'👨‍🍳':'🏖️',k.work?k.n+' entra en plantilla':k.n+' vuelve a ser un crío',()=>{if(k.work){rep(-4);return`Le das un delantal enorme y un gorro que le tapa los ojos. Sueldo: una piruleta al día. ${k.t==='vag'?'Se duerme a los 5 minutos.':k.t==='gen'?'A la hora ya ha reorganizado la cocina.':'Los clientes alucinan.'}`}k.rel=cl(k.rel+5,-100,100);return`${k.n} corre al parque gritando «¡LIBERTAAAD!».`})}
+  if(v==='scold')withRes('😠','Castigo',()=>{k.rel=cl(k.rel-12,-100,100);return pk([`${k.n} te mira fijamente y dice: «Esto lo pongo en mi biografía».`,`${k.n} se encierra en su cuarto y pone reguetón a todo volumen.`,`${k.n} acepta el castigo… y te esconde las llaves del local.`])});
+  save()};
+// ---------- RELACIONES PROFUNDAS ----------
+const LORE={abu:['De joven, tu abuelo Paco y yo abrimos este puestito con 20 duros y una sartén.','Tu abuelo tenía una receta secreta. Nunca la escribió entera… o eso decía.','Massimo y yo fuimos novios un verano. No se lo digas a nadie.','El Güey me debe 40 croquetas desde 1998.'],
+ mas:['Mi nonna me enseñó a amasar con 4 años. Con 5 ya odiaba a la competencia.','Mi bigote está asegurado por 10.000 euros.','Tu abuelo Paco… era un gran rival. El único que me ganó en un concurso de pizza.','A veces lloro cuando se me quema una margarita.'],
+ ken:['Vine de Osaka con una maleta y un cuchillo. La maleta la perdí.','Mi padre quería que fuera abogado. Ahora corto atún.','Tu abuelo me dio de comer cuando no tenía nada. Le debo mucho.','Practico kárate con los pepinos.'],
+ gue:['Soy de un pueblo de Jalisco. O de Albacete. Depende de quién pregunte.','Tengo 7 primos y todos se llaman Jesús.','Le debo dinero a tu abuela. Lo sé. Ella lo sabe. Todos lo saben.','Mi taco favorito es el que no he pagado.'],
+ inf:['Tengo 2 millones de seguidores y ningún amigo de verdad. Bueno, ahora a ti.','Mi primer vídeo viral fue cayéndome en una piscina de natillas.','Odio el brócoli pero lo como en directo por el patrocinio.'],
+ cri:['Llevo 30 años sin comer en casa. Mi cocina tiene telarañas.','Una vez le puse 0 estrellas a un restaurante y el chef se hizo monje.','Tu abuelo Paco hacía la mejor croqueta que he probado. Desde entonces busco otra igual.']};
+let relSel=null;
+const relLeft=k=>Math.max(0,((V4().cd['r_'+k]||0)-Date.now())/1000);
+function relOpen(k){const L=V4(),c=CAST[k],v=L.rel[k]||0;relSel=k;closeSheet();
+  openModal(`<div class="who" style="--pc:${c.c}"><span>${c.e}</span><b>${c.n}</b></div><div class="relrow">${relFace(v)} Relación: ${v}</div>${relLeft(k)>0?`<p class="note">⏳ Habéis quedado hace poco (${Math.ceil(relLeft(k))} s)</p>`:''}
+   <div class="choice"><button data-m="rl" data-v="talk"><span>💬</span><span style="font-size:15px">Charlar<small>+relación · cotilleos y secretos</small></span></button>
+    <button data-m="rl" data-v="gift"><span>🎁</span><span style="font-size:15px">Hacerle un regalo<small>${fmtM(ECO(8))} € · ++relación</small></span></button>
+    <button data-m="rl" data-v="eat"><span>🍽️</span><span style="font-size:15px">Invitarle a comer<small>+relación · +felicidad</small></span></button>
+    ${v>=50?`<button data-m="rl" data-v="fav"><span>🤝</span><span style="font-size:15px">Pedirle un favor<small>Vuestra amistad tiene premio</small></span></button>`:''}
+    <button data-m="rl" data-v="ins"><span>😤</span><span style="font-size:15px">Insultarle<small>−−relación · desahogo</small></span></button></div><button class="lnk" data-m="close">Cerrar</button>`)}
+MA.rl=b=>{const k=relSel,c=CAST[k],v=b.dataset.v,L=V4();closeModal();if(!k)return;if(relLeft(k)>0){toast('⏳ Dale un respiro');return}L.cd['r_'+k]=Date.now()+90000*itemCd();
+  if(v==='talk'){const i=(L.lore[k]||0)%LORE[k].length;L.lore[k]=(L.lore[k]||0)+1;rel(k,5);say([[k,LORE[k][i]]])}
+  if(v==='gift'){const g=ECO(8);if(S.money<g){toast('Te faltan '+fmtM(g-S.money)+' €');L.cd['r_'+k]=0;return}S.money-=g;rel(k,14);say([[k,pk(['¿Para mí? ¡No tenías por qué!','Uy, qué detalle. Lo guardaré para siempre (o lo revenderé).','Esto merece un abrazo. Ven aquí.'])]])}
+  if(v==='eat'){rel(k,9);hap(4);say([[k,pk(['Tus croquetas mejoran, eh. No se lo digas a nadie.','Esto está buenísimo. Me voy a hacer cliente fijo… es broma. ¿O no?','Comer gratis siempre sabe mejor.'])]])}
+  if(v==='ins'){rel(k,-16);rep(-3);say([[k,pk(['¡¿CÓMO TE ATREVES?!','Esto no quedará así. Lo apunto en mi libreta.','Muy bonito. Luego no me pidas sal.'])]])}
+  if(v==='fav')withRes('🤝','Favor de '+c.n,()=>{
+    if(k==='abu'){const g=gain(ECO(25));return`La abuela saca un sobre del sujetador: «Para el negocio». Dentro hay ${fmtM(g)} €.`}
+    if(k==='inf'){R.rush=Math.max(R.rush||0,40);pop(6);return'Lucía sube 12 stories de tu local. ¡Gentío durante 40 s!'}
+    if(k==='cri'){S.fame=Math.min(400,S.fame+25);return'Paca Gourmet publica una reseña de 5 estrellas. «Imprescindible».'}
+    const j=['mas','ken','gue'].indexOf(k)+1;if(j>0&&S.zones[j].open&&!S.zones[j].own){S.zones[j].r=Math.min(1.6,S.zones[j].r+.25);rel(k,-5);return`${c.n} sube sus precios un 25 % para dejarte clientes. «Pero no te acostumbres».`}
+    gain(ECO(15));return c.n+' te presta dinero sin intereses. Bueno, con un poco de intereses.'});
+  save()};
+// ---------- LA RECETA PERDIDA DEL ABUELO PACO ----------
+const CLUES=[['👵','La abuela te cuenta que el abuelo escondía trozos de su receta por todo el barrio.',()=>(V4().rel.abu||0)>=85],
+ ['👻','El fantasma del congelador era el pinche del abuelo. Te da un papel helado: «Ingrediente 2: paciencia y pimentón».',()=>V4().f2.ghostMet],
+ ['🎟️','En un rasca y gana premiado aparece escrito a mano: «La bechamel se remueve en 8, nunca en círculos».',()=>V4().f2.scratchBig],
+ ['🤝','Un rival que ahora es tu amigo confiesa: «Tu abuelo me ganó con una croqueta… su truco era el jamón de su pueblo».',()=>['mas','ken','gue'].some(k=>(V4().rel[k]||0)>=60)],
+ ['🧒','Tu hijo encuentra en el desván una caja de latón con la última página de la receta.',()=>V4().kids.some(k=>kAge(k)>=8)]];
+function clueTick(){const L=V4();if(L.clues.done||dlgOn||!$('#modal').hidden||sheetKind)return;for(let i=0;i<CLUES.length;i++){if(L.clues[i]||!CLUES[i][2]())continue;L.clues[i]=1;const n=Object.keys(L.clues).filter(x=>x!=='done').length;
+  logL('📜','Pista '+n+'/5 de la receta del abuelo Paco.');say([['nar','📜 ¡PISTA DE LA RECETA DEL ABUELO! ('+n+'/5)'],['nar',CLUES[i][1]]]);
+  if(n>=5){L.clues.done=1;applyItems();setTimeout(()=>say([['abu','…Lo has conseguido. Es la receta de tu abuelo, completa. Él estaría tan orgulloso…'],['nar','🏆 RECETA LEGENDARIA DEL ABUELO PACO: +50 % de ganancias para siempre, en todas las calles.']],()=>{bigText('📜 RECETA LEGENDARIA','+50 % ganancias para siempre');sfx.big();burst(VW/2,VH*.4,50,'📜')}),400)}
+  save();return}}
+function cluesH(){const L=V4(),n=Object.keys(L.clues).filter(x=>x!=='done').length;return`<div class="it lore"><span class="ic">📜</span><span class="tx"><b>La receta perdida del abuelo Paco · ${n}/5</b>${bar(n*20,'#c98a2c')}<small>${L.clues.done?'¡Completada! +50 % ganancias para siempre':'Pistas: '+CLUES.map((c,i)=>L.clues[i]?c[0]:'❔').join(' ')+' · habla con la gente, vive aventuras…'}</small></span></div>`}
+// ---------- MINIJUEGOS ----------
+const GAMES=[{id:'scr',ic:'🎟️',n:'Rasca y gana',d:'Rasca con el dedo. 3 iguales = premio',cd:60,cost:()=>ECO(3)},{id:'slot',ic:'🎰',n:'Tragaperras',d:'Para los rodillos en el momento justo',cd:45,cost:()=>ECO(2)},
+ {id:'catch',ic:'🍤',n:'Lluvia de croquetas',d:'Atrapa todas las que puedas. ¡Ojo a las bombas!',cd:150,cost:()=>0},{id:'mem',ic:'🧠',n:'MasterChef de barrio',d:'Memoriza los ingredientes antes de que acabe el tiempo',cd:200,cost:()=>0},
+ {id:'duel',ic:'⚔️',n:'Duelo de cocina',d:'Machaca el botón más rápido que tu rival',cd:300,cost:()=>0}];
+const gLeft=g=>Math.max(0,((V4().cd['m_'+g.id]||0)-Date.now())/1000);
+function gamesH(){return`<p class="note">Minijuegos con premio. Dinero, popularidad… y quizá alguna pista.</p>`+GAMES.map(g=>{const l=gLeft(g),c=g.cost();return`<div class="it"><span class="ic">${g.ic}</span><span class="tx"><b>${g.n}</b><small>${g.d}</small></span><button class="cb ${l<=0&&S.money>=c?'o':'no'}" data-a="game:${g.id}">${l>0?'⏳ '+Math.ceil(l)+' s':'JUGAR'}<small>${c?fmtM(c)+' €':'gratis'}</small></button></div>`}).join('')}
+function playGame(id){const g=GAMES.find(x=>x.id===id),L=V4();if(gLeft(g)>0){toast('⏳ Aún no');return}const c=g.cost();if(S.money<c){toast('Te faltan '+fmtM(c-S.money)+' €');return}S.money-=c;L.cd['m_'+id]=Date.now()+g.cd*1000*itemCd();closeSheet();
+  ({scr:gScratch,slot:gSlot,catch:gCatch,mem:gMem,duel:()=>startDuel()})[id]()}
+// --- rasca y gana ---
+function gScratch(){const sy=['🍒','💰','💎','👑','🍤','🥔'],luck=itemLuck();const x=Math.random();let win=null;if(x<.012+luck*.05)win='👑';else if(x<.06+luck*.1)win='💎';else if(x<.27+luck*.2)win='💰';
+  let cells;for(let t=0;t<200;t++){cells=[...Array(9)].map(()=>pk(sy.filter(s=>s!==win)));const cnt={};cells.forEach(s=>cnt[s]=(cnt[s]||0)+1);if(Object.values(cnt).every(v=>v<3))break}
+  if(win){const pos=[...Array(9).keys()].sort(()=>Math.random()-.5).slice(0,3);pos.forEach(p=>cells[p]=win)}
+  openModal(`<h2>🎟️ Rasca y gana</h2><p class="note">3 iguales: 💰 x5 · 💎 x25 · 👑 x150</p><div class="scr"><div class="scrg">${cells.map(s=>`<span>${s}</span>`).join('')}</div><canvas id="scrC" width="270" height="270"></canvas></div><p class="note" id="scrT">¡Rasca con el dedo!</p>`);
+  const cv=$('#scrC'),cx=cv.getContext('2d');const gr=cx.createLinearGradient(0,0,270,270);gr.addColorStop(0,'#c9ccd3');gr.addColorStop(.5,'#eef0f4');gr.addColorStop(1,'#a9adb6');cx.fillStyle=gr;cx.fillRect(0,0,270,270);cx.fillStyle='#8a8f99';cx.font='900 22px Nunito,sans-serif';cx.textAlign='center';cx.fillText('RASCA AQUÍ',135,140);for(let i=0;i<60;i++){cx.fillStyle='rgba(255,255,255,.35)';cx.fillText('✦',Math.random()*270,Math.random()*270)}
+  cx.globalCompositeOperation='destination-out';cx.fillStyle='#000';let done=false,n=0,down=false;
+  const scratch=e=>{if(done)return;const r=cv.getBoundingClientRect(),X=(e.clientX-r.left)*270/r.width,Y=(e.clientY-r.top)*270/r.height;cx.beginPath();cx.arc(X,Y,22,0,7);cx.fill();if(++n%8===0){tone(900+Math.random()*300,.02,'square',.015);const d=cx.getImageData(0,0,270,270).data;let cl0=0;for(let i=3;i<d.length;i+=160)if(d[i]<40)cl0++;if(cl0/(d.length/160)>.55)finish()}};
+  cv.addEventListener('pointerdown',e=>{down=true;cv.setPointerCapture(e.pointerId);scratch(e)});cv.addEventListener('pointermove',e=>{if(down)scratch(e)});cv.addEventListener('pointerup',()=>down=false);
+  function finish(){done=true;cv.style.transition='opacity .4s';cv.style.opacity=0;const mult={'💰':5,'💎':25,'👑':150}[win],base=ECO(3);
+    setTimeout(()=>{if(win){document.querySelectorAll('.scrg span').forEach(s=>{if(s.textContent===win)s.classList.add('w')});const g=gain(base*mult);if(mult>=25)V4().f2.scratchBig=1;if(mult>=150)V4().f2.lot=1;sfx.big();burst(VW/2,VH*.4,mult>=25?40:20,win);
+      $('#scrT').innerHTML=`<b style="font-size:20px;color:#2e9e48">¡PREMIO! +${fmtM(g)} €</b>`}else{hap(-2);$('#scrT').innerHTML='Nada… El lotero te guiña un ojo: «La próxima».'}
+      $('#card').insertAdjacentHTML('beforeend','<button class="cb" data-m="close">VALE</button>');save()},450)}}
+// --- tragaperras ---
+function gSlot(){const sy=['🍒','🍋','🍤','🔔','💎','7️⃣'];let st=0,pos=[0,0,0],iv;
+  openModal(`<h2>🎰 Tragaperras</h2><p class="note">Toca PARAR 3 veces. 3 iguales x15 · 7️⃣7️⃣7️⃣ x100 · 2 iguales x2</p><div class="reels">${[0,1,2].map(i=>`<span id="rl${i}">🍒</span>`).join('')}</div><button class="cb o" id="slB">PARAR</button><p class="note" id="slT"></p>`);
+  iv=setInterval(()=>{if(!$('#rl0')){clearInterval(iv);return}for(let i=st;i<3;i++){pos[i]=(pos[i]+1+i)%sy.length;const el=$('#rl'+i);if(el)el.textContent=sy[pos[i]]}},70);
+  $('#slB').onclick=()=>{if(st>=3)return;tone(500+st*150,.08,'square',.04);
+    if(st===2&&Math.random()<itemLuck()+.12){pos[2]=pos[Math.random()<.5?0:1];$('#rl2').textContent=sy[pos[2]]}st++;
+    if(st===3){clearInterval(iv);const r=pos.map(p=>sy[p]),base=ECO(2);let m=0;if(r[0]===r[1]&&r[1]===r[2])m=r[0]==='7️⃣'?100:15;else if(r[0]===r[1]||r[1]===r[2]||r[0]===r[2])m=2;
+      if(m){const g=gain(base*m);sfx.big();if(m>=15)burst(VW/2,VH*.4,30,r[0]);$('#slT').innerHTML=`<b style="font-size:20px;color:#2e9e48">${m>=15?'¡¡JACKPOT!!':'¡Premio!'} +${fmtM(g)} €</b>`}else $('#slT').textContent='Nada. La máquina se ríe de ti con lucecitas.';
+      $('#slB').outerHTML='<button class="cb" data-m="close">VALE</button>';save()}}}
+// --- lluvia de croquetas ---
+function gCatch(){openModal(`<h2>🍤 Lluvia de croquetas</h2><div class="catch" id="cA"><b id="cS">0</b><i id="cT">15</i></div><p class="note">Toca las croquetas 🍤 · evita las bombas 💣</p>`);
+  const A=$('#cA');let sc=0,t=15,objs=[],last=performance.now(),spawn=0,alive=true;
+  const hit=(o,e)=>{e.stopPropagation();if(!alive||o.dead)return;o.dead=1;o.el.remove();if(o.bomb){sc=Math.max(0,sc-3);A.classList.add('boom');setTimeout(()=>A.classList.remove('boom'),200);tone(120,.15,'sawtooth',.06)}else{sc+=o.gold?5:1;tone(700+sc*8,.04,'sine',.04)}$('#cS').textContent=sc};
+  function fr(now){if(!alive||!A.isConnected){alive=false;return}const dt=Math.min(.05,(now-last)/1000);last=now;t-=dt;spawn-=dt;const W=A.clientWidth,H=A.clientHeight;
+    if(spawn<=0){spawn=.28+Math.random()*.25;const r=Math.random(),o={x:Math.random()*(W-40),y:-40,v:120+Math.random()*120+(15-t)*12,bomb:r<.18,gold:r>.94};o.el=document.createElement('span');o.el.textContent=o.bomb?'💣':o.gold?'🌟':'🍤';o.el.addEventListener('pointerdown',e=>hit(o,e));A.appendChild(o.el);objs.push(o)}
+    for(const o of objs){if(o.dead)continue;o.y+=o.v*dt;o.el.style.transform=`translate(${o.x}px,${o.y}px)`;if(o.y>H){o.dead=1;o.el.remove()}}objs=objs.filter(o=>!o.dead);
+    $('#cT').textContent=Math.ceil(Math.max(0,t));if(t<=0){alive=false;objs.forEach(o=>o.el.remove());const g=gain(ECO(.8)*sc);if(sc>=30)pop(3);sfx.big();
+      $('#card').insertAdjacentHTML('beforeend',`<p style="text-align:center"><b style="font-size:20px">${sc} croquetas · +${fmtM(g)} €</b><br>${sc>=40?'¡Leyenda del rebozado! +3 ⭐':sc>=20?'¡Buenos reflejos!':'Las croquetas son más rápidas que tú.'}</p><button class="cb" data-m="close">VALE</button>`);save();return}
+    requestAnimationFrame(fr)}requestAnimationFrame(fr)}
+// --- memoria ---
+function gMem(){const em=pk([['🍅','🧀','🥚','🌶️','🧄','🍄'],['🦐','🥩','🐟','🥔','🫑','🍋'],['🍫','🍓','🥥','🍌','🍯','🥜']]),deck=[...em,...em].sort(()=>Math.random()-.5);let open=[],got=0,t=35,lock=true,iv;
+  openModal(`<h2>🧠 MasterChef de barrio</h2><p class="note">Encuentra las 6 parejas de ingredientes · <b id="mT">35</b> s</p><div class="mem">${deck.map((e,i)=>`<button data-i="${i}" class="up"><span>${e}</span></button>`).join('')}</div>`);
+  const bs=[...document.querySelectorAll('.mem button')];setTimeout(()=>{bs.forEach(b=>b.classList.remove('up'));lock=false},1600);
+  iv=setInterval(()=>{if(!$('#mT')){clearInterval(iv);return}t--;const el=$('#mT');if(el)el.textContent=t;if(t<=0)end()},1000);
+  bs.forEach(b=>b.onclick=()=>{if(lock||b.classList.contains('up'))return;b.classList.add('up');tone(600,.04,'sine',.03);open.push(b);if(open.length===2){lock=true;const [a,c]=open;open=[];
+    if(deck[a.dataset.i]===deck[c.dataset.i]){got++;a.classList.add('ok');c.classList.add('ok');lock=false;tone(900,.08,'sine',.05);if(got===6)end()}else setTimeout(()=>{a.classList.remove('up');c.classList.remove('up');lock=false},650)}});
+  let ended=false;function end(){if(ended)return;ended=true;clearInterval(iv);lock=true;const g=gain(ECO(4)*got+(got===6?ECO(10)+t*ECO(.5):0));if(got===6){pop(5);S.fame=Math.min(400,S.fame+5)}sfx.big();
+    $('#card').insertAdjacentHTML('beforeend',`<p style="text-align:center"><b style="font-size:20px">${got}/6 parejas · +${fmtM(g)} €</b><br>${got===6?'El jurado se pone en pie. ¡Sales en la tele! +5 ⭐ +5 🔥':'El jurado te mira con lástima, pero te dan un delantal de recuerdo.'}</p><button class="cb" data-m="close">VALE</button>`);save()}}
+// ---------- MÁS SITUACIONES ----------
+SE('kidart','nar',3,()=>V4().kids.some(k=>kAge(k)>=4),()=>{const k=pk(V4().kids.filter(k=>kAge(k)>=4));return`${k.n} ha pintado un mural gigante en la fachada del restaurante. Es… tu cara. Con bigote.`},[
+ ['🖼️','Dejarlo: es arte','Fama','Mural familiar',()=>{S.fame+=12;pop(3);return'Los turistas se hacen fotos con el mural. Un galerista quiere comprarlo.'}],
+ ['🧽','Borrarlo','Relación ↓','Pared limpia',()=>{V4().kids.forEach(k=>k.rel=cl(k.rel-10,-100,100));return'Tu hijo/a te mira como si hubieras borrado la Mona Lisa.'}]]);
+SE('social','nar',3,()=>V4().kids.some(k=>k.work&&kAge(k)>=6),'Llaman a la puerta: «Buenos días, Servicios Sociales. Nos han dicho que aquí trabaja un menor… por una piruleta al día».',[
+ ['🎓','«Son prácticas de FP»','Labia','Excusa creativa',()=>Math.random()<.6?(rep(-3),'Se lo creen. Hasta te piden currículum para su sobrino.'):(lose(ECO(20)),rep(-8),'No cuela. Multa y charla de 2 horas sobre derechos del niño.')],
+ ['🍤','Sobornar con croquetas','Arriesgado','Croquetas diplomáticas',()=>{rep(-10);return'Se van con un táper. Uno vuelve al día siguiente pidiendo más.'}],
+ ['🏖️','Mandar a los niños al cole','Honrado','Niños libres',()=>{V4().kids.forEach(k=>{k.work=false;k.rel=cl(k.rel+10,-100,100)});applyItems();rep(10);return'Tus hijos celebran la libertad. Tu cocina va un poco más lenta.'}]]);
+SE('teen','nar',3,()=>V4().kids.some(k=>kAge(k)>=13&&kAge(k)<18),()=>{const k=pk(V4().kids.filter(k=>kAge(k)>=13&&kAge(k)<18));return`${k.n} (adolescente) anuncia en la cena: «Voy a dejar el insti para ser streamer de Minecraft».`},[
+ ['🎮','Apoyarle','Buen rollo','Padre/madre guay',()=>{V4().kids.forEach(k=>k.rel=cl(k.rel+8,-100,100));pop(4);return'A los 3 meses tiene 50.000 seguidores. Te menciona en todos sus directos.'}],
+ ['📚','Prohibírselo','Drama','Drama adolescente',()=>{V4().kids.forEach(k=>k.rel=cl(k.rel-10,-100,100));hap(-5);return'Portazo. Se encierra 3 días. Luego aprueba todo para fastidiarte.'}]]);
+SE('wedding_r','mas',1,()=>(V4().rel.mas||0)>=40,'¡Amico! Me caso con Nonna Furia… digo, con una señora encantadora. ¿Haces tú el catering?',[
+ ['💒','¡Claro!','Dinero + amistad','Catering de boda',()=>{gain(ECO(25));rel('mas',15);return'Massimo llora en el brindis y dice que eres «como el hijo que nunca tuvo».'}],
+ ['🙅','Mejor no','Nada','Sin catering',()=>{rel('mas',-10);return'«Bueno… lo haré con pizza congelada». Se le ve dolido.'}]]);
+SE('ken_secret','ken',1,()=>(V4().rel.ken||0)>=50,'Necesito contarte algo. Mi sushi… lo compro congelado en el súper. ¿Me guardarías el secreto?',[
+ ['🤐','Guardar el secreto','Amistad','Amistad verdadera',()=>{rel('ken',20);rep(5);return'Kenji te abraza y te enseña a cortar pescado de verdad. Ahora sí.'}],
+ ['📢','Contarlo en TikTok','Escándalo','Escándalo del sushi',()=>{rel('ken',-40);pop(15);S.fame+=15;rep(-15);return'Viral total. '+ZONES[2].name+' se queda vacío. Te sientes fatal (un poco).'}]]);
+SE('gue_debt','gue',2,()=>!V4().f2.gueDebt,'Oye, compa… ¿me prestas una lana? Es para pagarle a tu abuela lo que le debo. Es una larga historia.',[
+ ['💸','Prestárselo','Abuela feliz','Deuda saldada',()=>{lose(ECO(12));V4().f2.gueDebt=1;rel('gue',15);rel('abu',10);return'El Güey le paga a tu abuela… con tu dinero. Ella lo sabe. Te guiña un ojo.'}],
+ ['🤨','Ni de broma','Desconfianza','No hay préstamo',()=>{V4().f2.gueDebt=1;rel('gue',-8);return'«Órale, qué codo». Se va silbando una ranchera triste.'}]]);
+SE('abu_date','abu',2,()=>S.served>40&&!V4().f2.abuDate,'Nieto/a, me he apuntado a una app de citas y he quedado AQUÍ con un señor. Vigílame, que no me fío.',[
+ ['👀','Vigilarla desde la cocina','Diversión','Cita vigilada',()=>{V4().f2.abuDate=1;hap(10);rel('abu',8);return'El señor es Don Massimo. Se ponen rojos los dos. Terminan bailando un pasodoble.'}],
+ ['💘','Hacer de celestino','Amor senior','Celestino/a',()=>{V4().f2.abuDate=1;rel('abu',15);rel('mas',10);return'Les pones velas y música de Julio Iglesias. Ya tienen segunda cita.'}]]);
+SE('robot','nar',1,()=>S.served>60,'Un vendedor te ofrece un robot camarero «casi nuevo». Solo ha atropellado a dos clientes.',[
+ ['🤖','Comprarlo','Turbo… o caos','Robot camarero',()=>{lose(ECO(15));return Math.random()<.6?(R.turbo=Math.max(R.turbo||0,60),'¡Funciona! Sirve a velocidad de la luz. Turbo 60 s.'):(S.fame=Math.max(0,S.fame-10),'Se vuelve loco y empieza a recitar poesía. Los clientes huyen.')}],
+ ['🙅','No, gracias','Seguro','Sin robots',()=>{hap(2);return'El vendedor se va. El robot le sigue, enamorado.'}]]);
+SE('flood','nar',1,()=>true,'¡Se ha roto una tubería y la cocina parece una piscina!',[
+ ['🏊','Convertirlo en «restaurante acuático»','Absurdo','Restaurante acuático',()=>{pop(10);S.fame+=8;return'Los clientes comen con los pies en remojo. Un influencer lo llama «experiencia spa-gastronómica».'}],
+ ['🔧','Llamar al fontanero','Caro','Fontanero',()=>{lose(ECO(10));return'El fontanero llega en 4 horas y cobra como un cirujano.'}],
+ ['👦','Que achiquen los niños','Hijos','Cubos y risas',()=>{V4().kids.forEach(k=>k.rel=cl(k.rel+5,-100,100));hap(5);return V4().kids.length?'Tus hijos lo convierten en una guerra de agua. Acaba todo seco y todos empapados.':'No tienes hijos. Achicas tú solo/a. Lloras un poco.'}]]);
+SE('ufo2','ali',1,()=>V4().surreal>=6,'Terrícola… mi planeta ha probado tu hamburguesa. Te nombramos Embajador/a Gastronómico de Andrómeda.',[
+ ['👽','Aceptar el cargo','Interplanetario','Embajador/a galáctico/a',()=>{pop(20);gain(ECO(30));return'Te dan una banda brillante y un platillo volante de segunda mano. No sabes conducirlo.'}],
+ ['🌍','Rechazarlo','Humilde','La Tierra primero',()=>{rep(10);return'Zorg lo respeta. Te deja una lata de salsa alienígena como recuerdo.'}]]);
+SE('chef_battle','ram',1,()=>S.fame>=150,'¡Te reto a un duelo en directo en televisión, cocinero/a de pacotilla!',[
+ ['⚔️','Aceptar el duelo','Minijuego','¡A la arena!',()=>{setTimeout(()=>startDuel(),900);return'Las cámaras se encienden. ¡Prepara los dedos!'}],
+ ['🐔','Huir','Cobardía','Pollo/a',()=>{pop(-3);return'Ramírez te llama «gallina» en horario de máxima audiencia.'}]]);
+SE('kid_runaway','nar',4,()=>V4().kids.some(k=>k.rel<=-50),()=>{const k=V4().kids.find(k=>k.rel<=-50);return`${k.n} ha dejado una nota: «Me voy a vivir con la abuela. Ella no me hace fregar platos».`},[
+ ['🏃','Ir a buscarle con croquetas','Reconciliación','Reconciliación',()=>{V4().kids.forEach(k=>{if(k.rel<=-50){k.rel=10;k.work=false}});applyItems();hap(5);return'Hacéis las paces con un abrazo y 12 croquetas. Prometes menos explotación.'}],
+ ['🤷','Dejarle con la abuela','Libertad','Vive con la abuela',()=>{V4().kids.forEach(k=>{if(k.rel<=-50){k.work=false;k.rel=0}});applyItems();rel('abu',10);return'La abuela le malcría a base de natillas. Él/ella está encantado/a.'}]]);
+// ---------- integración en la interfaz ----------
+VT.splice(VT.findIndex(t=>t[0]==='gig')+1,0,['jue','🎮 Juegos']);
+act=(function(prev){return function(a){const p=a.split(':');if(p[0]==='kid'){kidAct(p[1]);return false}if(p[0]==='rel'){relOpen(p[1]);return false}if(p[0]==='game'){playGame(p[1]);return false}return prev(a)}})(act);
+// lotería del curro → rasca y gana
+(()=>{const g=GIGS.find(x=>x.id==='lot');if(g){g.n='Rasca y gana';g.d='Compra un boleto y rasca con el dedo';g.f=()=>gScratch()}})();
+// avisos: solo cuando hay algo de verdad (no siempre)
+setInterval(()=>{if(document.hidden)return;applyItems();clueTick();const L=V4();
+  const ready=Object.keys(CAREERS).some(id=>car(id).lv>0&&carLeft(id)<=0&&car(id).lv<CAREERS[id].lv.length-1);const vb=document.querySelector('[data-sheet="vida"]');
+  if(vb){let b=vb.querySelector('.badge');if(ready&&!b){b=document.createElement('i');b.className='badge';b.textContent='!';vb.appendChild(b)}else if(!ready&&b)b.remove()}
+},700);
+const _dt4=dayTick;dayTick=function(dt){const d0=V4().day;_dt4(dt);if(V4().day!==d0)for(const k of V4().kids)if(k.work&&kAge(k)>=6)k.rel=cl(k.rel-(k.t==='dul'?2:5),-100,100)};
 
 </script>
 <script>
