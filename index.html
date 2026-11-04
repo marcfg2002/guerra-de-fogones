@@ -315,7 +315,7 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .dthc{background:#fff;border-radius:12px;padding:6px 10px;font-weight:800;font-size:15px}.dthc small{display:block;font-size:12px;color:#7a6a50}
 /*fitfix*/.topbar{padding-top:max(8px,env(safe-area-inset-top,0px))!important}
 .dock{padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
-#app{position:fixed!important;left:0!important;right:0!important;top:0!important;bottom:0!important;height:auto!important;margin:0!important;max-width:none!important;padding:0!important}html,body{background:#23262f!important;height:100%!important}
+#app{position:fixed!important;left:0!important;right:0!important;top:0!important;bottom:0!important;height:auto!important;margin:0!important;max-width:none!important;padding:0!important}html,body{background:#23262f!important;height:100%;overscroll-behavior:none}
 .sheet:not(.open){visibility:hidden;transition:transform .28s,visibility 0s .28s}
 /*v7*/
 .stepn{font:900 12px var(--f-b);color:#9a7b4f;text-transform:uppercase;letter-spacing:.5px}
@@ -1086,7 +1086,7 @@ function openSet(){openModal(`<h2>Ajustes</h2>
   <button class="tog ${S.music?'on':''}" data-m="tMusic"><span>🎵 Música</span><i></i></button>
   <button class="tog ${S.sound?'on':''}" data-m="tSound"><span>🔊 Sonido</span><i></i></button>
   <button class="cb b" data-m="help">CÓMO SE JUEGA</button>
-  <p style="font-size:12px;color:#8a6a40">Versión 27.4 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
+  <p style="font-size:12px;color:#8a6a40">Versión 27.5 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
   <button class="lnk" style="color:#d8352a" data-m="wipe">Borrar partida</button>
   <button class="cb" data-m="close">SEGUIR</button>`)}
 MA.tMusic=()=>{S.music=!S.music;music();openSet();save()};MA.tSound=()=>{S.sound=!S.sound;music();openSet();save()};
@@ -2016,7 +2016,7 @@ SE('paps2','pap',3,()=>celebK().some(k=>(V5().rel[k]??-999)>=40),()=>{const k=pk
  ['📢','Desmentirlo','Honrado','Comunicado oficial',()=>{rep(5);pop(4);return'Publicas un comunicado. Nadie te cree, pero quedas como un señor/a.'}]]);
 setInterval(()=>{if(!document.hidden)celebUnlock()},2000);
 
-setTimeout(()=>{fitApp();resize()},600);setTimeout(()=>{fitApp();resize()},2000);function fitApp(){const a=document.getElementById('app'),sa=navigator.standalone||matchMedia('(display-mode: standalone)').matches;a.style.removeProperty('height');a.style.removeProperty('bottom');const b=a.getBoundingClientRect().bottom;if(sa&&innerHeight>innerWidth&&screen.height>b+4){a.style.setProperty('bottom','auto','important');a.style.setProperty('height',screen.height+'px','important')}window._fitInfo=`pantalla ${screen.height} · ventana ${innerHeight} · juego ${Math.round(a.getBoundingClientRect().height)}${sa?' · app':''}`}fitApp();addEventListener('resize',()=>{fitApp();resize()});addEventListener('orientationchange',()=>setTimeout(()=>{fitApp();resize()},300));setTimeout(()=>{fitApp();resize()},400);
+setTimeout(()=>{fitApp();resize()},600);setTimeout(()=>{fitApp();resize()},2000);function fitApp(){const a=document.getElementById('app'),sa=navigator.standalone||matchMedia('(display-mode: standalone)').matches;a.style.removeProperty('height');a.style.removeProperty('bottom');const b=a.getBoundingClientRect().bottom;const de=document.documentElement,bd=document.body;if(sa&&innerHeight>innerWidth&&screen.height>innerHeight+4){const H=screen.height+'px';for(const e of [de,bd]){e.style.setProperty('height',H,'important');e.style.setProperty('min-height',H,'important');e.style.setProperty('overflow','hidden','important')}de.style.setProperty('overflow','visible','important');a.style.setProperty('position','absolute','important');a.style.setProperty('bottom','auto','important');a.style.setProperty('height',H,'important')}else if(sa&&screen.height>b+4&&innerHeight>innerWidth){a.style.setProperty('bottom','auto','important');a.style.setProperty('height',screen.height+'px','important')}window._fitInfo=`pantalla ${screen.height} · ventana ${innerHeight} · juego ${Math.round(a.getBoundingClientRect().height)}${sa?' · app':''}`}fitApp();addEventListener('resize',()=>{fitApp();resize()});addEventListener('orientationchange',()=>setTimeout(()=>{fitApp();resize()},300));setTimeout(()=>{fitApp();resize()},400);
 
 // ================= VIDA 7: todo lo nuevo de la vida, sobre el restaurante de siempre =================
 // ---------- utilidades ----------
