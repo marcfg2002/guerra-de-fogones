@@ -956,7 +956,7 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 22 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 23 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
@@ -1212,6 +1212,150 @@ const _sd2=startDay;startDay=function(){_sd2();if(RUN.day<3||Math.random()>.18)r
   ['🐦','¡Una paloma se ha colado en el local!','Aletea por encima de las mesas. Tócala para echarla.',()=>{for(let i=0;i<2;i++){spawnBug();bugs[bugs.length-1].el.textContent='🐦'}}],
   ['🎺','¡Una banda de música para delante de tu puerta!','La gente se para a escuchar… y entra a comer.',()=>{R.rush=30}]]);
   setTimeout(()=>{D[3]();bigText(D[0]+' '+D[1],D[2]);sfx.bad()},1200)};
+
+// ================= TODO CON HISTORIA: cada carta es una mini aventura de varios pasos =================
+function deep(id,title,steps,end){const c=CARDS.find(c=>c.id===id);if(!c)return;c.f=()=>story(title,steps,p=>{const r=end(p.map(x=>x[1]),p);if(r)res(r[0],r[1],r[2])});if(typeof c.d==='string')c.d=c.d+' · '+steps.length+' pasos'}
+const has=(a,s)=>a.some(x=>x.includes(s));
+const R3=()=>ST().riv;
+// ---------- RESTAURANTE ----------
+deep('flyer','📣 Campaña de flyers',[
+ {e:'🗺️',t:'¿Dónde repartes los flyers?',o:()=>[['🎓','En la universidad','Estudiantes hambrientos'],['🛒','En el mercado','Jubilados con tiempo'],['🪩','A la salida de la discoteca','A las 5 a. m.'],['😈','En la puerta de '+R3()[0][0],'Guerra abierta']]},
+ {e:'🎨',t:'¿Qué diseño llevan?',o:[['🤳','Una foto tuya guapísimo/a','Con filtro'],['✏️','Un dibujo hecho por ti en Paint','Arte'],['🎟️','Cupón 2x1 recortable','Pierdes margen'],['😂','Un meme de un gato con gorro de chef']]}],
+ (p)=>['📣','Flyers repartidos',()=>{let t='';hap(-3);
+  if(has(p,'universidad')){tom('spawn',1.35,'📣 Estudiantes con tu flyer: +35 %');t+='Los estudiantes se lo llevan todo, hasta el taco de flyers para apuntar. '}
+  if(has(p,'mercado')){tom('spawn',1.3,'📣 Jubilados del mercado: +30 %');relv('abu',4);t+='Las señoras del mercado te pellizcan la cara y prometen venir. '}
+  if(has(p,'discoteca')){tom('fan',1.8,'📣 Fiesteros con resaca');hp(-5);t+='La gente de la disco usa tus flyers como abanico. Algunos vendrán… a desayunar. '}
+  if(has(p,'puerta')){relv('r0',-15);RUN.riv[0].hp=Math.max(0,RUN.riv[0].hp-8);tom('spawn',1.3,'😈 Clientes robados: +30 %');t+=`${R3()[0][2]} sale gritando y te persigue con un rodillo. Merece la pena. `}
+  if(has(p,'foto')){pop(4);t+='Tu foto acaba pegada en la nevera de medio barrio.'}else if(has(p,'Paint')){t+='Tu dibujo es tan malo que se hace viral.';pop(3)}else if(has(p,'2x1')){tom('spawn',1.2,'🎟️ Cupones 2x1: +20 % clientes');tom('money',.9,'🎟️ 2x1: −10 % por plato');t+='Vienen en manada con el cupón. Algunos traen 14.'}else{tom('tur',1.6,'😂 El meme del gato atrae turistas');t+='El gato con gorro se convierte en tu mascota oficial.'}return t}]);
+deep('course','📚 Curso de cocina',[
+ {e:'👨‍🏫',t:'¿Qué curso haces?',o:[['🍣','Cocina japonesa con un maestro de Osaka','Precisión'],['🧁','Repostería extrema','Azúcar en vena'],['⚡','Cocina rápida para ansiosos','Velocidad'],['📈','Gestión de restaurantes','Aburrido pero útil']]},
+ {e:'🪑',t:'En mitad de la clase…',o:[['📝','Atiendes como nunca'],['😴','Te quedas dormido/a encima de la masa'],['😏','Ligas con el profe'],['🔥','Prendes fuego a una sartén sin querer']]}],
+ (p)=>['📚','Clase terminada',()=>{const v=has(p,'japonesa')?1.3:has(p,'rápida')?1.45:has(p,'Repostería')?1.2:1.15;let t='';
+  if(has(p,'Atiendes')){tom('cook',v,`📚 Cocina +${Math.round((v-1)*100)} %`);t='Te sacas un diploma con un 10. Tus cocineros te miran con respeto.'}
+  else if(has(p,'dormido')){tom('cook',1.08,'📚 Algo aprendiste: +8 %');t='Te despiertas con la cara llena de harina y la marca del rodillo en la frente.'}
+  else if(has(p,'profe')){tom('cook',v*.95,'📚 Cocina mejor (y más feliz)');hap(10);need('soc',20);t='No aprendes mucho de cocina, pero el profe te da su número «para dudas».'}
+  else{hp(-6);tom('cook',1.05,'📚 Aprendes a no quemar cosas');t='Los bomberos llegan en 4 minutos. El profe te pone un 3 y un extintor de regalo.'}
+  if(has(p,'Gestión'))tom('money',1.15,'📈 Mejor gestión: +15 % por plato');return t}]);
+deep('social','📱 Campaña en redes',[
+ {e:'📱',t:'¿En qué red social?',o:[['🎵','TikTok','Caos y bailes'],['📸','Instagram','Fotos bonitas'],['💼','LinkedIn','«Emocionado de anunciar…»'],['👨‍👩‍👧','El grupo de WhatsApp de la familia','Público cautivo']]},
+ {e:'💡',t:'¿Qué tipo de contenido?',o:[['🍳','Una receta paso a paso'],['🧨','Una polémica: «la paella con chorizo es la mejor»'],['💃','Un baile con tu cocinero'],['🎁','Un sorteo de una cena gratis']]}],
+ (p)=>['📱','Campaña lanzada',()=>{let t='';const m=has(p,'TikTok')?1.3:has(p,'Instagram')?1.2:has(p,'LinkedIn')?.9:1.1;
+  if(has(p,'polémica')){if(Math.random()<.5){pop(10);tom('tur',2.2*m,'🧨 Polémica viral: turistas x2');t='Medio país te insulta, el otro medio viene a probar la paella. Ganas igual.'}else{rep(-8);pop(4);t='Te cancelan en 40 minutos. Tu abuela te pide que borres «eso».'}}
+  else if(has(p,'baile')){pop(6);tom('fan',2*m,'💃 Fans de tu baile');t='Tu cocinero baila mejor que tú. Ahora él tiene más seguidores.'}
+  else if(has(p,'sorteo')){tom('spawn',1.4*m,'🎁 Sorteo: +40 % clientes');t='Participan 3.000 personas. Le toca a tu primo. Nadie se lo cree.'}
+  else{tom('tur',1.6*m,'🍳 Receta viral: turistas');t='La receta funciona tan bien que la gente viene a comprobar si la haces igual.'}
+  if(has(p,'LinkedIn'))t+=' En LinkedIn te felicitan 4 personas por «tu nueva etapa profesional».';if(has(p,'WhatsApp')){relv('abu',6);t+=' Tu tía reenvía la campaña a 47 grupos.'}return t}]);
+deep('market','🛒 Mercado de madrugada',[
+ {e:'🛒',t:'Son las 5 de la mañana. ¿A qué puesto vas?',o:[['🐟','Al pescadero que grita mucho'],['🍅','A la frutería de la señora Encarna'],['🥩','Al carnicero que parece un luchador'],['🕶️','A un señor con gabardina que vende «género especial»','Mercado negro']]},
+ {e:'💬',t:'¿Cómo negocias?',o:[['😤','Regatear sin piedad'],['💶','Pagar lo que pida'],['😘','Ligar con el/la tendero/a'],['😭','Llorar y contar tu vida']]}],
+ (p)=>['🛒','Compra hecha',()=>{let t='';hp(-4);let q=has(p,'especial')?(Math.random()<.5?1.5:.7):1.25;
+  if(has(p,'Regatear')){gain(ECO(3));t='Regateas tan fuerte que el tendero acaba pagándote a ti. '}else if(has(p,'Ligar')){need('soc',20);q+=.05;t='Te llevas el mejor género y un número de teléfono escrito en una servilleta. '}else if(has(p,'Llorar')){q+=.1;t='Le cuentas tu vida durante 40 minutos. Llora contigo y te regala media caja. '}else{lose(ECO(3));t='Pagas sin rechistar. El tendero te mira con lástima. '}
+  if(has(p,'especial'))t+=q>1?'El «género especial» resulta ser trufa blanca de verdad. ¡Jackpot!':'El «género especial» eran patatas pintadas de dorado. Estafa.';
+  tom('money',q,`🛒 Producto ${q>1?'top':'cutre'}: ${q>1?'+':'−'}${Math.round(Math.abs(q-1)*100)} % por plato`);return t}]);
+// ---------- RIVALES ----------
+CARDS.find(c=>c.id==='spy').f=()=>{const j=rj(),r=R3()[j];story('🕵️ Espionaje',[
+ {e:'🥷',t:`¿Cómo te cuelas en ${r[0]}?`,o:[['🛵','Disfrazado/a de repartidor'],['🌬️','Por el conducto de ventilación','Muy de película'],['🧐','Fingiendo ser crítico gastronómico'],['🐕','Dentro de un disfraz de perro']]},
+ {e:'📂',t:'Ya estás dentro. ¿Qué robas?',o:[['📖','Su libro de recetas secretas'],['📋','Su lista de proveedores'],['🧂','Su salero de la suerte'],['📸','Fotos de su cocina para denunciarle']]},
+ {e:'😱',t:`¡${r[2]} te ha visto!`,o:[['🏃','Huir saltando por la ventana'],['🎭','Inventar una excusa absurda'],['🙋','Pedirle trabajo'],['💃','Ponerte a bailar para distraer']]}],
+ p=>{const v=p.map(x=>x[1]),ok=Math.random()<(v[0].includes('ventilación')?.45:v[0].includes('perro')?.7:.6)+(v[2].includes('bailar')?.1:0);const rv=RUN.riv[j];
+  res(ok?'🕵️':'🚨',ok?'¡Misión cumplida!':'¡Te han pillado!',()=>{let t='';if(ok){const dm=v[1].includes('recetas')?18:v[1].includes('proveedores')?12:v[1].includes('salero')?8:14;rv.hp=Math.max(0,rv.hp-dm);rv.promo=0;t=`Te llevas ${v[1].toLowerCase().replace(/^su /,'su ')} sin que nadie se entere del todo. ${r[0]} pierde ${dm} de vida. `;
+    if(v[1].includes('salero'))t+=`Sin su salero de la suerte, ${r[2]} está hundido/a. `;if(v[1].includes('Fotos')){tom('spawn',1.2,'📸 Denuncia a tu rival: +20 %');t+='Le mandas las fotos a sanidad. '}}
+   else{relv('r'+j,-20);RUN.fame=Math.max(0,RUN.fame-8);rep(-6);t=`${r[2]} te pilla con las manos en la masa. `}
+   t+=v[2].includes('ventana')?(ok?'Saltas por la ventana como un ninja.':'Saltas por la ventana… a un contenedor de basura.'):v[2].includes('excusa')?'Le dices que eres inspector de croquetas. Casi cuela.':v[2].includes('trabajo')?(Math.random()<.5?'¡Te contrata a media jornada! Ahora trabajas para tu rival los martes.':'Te echa a escobazos.'):'Bailas como si no hubiera un mañana. Te aplaude y luego te echa.';return t})})};
+CARDS.find(c=>c.id==='sab').f=()=>{const j=rj(),r=R3()[j];story('🐀 Sabotaje',[
+ {e:'😈',t:`¿Cómo saboteas ${r[0]}?`,o:[['🪳','Soltar 40 cucarachas de juguete'],['🧂','Cambiarle la sal por azúcar'],['🐐','Soltar una cabra dentro del local'],['🎵','Ponerle reguetón a todo volumen en la puerta']]},
+ {e:'🕶️',t:'¿Y tu coartada?',o:[['👵','«Estaba con mi abuela»','Ella te cubrirá… ¿no?'],['🎥','Grabarte en otro sitio con la hora','Coartada perfecta'],['🤷','No tener coartada','Vivir al límite']]}],
+ p=>{const v=p.map(x=>x[1]),caught=Math.random()<(v[1].includes('No tener')?.5:v[1].includes('abuela')?.25:.12);res(caught?'🚔':'🐀',caught?'¡Te han descubierto!':'Sabotaje perfecto',()=>{let t=`Opción: ${v[0].toLowerCase()}. `;
+  if(caught){rep(-20);relv('r'+j,-30);lose(ECO(10));return t+(v[1].includes('abuela')?'La abuela te delata en 3 segundos: «Mi nieto/a nunca viene a verme».':'Te pillan. Multa y vergüenza en el periódico del barrio.')}
+  tom('shut'+j,1,`🐀 ${r[0]} sin clientes un rato`);rep(-12);relv('r'+j,-15);if(v[0].includes('cabra'))t+='La cabra se come el menú y la cortina. Nadie entra.';else if(v[0].includes('azúcar'))t+='Mañana su gazpacho sabrá a natillas. Nadie entenderá nada.';else if(v[0].includes('reguetón'))t+='Los clientes huyen de su puerta… o se ponen a perrear. Depende.';else t+='Los clientes gritan. Las cucarachas de juguete se quedan quietas, pero nadie se fija.';return t})})};
+CARDS.find(c=>c.id==='beer').f=()=>{const j=rj(),r=R3()[j];story('🍻 Cañas con el enemigo',[
+ {e:'🍺',t:`Quedas con ${r[2]}. ¿De qué habláis?`,o:[['⚽','De fútbol'],['🗣️','Cotilleos del barrio'],['🫂','De sus problemas personales'],['🤝','Proponerle una alianza contra el otro rival']]},
+ {e:'💸',t:'Llega la cuenta…',o:[['💶','Invitas tú'],['🙄','Que pague él/ella'],['💪','Os la jugáis a un pulso'],['🏃','Simpa: salís corriendo los dos']]}],
+ p=>{const v=p.map(x=>x[1]);res('🍻','Fin de la noche',()=>{let rl=v[0].includes('problemas')?20:12,t='';need('soc',30);
+  if(v[1].includes('Invitas')){lose(ECO(2));rl+=8}if(v[1].includes('pulso')){Math.random()<.5?(rl+=5,t+='Ganas el pulso. '):(t+='Pierdes el pulso y pagas igual. ')}if(v[1].includes('Simpa')){rep(-5);rl+=10;t+='Corréis juntos tres calles riéndoos. Eso une mucho. '}
+  relv('r'+j,rl);const L=LF();if(v[0].includes('alianza')&&(L.rel['r'+j]||0)>=30){const o=1-j;if(RUN.riv[o]&&RUN.riv[o].open){RUN.riv[o].hp=Math.max(0,RUN.riv[o].hp-15);t+=`Hacéis un pacto contra ${R3()[o][0]}: pierde 15 de vida. `}}
+  if((L.rel['r'+j]||0)>=50){RUN.riv[j].price+=.12;t+=`${r[2]} promete subir sus precios para dejarte clientes. «Pero calla».`}else t+=`${r[2]} se despide con un abrazo raro. Quizá no sea tan mala persona.`;return t})})};
+// ---------- AMOR Y FAMILIA ----------
+CARDS.find(c=>c.id==='ring').f=()=>{const L=LF(),lv=L.love;story('💍 La pedida',[
+ {e:'📍',t:`¿Dónde le pides matrimonio a ${lv.n}?`,o:[['🍽️','En tu restaurante, delante de todos','Presión máxima'],['🌅','En la playa al atardecer','Clásico'],['🎤','En un karaoke, cantando','Valiente'],['🍤','Escondiendo el anillo en una croqueta','Peligro de asfixia']]},
+ {e:'💍',t:'¿Qué anillo?',o:[['🪙',`Uno barato · ${fmtM(ECO(10))} €`],['💎',`Uno carísimo · ${fmtM(ECO(40))} €`],['👵','El de la abuela','Gratis y con historia']]}],
+ p=>{const v=p.map(x=>x[1]);const c=v[1].includes('barato')?ECO(10):v[1].includes('carísimo')?ECO(40):0;if(RUN.money<c)return toast('No tienes para ese anillo');lose(c);
+  const ch=.65+(v[1].includes('carísimo')?.15:0)+(v[1].includes('abuela')?.2:0)+(v[0].includes('playa')?.05:0)-(v[0].includes('restaurante')?.1:0);
+  if(Math.random()<ch)res('💍','¡¡HA DICHO QUE SÍ!!',()=>{lv.lv=3;hap(25);logL('💍','Te prometes con '+lv.n+'.');if(v[1].includes('abuela'))relv('abu',15);return(v[0].includes('croqueta')?`${lv.n} casi se traga el anillo, tose, y entre lágrimas dice que SÍ.`:v[0].includes('karaoke')?'Cantas fatal, pero con tanto sentimiento que todo el bar llora.':v[0].includes('restaurante')?'Todo el restaurante aplaude. Un cliente se desmaya de la emoción.':'El sol se pone justo cuando dice SÍ. Perfecto.')+(v[1].includes('abuela')?' La abuela llora: «Era de tu abuelo Paco».':'')});
+  else res('🙈','Ha dicho que… «lo tengo que pensar»',()=>{hap(-15);return v[0].includes('restaurante')?'Delante de 40 clientes. Uno te da una palmadita. Otro te pide la cuenta.':'Te quedas con el anillo y la cara de tonto/a.'})})};
+CARDS.find(c=>c.id==='wed').f=()=>{const L=LF(),lv=L.love,c0=ECO(50);if(RUN.money<c0)return toast('La boda cuesta '+fmtM(c0)+' €');story('💒 Tu boda',[
+ {e:'⛪',t:'¿Dónde os casáis?',o:[['🍽️','En tu restaurante','Banquete en casa'],['🏖️','En la playa','Arena por todas partes'],['🎰','En Las Vegas, con un Elvis','Exprés'],['🏛️','En el ayuntamiento, rapidito','Práctico']]},
+ {e:'👥',t:'¿A quién invitas?',o:[['💑','Solo familia, íntima'],['🏘️','Al barrio entero'],['😈','A los rivales también','Que vean tu felicidad']]},
+ {e:'🎤',t:'¿Quién da el discurso?',o:[['😭','Tú, llorando sin parar'],['😂','Tú, con chistes malos'],['👵','La abuela Lola','Peligro']]}],
+ p=>{const v=p.map(x=>x[1]);lose(c0);res('💒','¡VIVAN LOS NOVIOS!',()=>{lv.lv=4;hap(35);pop(8);logL('💒','Te casas con '+lv.n+'.');let t=`Os casáis ${v[0].toLowerCase().replace('en ','en ')} con ${v[1].toLowerCase()}. `;
+  if(v[0].includes('restaurante'))tom('spawn',1.8,'💒 Invitados de la boda: +80 % clientes');if(v[0].includes('Vegas')){pop(8);t+='Elvis llora más que vosotros. '}
+  if(v[1].includes('barrio'))RUN.fame+=15;if(v[1].includes('rivales')){relv('r0',20);relv('r1',20);t+=`${R3()[0][2]} acaba bailando con la abuela. `}
+  t+=v[2].includes('abuela')?'La abuela cuenta en el discurso cómo te cagaste encima en tu primera comunión. Ovación.':v[2].includes('chistes')?'Nadie se ríe de tus chistes, pero todos se ríen de ti. Vale igual.':'Lloras tanto que tienen que traerte otra servilleta. Y otra. Y un mantel.';return t})})};
+CARDS.find(c=>c.id==='baby').f=()=>{const L=LF();if(L.kids.length>=5)return;story('👶 Ampliar la familia',[
+ {e:'👶',t:`¿Cómo ampliáis la familia ${L.love.n} y tú?`,o:[['❤️','De la forma tradicional','Fundido a negro'],['📄','Adoptando','Papeleo infinito, amor infinito'],['🦩','Encargándolo a la cigüeña','Envío en 3-5 días laborables']]},
+ {e:'📛',t:'¿Cómo se va a llamar?',o:()=>[...KN].sort(()=>Math.random()-.5).slice(0,3).map(k=>[k[1],k[0]]).concat([['🍤','Croqueta','Para que herede el negocio']])}],
+ p=>{const v=p.map(x=>x[1]),ok=v[0].includes('Adoptando')?.95:.75;if(Math.random()>ok)return res('🍼','Esta vez no…',()=>{hap(-4);return'No ha habido suerte este mes. Os consoláis con croquetas.'});
+  const k0=KN.find(k=>k[0]===v[1])||['Croqueta','👶'];const t=pk(Object.keys(TRAITS));L.kids.push({n:v[1],e:k0[1],born:L.day,t,rel:60,work:false});
+  res('👶',`¡Bienvenido/a, ${v[1]}!`,()=>{hap(25);need('soc',30);logL('👶','Llega '+v[1]+' a la familia.');return(v[0].includes('cigüeña')?'La cigüeña llega con retraso y sin albarán, pero el bebé está perfecto. ':v[0].includes('Adoptando')?'Tras 400 formularios, por fin. Es amor a primera vista. ':'')+`Se le ve ${TRAITS[t][1].toLowerCase()} desde el primer día. La abuela ya le ha tejido un delantal.`})})};
+CARDS.find(c=>c.id==='kids').f=()=>{const L=LF();story('🧸 Tarde con los niños',[
+ {e:'🧸',t:'¿Qué hacéis hoy?',o:[['🛝','Ir al parque'],['🎮','Videojuegos en el sofá'],['📚','Hacer los deberes juntos','Matemáticas de 3º'],['🍳','Enseñarles a cocinar en el restaurante']]},
+ {e:'⚡',t:'De repente…',o:[['🤕','Uno se cae y llora'],['🐶','Aparece un perro y quieren quedárselo'],['💩','Pañal de emergencia','O algo peor'],['🤣','Os entra un ataque de risa a todos']]}],
+ p=>{const v=p.map(x=>x[1]);res('🧸','Tarde en familia',()=>{let r=12,t='';if(v[0].includes('deberes')){r=6;t+='No sabes hacer una división. Tu hijo/a te la explica. '}if(v[0].includes('cocinar')){tom('cook',1.1,'🧸 Los niños ayudan: +10 %');t+='Acaban con harina hasta en las orejas, pero las croquetas salen buenas. '}
+  if(v[1].includes('perro')){hap(12);t+='Os quedáis el perro. Se llama Rebozado. ';L.f=L.f||{};L.f.dog=1}else if(v[1].includes('cae')){r+=4;t+='Le curas con una tirita de dinosaurios. Eres su héroe. '}else if(v[1].includes('Pañal')){need('hig',-15);t+='Prefieres no hablar de lo que ha pasado. '}else{r+=6;t+='Os reís tanto que os duele la barriga. '}
+  L.kids.forEach(k=>k.rel=cl(k.rel+r,-100,100));need('soc',25);hap(8);return t})})};
+// ---------- OCIO ----------
+deep('party','🎉 Noche de fiesta',[
+ {e:'🪩',t:'¿Dónde sales?',o:[['🪩','A la discoteca de moda'],['🛥️','A una fiesta en un barco'],['🏭','A una rave en una nave industrial'],['💒','A colarte en una boda de desconocidos','Comida gratis']]},
+ {e:'🍹',t:'¿Qué haces allí?',o:[['💃','Bailar hasta el amanecer'],['🍹','Beber más de la cuenta'],['😏','Ligar a lo loco'],['🎤','Secuestrar el micro del DJ']]},
+ {e:'🌅',t:'Son las 6 de la mañana…',o:[['🏠','Volver a casa como una persona normal'],['🔁','Irte a un after'],['🍩','Churros con chocolate'],['🚕','Despertarte en un taxi en otra ciudad']]}],
+ (v)=>['🎉','¡Qué noche!',()=>{hap(18);hp(-6);let t='';const L=LF();IL().f.risk=(IL().f.risk||0)+1;
+  if(v[0].includes('boda')){need('ham',40);t+='Te comes medio banquete. La novia te saca a bailar pensando que eres primo/a del novio. '}
+  if(v[1].includes('Beber')){hp(-6);t+='Bebes tanto que llamas a tu ex. Dos veces. '}
+  if(v[1].includes('Ligar')&&!L.love&&Math.random()<.5){const m=pk(LOV2.filter(likes));L.love={n:m[0],e:m[1],bio:m[3],lv:1,x:0};t+=`Conoces a ${m[0]} (${m[3]}). Os dais el número. `}
+  if(v[1].includes('micro')){pop(5);t+='Cantas «Paquito el chocolatero». Toda la discoteca te sigue. '}
+  if(L.car&&Math.random()<.3){const c=CELEBS[L.car];if(!L.friends.includes(c[0])){L.friends.push(c[0]);L.rel[c[0]]=20;t+=`¡Coincides con ${c[2]}, ${c[3]}! Os hacéis amigos. `}}
+  t+=v[2].includes('after')?'El after dura hasta las 2 de la tarde. No recuerdas nada.':v[2].includes('Churros')?'Los mejores churros de tu vida. Lloras un poquito.':v[2].includes('taxi')?'Te despiertas en un taxi en Zaragoza. Te cuesta un riñón volver.':'Vuelves a casa como una persona responsable. Tu madre estaría orgullosa.';
+  if(v[2].includes('taxi'))lose(ECO(6));if(v[2].includes('after'))hp(-8);return t}]);
+deep('gym','🏋️ Gimnasio',[
+ {e:'🏋️',t:'¿Qué haces hoy?',o:[['🏋️','Pesas como si no hubiera mañana'],['💃','Clase de zumba con señoras','Ellas mandan'],['🔥','Crossfit','Hay que decirlo a todo el mundo'],['🚴','Spinning a oscuras con luces de colores']]},
+ {e:'💭',t:'¿Y tu actitud?',o:[['💯','Darlo todo'],['🤳','Hacerte selfies en el espejo'],['😏','Mirar a la gente guapa'],['🍫','Merendar un bollo en la máquina expendedora']]}],
+ (v)=>['🏋️','Entrenamiento',()=>{let t='';hp(v[1].includes('Darlo')?16:v[1].includes('bollo')?2:8);need('hig',-25);
+  if(v[0].includes('zumba')){need('soc',25);t+='Las señoras de zumba te adoptan. Ahora estás en su grupo de WhatsApp. '}
+  if(v[0].includes('Crossfit')){pop(3);t+='Le cuentas a todo el mundo que haces crossfit. Todo el mundo. '}
+  if(v[1].includes('selfies')){pop(4);t+='Subes 14 fotos. Una se hace viral por el señor que sale detrás en calzoncillos.'}else if(v[1].includes('guapa')){need('soc',10);t+='Te pillan mirando. Disimulas haciendo una sentadilla rarísima.'}else if(v[1].includes('bollo'))t+='Quemas 40 calorías y te comes 600. Equilibrio.';else t+='Al día siguiente no puedes ni levantar un tenedor. Merece la pena.';return t}]);
+deep('lab','🧪 Ensayo clínico',[
+ {e:'🧪',t:'¿Qué producto pruebas?',o:[['🥛','Un yogur «revolucionario»'],['💊','Una pastilla para no dormir nunca'],['🧴','Una crema para que crezca el pelo… y el bigote'],['🍬','Un caramelo que «potencia la simpatía»']]},
+ {e:'📄',t:'Te dan un contrato de 40 páginas.',o:[['🔍','Leer toda la letra pequeña'],['✍️','Firmar sin leer'],['🤝','Negociar más dinero']]}],
+ (v)=>['🧪','Ensayo terminado',()=>{IL().f.risk=(IL().f.risk||0)+1;let m=v[1].includes('Negociar')?16:12;const g=gain(ECO(m));let t=`Te pagan ${fmtM(g)} €. `;
+  if(v[1].includes('letra')){t+='En la página 38 pone que cedes los derechos de tu cara. Tachas esa línea. Nadie se da cuenta.'}
+  else{const k=v[0].includes('yogur')?'verso':v[0].includes('pastilla')?'hipo':v[0].includes('crema')?'bigo':'eco';if(!LF().ill){LF().ill={k,d:2+rint(2)};t+=`Efecto secundario: te contagias de ${ILLS[k].n.toLowerCase()}. ${ILLS[k].d}`}else t+='Efecto secundario: ves a todo el mundo con bigote durante 3 horas.'}
+  if(v[0].includes('simpatía'))need('soc',30);return t}]);
+deep('sleep','😴 Hora de dormir',[
+ {e:'🛏️',t:'¿Cómo te vas a dormir?',o:[['📖','Leyendo un libro'],['🧘','Meditando 10 minutos'],['📱','Viendo vídeos «solo 5 minutos»'],['🎧','Escuchando lluvia en YouTube']]}],
+ (v)=>['😴','Buenas noches',()=>{if(v[0].includes('vídeos')){hp(4);hap(5);return'Son las 3:47. Has visto 200 vídeos de gente arreglando alfombras. No te arrepientes.'}
+  hp(15);hap(5);need('hig',5);return v[0].includes('libro')?'Lees dos páginas y te duermes con el libro en la cara.':v[0].includes('Meditando')?'Meditas 10 minutos. Piensas en croquetas 9 de ellos.':'Sueñas que eres una gota de lluvia que cae en una sartén. Raro, pero relajante.'}]);
+deep('eat','🍝 La cena',[
+ {e:'🍳',t:'¿Qué cenas?',o:[['🧑‍🍳','Cocinas tú algo elaborado'],['📦','Pides a domicilio… a tu propio restaurante'],['👵','Te presentas en casa de la abuela','Por sorpresa'],['🥣','Cereales a las 23:58']]},
+ {e:'📺',t:'¿Cómo cenas?',o:[['📺','Viendo una serie'],['🕯️','Con velas, como en una peli'],['🧍','De pie en la cocina'],['📞','En videollamada con alguien']]}],
+ (v)=>['🍝','Cena',()=>{need('ham',v[0].includes('Cereales')?25:55);let t='';if(v[0].includes('abuela')){relv('abu',8);need('soc',20);t+='La abuela te pone tres platos y un táper para mañana. '}if(v[0].includes('domicilio')){t+='Te cobras el envío a ti mismo/a. Tu repartidor eres tú. '}
+  if(v[1].includes('videollamada'))need('soc',20);if(v[1].includes('velas'))hap(6);t+=v[1].includes('serie')?'Ves 4 capítulos seguidos. Netflix te pregunta si sigues ahí.':v[1].includes('pie')?'Comes de pie como un animal salvaje. Rápido y eficaz.':v[1].includes('velas')?'Cena a la luz de las velas… tú solo/a. Muy elegante, igual.':'Hablas con la boca llena. Te cuelgan.';return t}]);
+deep('games','🎮 Noche de videojuegos',[
+ {e:'🎮',t:'¿A qué juegas?',o:[['🔫','Shooter online con niños que insultan'],['🏰','RPG de 200 horas'],['🧑‍🍳','Un simulador de restaurantes','Irónico'],['🚗','Carreras con tu grupo de amigos']]},
+ {e:'⏰',t:'Son las 2 de la mañana…',o:[['🛑','Apagar como un adulto'],['🔁','«Una partida más»'],['😡','Romper el mando de la rabia']]}],
+ (v)=>['🎮','Game over',()=>{need('div',v[1].includes('Una partida')?65:45);if(v[0].includes('amigos'))need('soc',30);let t='';if(v[1].includes('Una partida')){hp(-6);t+='«Una partida más» se convierten en 14. Amanece. '}if(v[1].includes('Romper')){lose(ECO(4));t+='Rompes el mando. Te compras otro al día siguiente. '}
+  t+=v[0].includes('simulador')?'Tu restaurante virtual va mejor que el real. Te deprime un poco.':v[0].includes('Shooter')?'Un niño de 11 años te dice cosas que no sabías ni que existían.':v[0].includes('RPG')?'Llevas 3 horas eligiendo el peinado de tu personaje.':'Ganas una carrera y lo celebras como si fuera un Mundial.';return t}]);
+deep('friends','🫂 Plan con amigos',[
+ {e:'🫂',t:'¿Qué plan hacéis?',o:[['🎤','Karaoke'],['🎳','Bolera'],['🍻','Terraceo hasta que os echen'],['🏕️','Acampada improvisada en la playa']]},
+ {e:'💬',t:'En mitad del plan…',o:[['🗣️','Alguien cuenta un secreto muy fuerte'],['💔','Un amigo llora por su ex'],['📸','Fotos para el recuerdo'],['🤯','Discusión épica sobre si la tortilla lleva cebolla']]}],
+ (v)=>['🫂','Noche con el grupo',()=>{need('soc',55);need('div',30);let t='';if(v[0].includes('Acampada')){need('hig',-25);t+='Dormís en la arena. Te despiertas con un cangrejo en la oreja. '}
+  t+=v[1].includes('secreto')?'El secreto es tan fuerte que juráis no contarlo. Mañana lo sabe todo el barrio.':v[1].includes('ex')?'Le consuelas toda la noche. Al final os reís de todo. Para eso están los amigos.':v[1].includes('Fotos')?'Sale una foto en la que pareces una patata. Es tu nueva foto de perfil.':'La discusión dura 3 horas. Nadie cambia de opinión. Fue precioso.';if(v[1].includes('secreto'))pop(2);return t}]);
+deep('shower','🛁 Ducha',[
+ {e:'🛁',t:'¿Qué tipo de ducha?',o:[['🎤','Concierto completo en la ducha'],['🫧','Baño de espuma con patito'],['🥶','Ducha fría para espabilar'],['🧖','Mascarilla, exfoliante y la rutina completa']]}],
+ (v)=>['🛁','Recién duchado/a',()=>{need('hig',65);if(v[0].includes('fría')){hp(5);return'Gritas tan fuerte que el vecino llama a la puerta para ver si estás bien.'}if(v[0].includes('rutina')){pop(2);hap(6);return'Sales del baño brillando. Literalmente. Te pasaste con el aceite.'}hap(5);return v[0].includes('Concierto')?'Das un concierto entero. Los vecinos aplauden por el patio de luces.':'El patito y tú tenéis una conversación muy profunda.'}]);
+// la abuela: primero eliges de qué habláis, luego la IA (o el guion) responde
+CARDS.find(c=>c.id==='abu').f=()=>story('👵 Cena con la abuela',[{e:'👵',t:'¿De qué le hablas a la abuela Lola?',o:[['🧠','Le pides consejo sobre tu vida'],['🗣️','Cotilleos del barrio'],['👴','Le preguntas por el abuelo Paco'],['💶','Le pides dinero «para el negocio»']]}],
+ p=>{const v=p[0][1];let g=0;aiRes('👵','La abuela dice…',`La abuela Lola (cariñosa, cotilla, muy graciosa) responde a esto: «${v}». Relaciónalo con la vida actual del protagonista.`,()=>{relv('abu',v.includes('dinero')?2:10);need('ham',40);need('soc',20);hap(6);g=gain(ECO(v.includes('dinero')?12:3))},
+  ()=>(v.includes('consejo')?'«Cariño, un cliente contento trae a dos amigos. Y uno enfadado, a diez enemigos.»':v.includes('Cotilleos')?`«${R3()[0][2]} tiene un amante. Lo sé porque soy yo.»`:v.includes('Paco')?'«Tu abuelo escondía la receta por el barrio… algún día la encontrarás.»':'«¿Otra vez? Toma, pero no se lo digas a tu madre.»')+` Te mete ${fmtM(g)} € en el bolsillo.`)});
 
 </script>
 <script>
