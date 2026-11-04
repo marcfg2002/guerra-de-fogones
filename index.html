@@ -308,6 +308,11 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .mem button{aspect-ratio:1;border-radius:12px;background:linear-gradient(#ff9d5c,#ff7a2e);border:3px solid #23262f;box-shadow:0 3px 0 #23262f;font-size:0}
 .mem button span{opacity:0}.mem button.up{background:#fff;font-size:30px}.mem button.up span{opacity:1}.mem button.ok{background:#c8f5cd}
 .choice button[disabled]{opacity:.5}
+.goalc{position:absolute;left:64px;right:64px;top:60px;z-index:4;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.93);border-radius:12px;padding:4px 8px;box-shadow:0 2px 0 rgba(0,0,0,.15);font-weight:800;font-size:12px;cursor:pointer}
+.goalc .gt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.goalc .dth{font-size:17px}.goalc .gh{font-family:var(--f-d);font-size:12px}
+.seg2{display:flex;gap:4px;background:#f0e2c4;border-radius:12px;padding:3px}.seg2 button{flex:1;padding:8px 2px;border-radius:9px;font-family:var(--f-d);font-size:13px;color:#8a6a40}.seg2 button.on{background:#fff;color:#23262f;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.slot em{position:absolute;top:2px;left:4px;font-style:normal;font:900 10px var(--f-b);color:#fff;background:var(--rc);border-radius:6px;padding:0 4px}
+.dthc{background:#fff;border-radius:12px;padding:6px 10px;font-weight:800;font-size:15px}.dthc small{display:block;font-size:12px;color:#7a6a50}
 </style>
 <style>body:has(.modal:not([hidden])) .dlg{visibility:hidden}</style>
 </head>
@@ -695,7 +700,7 @@ function buildStatic(){if(staticG){scene.remove(staticG)}
       [[x0,dx-gap],[dx+gap,x1]].forEach(([a,b])=>{A(mesh(G.box,'#5b5f6b',(a+b)/2,.12,fz,b-a,.24,.28));A(mesh(G.box,'#5b5f6b',(a+b)/2,1.25,fz,b-a,.12,.28));
         const n=Math.max(1,Math.round((b-a)/1.6));for(let k=0;k<=n;k++)A(mesh(G.box,'#5b5f6b',a+(b-a)*k/n,.68,fz,.1,1.2,.28));
         const gl=mesh(G.box,mat('#7cc9c0',.72),(a+b)/2,.7,fz,b-a,1,.12);gl.castShadow=false;A(gl)});
-      A(mesh(G.box,'#3a3d46',dx,.02,fz,gap*2,.04,.5));
+      {const th=mesh(G.box,'#d9cdb6',dx,.1,fz,gap*2,.02,.5);th.castShadow=false;A(th)}
       // plantas
       [[x0+.45,bz-(g.dir>0?.45:-.45)],[x1-.45,bz-(g.dir>0?.45:-.45)]].forEach(([px,pz])=>{A(mesh(G.box,'#f4e9d4',px,.25,pz,.5,.5,.5));for(let k=0;k<5;k++){const lf=mesh(new THREE.ConeGeometry(.12,.9,4),'#4caf50',px+(k-2)*.07,.85,pz+((k%2)-.5)*.1,1,1,1);lf.rotation.z=(k-2)*.25;A(lf)}});
       // mesas
@@ -1063,7 +1068,7 @@ function openSet(){openModal(`<h2>Ajustes</h2>
   <button class="tog ${S.music?'on':''}" data-m="tMusic"><span>🎵 Música</span><i></i></button>
   <button class="tog ${S.sound?'on':''}" data-m="tSound"><span>🔊 Sonido</span><i></i></button>
   <button class="cb b" data-m="help">CÓMO SE JUEGA</button>
-  <p style="font-size:12px;color:#8a6a40">Versión 11 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
+  <p style="font-size:12px;color:#8a6a40">Versión 12 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
   <button class="lnk" style="color:#d8352a" data-m="wipe">Borrar partida</button>
   <button class="cb" data-m="close">SEGUIR</button>`)}
 MA.tMusic=()=>{S.music=!S.music;music();openSet();save()};MA.tSound=()=>{S.sound=!S.sound;music();openSet();save()};
@@ -1528,7 +1533,7 @@ const _dayTick=dayTick;dayTick=function(dt){_dayTick(dt);const L=L2();if(L.day==
   if(L.rent>0){const r=gain(L.rent);lines.push('🏠 Alquileres: +'+fmtM(r)+' €')}
   const ic=car('infl').lv;if(ic>0){const r=gain(ECO(2)*ic*ic);lines.push('📱 Patrocinios: +'+fmtM(r)+' €')}
   if(L.love&&L.love.lv>=2)hap(4);hap(-3);if(L.pop>8)pop(-1.5);
-  if(L.day%6===0){L.age++;lines.push('🎂 ¡Cumples '+L.age+' años!');logL('🎂','Cumples '+L.age+' años.')}
+  if(L.day%2===0){L.age++;lines.push('🎂 ¡Cumples '+L.age+' años!');logL('🎂','Cumples '+L.age+' años.')}
   if(L.stup&&L.day>=L.stup.day){const s=L.stup;L.stup=null;const r=Math.random();
     if(r<.2)setTimeout(()=>withRes('🦄','¡LA STARTUP TRIUNFA!',()=>{gain(s.amt*12);hap(20);return`«${s.n}» la compra una multinacional. Tu primo Jonatan se compra un yate. Tú, otro.`}),800);
     else if(r<.5)setTimeout(()=>withRes('📊','La startup sobrevive',()=>{gain(s.amt*1.5);return`«${s.n}» da beneficios. Pocos, pero da.`}),800);
@@ -1874,6 +1879,124 @@ setInterval(()=>{if(document.hidden)return;applyItems();clueTick();const L=V4();
   if(vb){let b=vb.querySelector('.badge');if(ready&&!b){b=document.createElement('i');b.className='badge';b.textContent='!';vb.appendChild(b)}else if(!ready&&b)b.remove()}
 },700);
 const _dt4=dayTick;dayTick=function(dt){const d0=V4().day;_dt4(dt);if(V4().day!==d0)for(const k of V4().kids)if(k.work&&kAge(k)>=6)k.rel=cl(k.rel-(k.t==='dul'?2:5),-100,100)};
+
+// ================= VIDA 5: generaciones, salud, casa, sueños, días temáticos, objetos con niveles =================
+function V5(){const L=V4();if(L.hp==null)L.hp=100;if(L.gen==null)L.gen=1;L.anc=L.anc||[];if(L.house==null)L.house=0;if(L.dth==null)L.dth=0;return L}
+V5();
+// ---------- OBJETOS: tocar = equipar, fusión con niveles infinitos ----------
+const ival=it=>RAR[it.r].v*(1+.45*((it.lv||1)-1));
+powSum=function(){const t={};for(const it of eqItems())for(const p of it.p)(t[p]=t[p]||[]).push(ival(it));return t};
+let mergeMode=false;
+const itName=it=>it.n+((it.lv||1)>1?' · Nv '+it.lv:'');
+function doMerge(a,b){const L=I3();const p=[...new Set([...a.p,...b.p])].slice(0,5),top=a.r>=4;const wasEq=L.eq.includes(a.id)||L.eq.includes(b.id);
+  const n=mkItem(top?4:a.r+1,p);n.lv=top?(a.lv||1)+(b.lv||1):Math.max(1,Math.floor(((a.lv||1)+(b.lv||1))/2));if(top){n.e=a.e;n.n=a.n}
+  L.items=L.items.filter(i=>i!==a&&i!==b);L.eq=L.eq.filter(e=>e!==a.id&&e!==b.id);L.items.push(n);if(wasEq||L.eq.length<4)L.eq.push(n.id);return n}
+objAct=function(k,x){const L=I3();
+  if(k==='open'){openBox();return false}
+  if(k==='mode'){mergeMode=x==='1';selIt=null;sfx.tap();return true}
+  if(k==='sel'){const id=+x,it=L.items.find(i=>i.id===id);if(!it)return true;
+    if(!mergeMode){if(L.eq.includes(id))L.eq=L.eq.filter(e=>e!==id);else{if(L.eq.length>=4){toast('Máximo 4 equipados: toca uno equipado para quitarlo');return true}L.eq.push(id)}applyItems();sfx.tap();save();return true}
+    if(selIt==null||selIt===id){selIt=selIt===id?null:id;sfx.tap();return true}
+    const a=L.items.find(i=>i.id===selIt);if(!a||a.r!==it.r){selIt=id;toast('Solo se fusionan objetos de la misma rareza');return true}
+    const n=doMerge(a,it);selIt=null;applyItems();save();closeSheet();sfx.big();
+    openModal(`<div class="reveal" style="--rc:${RAR[n.r].c}"><div class="rays"></div><div class="ie">${n.e}</div></div><div class="rtag" style="background:${RAR[n.r].c}">¡FUSIÓN ${RAR[n.r].n.toUpperCase()}${n.lv>1?' NV '+n.lv:''}!</div><h2>${itName(n)}</h2><p>${n.p.map(q=>POW[q].d(ival(n))).join('<br>')}</p><button class="cb" data-m="close">¡BRUTAL!</button>`);burst(VW/2,VH*.4,30,'✨');return false}
+  if(k==='auto'){let c=0;for(;;){const g={};let pair=null;for(const it of L.items.slice().sort((a,b)=>a.r-b.r)){const key=it.r;if(g[key]){pair=[g[key],it];break}g[key]=it}if(!pair)break;doMerge(pair[0],pair[1]);c++}
+    applyItems();save();if(c){sfx.big();toast(`🔀 ${c} fusiones hechas`)}else toast('No hay parejas de la misma rareza');return true}
+  if(k==='del'){const id=+x;L.items=L.items.filter(i=>i.id!==id);L.eq=L.eq.filter(e=>e!==id);selIt=null;applyItems();gain(ECO(3));save();return true}
+  return true};
+objH=function(){const L=I3(),t=powSum();
+  let h=`<div class="it boxit"><span class="ic">🎁</span><span class="tx"><b>Cajas de regalo: ${L.boxes}</b><small>Cada 3 logros, cada 5 días, con las ⭐, con los sueños y comprando locales</small></span><button class="cb ${L.boxes?'o':'no'}" data-a="obj:open">ABRIR</button></div>`;
+  const eff=Object.keys(t).map(p=>{const v=t[p],tot=['pm','sp','ck'].includes(p)?v.reduce((a,x)=>a*(1+x),1)-1:p==='cd'?(1-itemCd())/.5*.5*2/1:v.reduce((a,x)=>a+x,0);return`<span>${POW[p].e} ${POW[p].d(p==='cd'?(1-itemCd())*2:tot)}</span>`});
+  h+=`<div class="effs"><b>Poderes activos (${L.eq.length}/4)</b>${eff.length?eff.join(''):'<span>Nada equipado</span>'}</div>`;
+  h+=`<div class="seg2"><button data-a="obj:mode:0" class="${mergeMode?'':'on'}">✋ Equipar</button><button data-a="obj:mode:1" class="${mergeMode?'on':''}">🔀 Fusionar</button><button data-a="obj:auto">⚡ Fusión auto</button></div>`;
+  h+=`<p class="note">${mergeMode?'Toca dos objetos de la misma rareza para fusionarlos. Los Míticos se fusionan subiendo de NIVEL sin límite.':'Toca un objeto para equiparlo o quitártelo (máximo 4).'}</p><div class="inv">`;
+  h+=L.items.slice().sort((a,b)=>b.r-a.r||(b.lv||1)-(a.lv||1)).map(i=>{const eq=L.eq.includes(i.id),sel=selIt===i.id,can=mergeMode&&selIt!=null&&!sel&&(L.items.find(z=>z.id===selIt)||{}).r===i.r;
+    return`<button class="slot ${eq?'eq':''} ${sel?'sel':''} ${can?'can':''}" style="--rc:${RAR[i.r].c}" data-a="obj:sel:${i.id}"><span>${i.e}</span><i>${i.p.map(p=>POW[p].e).join('')}</i>${(i.lv||1)>1?`<em>Nv${i.lv}</em>`:''}${eq?'<b>✓</b>':''}</button>`}).join('')+[...Array(Math.max(0,16-L.items.length))].map(()=>'<div class="slot empty"></div>').join('')+'</div>';
+  h+=`<p class="note">${L.items.filter(i=>L.eq.includes(i.id)).map(i=>`${i.e} <b style="color:${RAR[i.r].c}">${itName(i)}</b>: ${i.p.map(p=>POW[p].d(ival(i))).join(', ')}`).join('<br>')||''}</p>`;
+  return h};
+// ---------- DÍAS TEMÁTICOS ----------
+const DTH=[['☀️','Día normal','Nada especial. Disfruta.',{}],['🌧️','Lluvia','La gente entra a refugiarse: +20 % clientes',{sp:1.2}],['🥵','Ola de calor','Los refrescos vuelan: +25 % ganancias',{pm:1.25}],
+ ['💘','San Valentín','Parejas por todas partes: +30 % ganancias',{pm:1.3}],['⚽','Día de fútbol','Todo el barrio sale a cenar: +40 % clientes',{sp:1.4}],['😵','Lunes de resaca','Tus cocineros van lentos: −20 % velocidad',{ck:.8}],
+ ['🎉','Fiestas del barrio','¡Locura total! +30 % clientes y ganancias',{sp:1.3,pm:1.3}],['🍤','Día de la Croqueta','Nadie sabe quién lo inventó: +35 % ganancias',{pm:1.35}],['🚧','Obras en la calle','Cuesta llegar: −20 % clientes',{sp:.8}],
+ ['👽','Avistamiento OVNI','La calle se llena de curiosos: +50 % clientes',{sp:1.5}],['🧘','Día zen','Cocina tranquila y precisa: +25 % velocidad',{ck:1.25}],['🎃','Halloween','Disfraces y caramelos: +20 % de todo',{sp:1.2,pm:1.2,ck:1.2}]];
+const dmod=()=>DTH[V5().dth]?DTH[V5().dth][3]:{};
+// ---------- CASA ----------
+const HOUSES=[['🛏️','Sofá de la abuela',0],['🏚️','Piso compartido con 6 erasmus',40],['🏢','Estudio de 20 m²',120],['🏠','Piso con terraza',400],['🏡','Chalet con piscina',1500],['🏰','Mansión con mayordomo',6000],['🛥️','Yate con helipuerto',25000],['🌕','Base lunar',1e5]];
+const houseCost=()=>ECO(HOUSES[V5().house+1][2]);
+// ---------- generaciones: bonus de legado ----------
+applyItems=(function(prev){return function(){prev();const d=dmod(),g=1+.1*(V5().gen-1);S.it.pm*=(d.pm||1)*g;S.it.sp*=(d.sp||1);S.it.ck*=(d.ck||1)}})(applyItems);
+// ---------- SUEÑOS (objetivos de vida) ----------
+const GOALS=[
+ ['💘','Echarte pareja',()=>(V5().love||{}).lv>=2],['💒','Casarte',()=>(V5().love||{}).lv>=4],['👶','Tener un hijo',()=>V5().kids.length>=1],['👨‍👩‍👧‍👦','Tener 3 hijos',()=>V5().kids.length>=3],
+ ['👨‍🍳','Poner a un hijo a currar',()=>V5().kids.some(k=>k.work&&kAge(k)>=6)],['🎬','Ser secundario en una peli',()=>car('actor').lv>=3],['📱','Llegar a 10.000 seguidores',()=>car('infl').lv>=2],['🎤','Cantar en bodas',()=>car('sing').lv>=2],
+ ['🏛️','Ser concejal',()=>car('pol').lv>=3],['🏠','Mudarte a un piso con terraza',()=>V5().house>=3],['🏡','Tener chalet con piscina',()=>V5().house>=4],['⭐','Popularidad 40',()=>V5().pop>=40],
+ ['😄','Felicidad al 90',()=>V5().hap>=90],['❤️','Salud al 100 pasados los 40',()=>V5().hp>=99&&V5().age>=40],['🍀','Tener un objeto Épico',()=>I3().items.some(i=>i.r>=2)],['💎','Tener un objeto Mítico',()=>I3().items.some(i=>i.r>=4)],
+ ['👵','Abuela al 90',()=>(V5().rel.abu||0)>=90],['🤝','Hacerte amigo de un rival',()=>['mas','ken','gue'].some(k=>(V5().rel[k]||0)>=50)],['🏙️','Comprar un local rival',()=>[1,2,3].some(j=>S.zones[j].own)],['📜','Encontrar 2 pistas de la receta',()=>Object.keys(V5().clues).filter(x=>x!=='done').length>=2],
+ ['🏢','Abrir una franquicia',()=>S.fr>=1],['🎟️','Ganar un rasca de 💎',()=>V5().f2.scratchBig],['🌀','Vivir 15 locuras',()=>V5().surreal>=15],['🎂','Cumplir 40',()=>V5().age>=40]];
+function goalNext(){const L=V5();L.gdone=L.gdone||{};const pool=GOALS.map((g,i)=>i).filter(i=>!L.gdone[i]&&!GOALS[i][2]());L.goal=pool.length?pk(pool.slice(0,6)):null}
+if(V5().goal==null)goalNext();
+function goalTick(){const L=V5();if(L.goal==null)return;const g=GOALS[L.goal];if(!g)return goalNext();if(g[2]()){L.gdone=L.gdone||{};L.gdone[L.goal]=1;giveBox('Sueño cumplido: '+g[1],2);pop(3);hap(8);logL('💭','Sueño cumplido: '+g[1]+'.');bigText('💭 ¡SUEÑO CUMPLIDO!',g[1]+' · 2 🎁');sfx.big();goalNext()}}
+(function(){const el=document.createElement('div');el.id='goal';el.className='goalc';$('#mission').insertAdjacentElement('afterend',el);el.addEventListener('click',()=>{openSheet('vida');vtab='vida';renderSheet(true)})})();
+function paintGoal(){const L=V5(),el=$('#goal');if(!el)return;const g=GOALS[L.goal],d=DTH[L.dth];const t=`<span class="dth">${d[0]}</span><span class="gt">${g?`💭 <b>Sueño:</b> ${g[1]}`:'💭 ¡Todos los sueños cumplidos!'}</span><span class="gh">❤️${Math.round(L.hp)}</span>`;if(el.innerHTML!==t)el.innerHTML=t}
+// ---------- SALUD, MUERTE Y HERENCIA ----------
+const EPI=['Murió como vivió: oliendo a fritanga.','Nunca le dio la vuelta a una tortilla sin aplaudir.','Se fue a cocinar para los ángeles. Dicen que les cobra caro.','«Le faltaba sal», sus últimas palabras.','Dejó 3.000 croquetas congeladas y ninguna deuda (casi).'];
+const _dt5=dayTick;dayTick=function(dt){const L=V5(),d0=L.day,a0=L.age;_dt5(dt);if(L.day===d0)return;
+  L.dth=Math.random()<.45?0:1+rint(DTH.length-1);applyItems();
+  let dh=-.3;if(L.age>45)dh-=(L.age-45)*.12;if(L.hap<20)dh-=2;if(L.house>=4)dh+=.5;L.hp=cl(L.hp+dh,0,100);hap(L.house*1.2);
+  if(L.age!==a0&&L.age>=62&&!L.dead){const p=Math.max(0,(L.age-60)/40)*(1.7-L.hp/100);if(Math.random()<p||L.hp<=0){L.dead=1;setTimeout(showDeath,1500)}}
+  if(L.age!==a0&&[30,40,50,60,70].includes(L.age))setTimeout(()=>withRes('🎂','¡'+L.age+' años!',()=>{const t={30:['Crisis de los 30: te compras una moto que no sabes conducir.',()=>hap(-5)],40:['Te sale la primera cana. Le pones nombre: Paquita.',()=>hap(-3)],50:['Medio siglo. Tu espalda cruje al agacharte a por una croqueta.',()=>{L.hp=cl(L.hp-8,0,100)}],60:['Te jubilas… es broma, los restaurantes no se jubilan.',()=>pop(3)],70:['Tus nietos (o los vecinos) te llaman «la leyenda».',()=>pop(8)]}[L.age];t[1]();return t[0]}),2000)};
+function showDeath(){const L=V5();const nm=(L.look&&L.look.name)||'el/la gran chef';const heirs=L.kids.map((k,i)=>({k,i,a:kAge(k)}));closeSheet();sfx.big();
+  L.anc.push({n:nm,e:(L.look&&L.look.av)||'🧑‍🍳',age:L.age,money:S.money,kids:L.kids.length,gen:L.gen});
+  openModal(`<div class="emo">🪦</div><h2>Aquí yace ${nm}</h2><p>${L.age} años · Generación ${L.gen}<br><i>«${pk(EPI)}»</i></p><div class="keep"><span>💰 Fortuna: ${fmtM(S.money)} €</span><span>👶 Hijos: ${L.kids.length}</span><span>🏆 Logros: ${Object.keys(L.ach).length}</span><span>🏠 Casa: ${HOUSES[L.house][1]}</span></div>
+   <p style="font-size:14px"><b>¿Quién hereda el restaurante?</b> Se queda el 80 % del dinero, tus objetos, el restaurante y +10 % de ganancias de legado.</p><div class="choice">${heirs.map(h=>`<button data-m="heir" data-i="${h.i}"><span>${h.k.e}</span><span style="font-size:15px">${h.k.n}<small>${Math.max(18,h.a)} años · ${TRAITS[h.k.t][0]} ${TRAITS[h.k.t][1]}</small></span></button>`).join('')}<button data-m="heir" data-i="-1"><span>🧑‍🦱</span><span style="font-size:15px">Un sobrino lejano<small>Aparece de la nada en el funeral</small></span></button></div>`)}
+MA.heir=b=>{const L=V5(),i=+b.dataset.i,k=L.kids[i];const nm=k?k.n:pk(['Jonatan Jr.','Kevin','Yeray','Vanesa','Iratxe']),em=k?k.e:'🧑‍🦱',age=k?Math.max(18,kAge(k)):25;
+  closeModal();S.money*=.8;L.gen++;L.dead=0;L.age=age;L.hp=100;L.hap=70;L.pop*=.5;L.rep=0;L.car={};L.love=null;L.kids=[];L.house=Math.max(0,L.house-1);L.foll=0;L.look.name=nm;L.look.av=em;L.goal=null;goalNext();
+  for(const kk of Object.keys(L.rel))L.rel[kk]=Math.round(L.rel[kk]*.4);CAST.abu.n=['Abuela Lola','Bisabuela Lola','Tatarabuela Lola','Lola la Inmortal'][Math.min(3,L.gen-1)];
+  applyItems();applyLook();logL('🕯️',`Empieza la generación ${L.gen}: ${nm}, ${age} años.`);save();
+  say([['abu',`${nm}… tienes la misma cara que ${L.anc[L.anc.length-1].n} cuando empezó. El restaurante es tuyo. No la cagues.`],['nar',`👑 GENERACIÓN ${L.gen} · Legado familiar: +${(L.gen-1)*10} % de ganancias para siempre.`]])};
+// ---------- integración Vida ----------
+ACTS.push({id:'doc',ic:'🩺',n:'Ir al médico',d:'+25 salud · el doctor te riñe por las croquetas',cd:300,ok:()=>true,cost:()=>ECO(10),f:()=>withRes('🩺','Revisión médica',()=>{V5().hp=cl(V5().hp+25,0,100);return pk(['El médico te dice que comas menos fritos. Asientes mientras te comes una croqueta.','Todo bien. Te recetan «menos estrés». Te ríes durante 5 minutos.','Te hacen un análisis: tienes un 30 % de bechamel en sangre.'])})});
+ACTS.push({id:'gym',ic:'🏋️',n:'Ir al gimnasio',d:'+10 salud · +5 felicidad',cd:200,ok:()=>true,cost:()=>ECO(3),f:()=>withRes('🏋️','Gimnasio',()=>{V5().hp=cl(V5().hp+10,0,100);hap(5);return pk(['Haces una sentadilla y oyes un crujido. Era el suelo. Creo.','Levantas tanto peso que el monitor te pide un selfie.','Corres en la cinta 10 minutos. Lo publicas como si fuera un maratón.'])})});
+const _rs6=renderSheet;renderSheet=function(force){_rs6(force);if(sheetKind!=='vida'||vtab!=='vida')return;const L=V5(),list=$('#sheet .list');if(!list||list.querySelector('.hcard'))return;
+  const hn=HOUSES[L.house],nx=HOUSES[L.house+1],d=DTH[L.dth],g=GOALS[L.goal];
+  const extra=`<div class="it hcard"><span class="ic">❤️</span><span class="tx"><b>Salud: ${Math.round(L.hp)}</b>${bar(L.hp,L.hp<30?'#ff5a4e':'#ff7a9a')}<small>Baja con la edad y el estrés. Gimnasio y médico en ⚡ Barrio. ${L.age>=62?'⚠️ A tu edad, cuídate…':''}</small></span></div>
+   <div class="it"><span class="ic">${hn[0]}</span><span class="tx"><b>Tu casa: ${hn[1]}</b><small>+${(L.house*1.2).toFixed(1)} felicidad al día${nx?' · Siguiente: '+nx[0]+' '+nx[1]:''}</small></span>${nx?`<button class="cb ${S.money>=houseCost()?'o':'no'}" data-a="house">MUDARSE<small>${fmtM(houseCost())} €</small></button>`:'<span>👑</span>'}</div>
+   <div class="it"><span class="ic">${d[0]}</span><span class="tx"><b>Hoy: ${d[1]}</b><small>${d[2]}</small></span></div>
+   <div class="it"><span class="ic">💭</span><span class="tx"><b>Sueño: ${g?g[1]:'¡todos cumplidos!'}</b><small>Cúmplelo para ganar 2 🎁 · ${Object.keys(L.gdone||{}).length}/${GOALS.length} sueños</small></span></div>
+   <div class="it"><span class="ic">👑</span><span class="tx"><b>Generación ${L.gen}</b><small>${L.anc.length?'Antepasados: '+L.anc.map(a=>a.e+' '+a.n+' ('+a.age+')').join(', '):'Cuando mueras, uno de tus hijos heredará el negocio'} · legado +${(L.gen-1)*10} % ganancias</small></span></div>`;
+  const sc=list.querySelector('.statc');if(sc)sc.insertAdjacentHTML('afterend',extra)};
+act=(function(prev){return function(a){if(a==='house'){const L=V5();if(!HOUSES[L.house+1])return false;const c=houseCost();if(S.money<c){toast('Te faltan '+fmtM(c-S.money)+' €');return false}S.money-=c;L.house++;const h=HOUSES[L.house];closeSheet();
+  withRes(h[0],'¡Te mudas!',()=>{hap(20);pop(3);logL(h[0],'Te mudas a: '+h[1]+'.');return`Nueva casa: <b>${h[1]}</b>. ${pk(['Los vecinos te traen una tortilla de bienvenida.','Tu madre llora al verla. Tu abuela pregunta dónde está la freidora.','Haces una fiesta de inauguración. Viene medio barrio y el otro medio se queja del ruido.'])}`});return false}return prev(a)}})(act);
+// día temático en la tarjeta diaria
+const _sd=showDay;showDay=function(){_sd();const d=DTH[V5().dth];const p=document.querySelector('#card p');if(p)p.insertAdjacentHTML('beforebegin',`<div class="dthc">${d[0]} <b>${d[1]}</b><small>${d[2]}</small></div>`)};
+setInterval(()=>{if(document.hidden)return;paintGoal();goalTick()},700);
+
+// ================= AMIGOS FAMOSOS: tu carrera trae celebridades al restaurante =================
+const CELEB={actor:{k:'vale',e:'👩🏼‍🦰',n:'Valeria Estrella',c:'#e0457b',job:'actriz de Hollywood',lore:['Gané un Óscar por hacer de croqueta. Fue un papel muy exigente.','Mi primer trabajo fue de extra en un anuncio de yogur. ¡Como tú!','Los paparazzi me siguen hasta al baño. Literalmente.'],visit:'Valeria Estrella viene a cenar… ¡y detrás vienen 200 paparazzi!'},
+ sing:{k:'lola',e:'👩🏽‍🎤',n:'Lola Platino',c:'#9b59d6',job:'cantante número 1',lore:['Mi canción «Croqueta de mi corazón» lleva 40 semanas en el número 1.','Antes de ser famosa cantaba en el metro. Me tiraban monedas y tomates.','Tengo miedo escénico. Por eso canto con gafas de sol.'],visit:'¡Lola Platino da un concierto sorpresa en tu terraza! La cola llega a la otra calle.'},
+ infl:{k:'mrc',e:'🧑🏻‍💻',n:'MrCroqueto',c:'#ff8a3d',job:'streamer con 40 millones',lore:['Hice un directo de 24 horas comiendo croquetas. Acabé en urgencias. Valió la pena.','Mi madre aún cree que trabajo en un banco.','Cada vez que digo una marca, se agota. Es un poder y una maldición.'],visit:'MrCroqueto hace un directo desde tu local. 2 millones de personas mirando… y medio barrio en la puerta.'},
+ pol:{k:'min',e:'👩🏻‍💼',n:'La Ministra de Fritanga',c:'#3f86d6',job:'ministra',lore:['Mi ministerio no existe, pero tengo coche oficial.','Si me votas, croquetas gratis los domingos. Bueno, si me votas dos veces.','Una vez inauguré un puente que ya estaba inaugurado.'],visit:'La Ministra inaugura tu restaurante como «Patrimonio Nacional del Rebozado». Cámaras, banda de música y cola infinita.'}};
+const celebK=()=>Object.values(CELEB).map(c=>c.k);
+function celebUnlock(){const L=V5();for(const id in CELEB){const c=CELEB[id];CAST[c.k]=CAST[c.k]||{e:c.e,n:c.n,c:c.c};LORE[c.k]=c.lore;
+  if(car(id).lv>=2&&!(c.k in L.rel)&&!dlgOn&&$('#modal').hidden&&!sheetKind){L.rel[c.k]=10;logL(c.e,'Conoces a '+c.n+', '+c.job+'.');say([['nar',`⭐ Gracias a tu carrera conoces a ${c.n}, ${c.job}.`],[c.k,'¡Encantada! He oído hablar de tus croquetas. Si nos hacemos amigos… a lo mejor me paso un día por tu local 😉']]);return}}}
+for(const id in CELEB){const c=CELEB[id];CAST[c.k]={e:c.e,n:c.n,c:c.c};LORE[c.k]=c.lore}
+function celebVisit(k,big){const c=Object.values(CELEB).find(x=>x.k===k);const dur=big?90:60;R.rush=Math.max(R.rush||0,dur*itemTd());S.fame=Math.min(400,S.fame+(big?30:15));pop(big?8:4);rel(k,5);
+  bigText(c.e+' ¡'+c.n.toUpperCase()+' ESTÁ AQUÍ!','Colas increíbles durante '+Math.round(R.rush)+' s');sfx.big();for(let i=0;i<5;i++)setTimeout(()=>burst(VW/2,VH*.35+i*30,24,pk(['📸','⭐','🤩','💥'])),i*300);logL(c.e,c.n+' vino a tu restaurante. Locura total.');save()}
+const _rl6=MA.rl;MA.rl=b=>{const k=relSel;if(b.dataset.v==='fav'&&celebK().includes(k)){closeModal();const L=V5();if(relLeft(k)>0){toast('⏳ Dale un respiro');return}L.cd['r_'+k]=Date.now()+90000*itemCd();
+  const c=Object.values(CELEB).find(x=>x.k===k);say([[k,'¡Claro! Esta tarde me paso. Avisa a la cocina…']],()=>celebVisit(k,true));return}_rl6(b)};
+// eventos con famosos
+for(const id in CELEB){const c=CELEB[id];
+  SE('cv_'+c.k,c.k,4,()=>(V5().rel[c.k]??-999)>=30,c.visit,[
+   ['🥂','Tratamiento VIP','Cuesta dinero · colas épicas','¡Visita estelar!',()=>{lose(ECO(10));setTimeout(()=>celebVisit(c.k,true),600);rel(c.k,10);return`${c.n} sale encantada. Los paparazzi no dejan de hacer fotos a tu cartel.`}],
+   ['🍔','Trato normal, como a todos','Gratis','Visita sencilla',()=>{setTimeout(()=>celebVisit(c.k,false),600);return`${c.n} come como una más. Lo publica igual: «el sitio más auténtico de la ciudad».`}],
+   ['📸','Vender las fotos a la prensa','Dinero · traición','Exclusiva',()=>{gain(ECO(40));rel(c.k,-35);rep(-10);return`Te pagan una fortuna por las fotos. ${c.n} no vuelve a dirigirte la palabra.`}]]);
+  SE('cg_'+c.k,c.k,2,()=>(V5().rel[c.k]??-999)>=60,`Oye… ¿quieres venir conmigo a la gala de esta noche? Habrá alfombra roja.`,[
+   ['💃','¡Vamos!','Popularidad x2','Alfombra roja',()=>{pop(15);hap(15);rel(c.k,10);return`Desfiláis juntos. Mañana sales en todas las portadas: «¿Quién es el/la misterioso/a cocinero/a?».`}],
+   ['🙅','Tengo que trabajar','Responsable','Otra vez será',()=>{rel(c.k,-5);return`«Vaya… bueno, te guardo un canapé».`}]]);}
+SE('paps2','pap',3,()=>celebK().some(k=>(V5().rel[k]??-999)>=40),()=>{const k=pk(celebK().filter(k=>(V5().rel[k]??-999)>=40));return`¡EXCLUSIVA! Te han fotografiado cenando con ${CAST[k].n}. Las revistas dicen que sois pareja.`},[
+ ['😏','No desmentirlo','Popularidad','Romance de portada',()=>{pop(12);if(V5().love)hap(-10);return V5().love?`${V5().love.n} no está nada contenta con el titular…`:'Tu popularidad se dispara. Tu madre compra 30 revistas.'}],
+ ['📢','Desmentirlo','Honrado','Comunicado oficial',()=>{rep(5);pop(4);return'Publicas un comunicado. Nadie te cree, pero quedas como un señor/a.'}]]);
+setInterval(()=>{if(!document.hidden)celebUnlock()},2000);
 
 </script>
 <script>
