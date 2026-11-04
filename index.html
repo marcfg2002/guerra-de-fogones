@@ -949,7 +949,7 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 19 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 20 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
@@ -984,8 +984,8 @@ setInterval(()=>{if(!document.hidden)paintGuide()},300);
 
 // ================= IDENTIDAD: nombre, género, orientación, transición · IA personalizada =================
 const GEN={m:{n:'Hombre',e:'👨‍🍳',pr:'él'},f:{n:'Mujer',e:'👩‍🍳',pr:'ella'},n:{n:'No binario',e:'🧑‍🍳',pr:'elle'}};
-const ORI={het:'Hetero',gay:'Gay / Lesbiana',bi:'Bisexual',pan:'Pansexual',ace:'Asexual',cro:'Solo croquetas 🍤'};
-const ID=()=>{const L=LF();L.id=L.id||{g:'n',o:'bi',made:0,out:0};return L.id};
+const ORI={het:'Hetero',gay:'Gay / Lesbiana',bi:'Bisexual',ace:'Asexual',cro:'Solo croquetas 🍤'};
+const ID=()=>{const L=LF();L.id=L.id||{g:'n',o:'bi',made:0,out:0};if(L.id.o==='pan')L.id.o='bi';return L.id};
 // texto con el género del personaje: "cansado/a" → cansado / cansada / cansade
 function gtxt(s){const g=ID().g;return String(s).replace(/\b(\p{L}+?)o\/a(s?)\b/gu,(_,w,pl)=>w+(g==='m'?'o':g==='f'?'a':'e')+pl).replace(/\bel\/la\b/g,g==='m'?'el':g==='f'?'la':'le').replace(/\bun\/una\b/g,g==='m'?'un':g==='f'?'una':'une')}
 const _res=res;res=function(ic,t,fn){return _res(ic,gtxt(t),()=>gtxt(fn()||''))};
