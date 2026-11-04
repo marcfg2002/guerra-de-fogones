@@ -369,6 +369,10 @@ body.isnight .dock,body.isnight .pbar,body.isnight .clock,body.isnight .side{vis
 .stnav{display:flex;gap:5px;justify-content:center;margin-top:4px}.stnav button{flex:1;background:#fff;border:2.5px solid #e3d1ad;border-radius:12px;padding:4px 2px;font-size:22px;line-height:1}.stnav button small{display:block;font:900 10px var(--f-b);color:#8a6a40}.stnav button.on{border-color:#2a1405;background:#fff3c4}.stnav button.off{opacity:.45}
 .cb.xl{font-size:20px!important;padding:12px 18px!important;flex:1}.vtabs .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff3d6e;margin-left:4px;vertical-align:middle}
 .wb{transition:scale .12s}
+.wb{white-space:nowrap}.wb i{opacity:.95}
+.wb.rnd{width:38px!important;height:38px!important;min-width:0!important;border-radius:50%!important;padding:0!important;display:grid;place-items:center}.wb.rnd b{font-size:18px!important}
+.wb.rnd .lv{position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);background:#2a1405;color:#fff;font-style:normal;font:900 10px var(--f-b);border-radius:8px;padding:1px 5px;white-space:nowrap}
+.wb.rnd:not(.ok){background:#9aa3ad!important}
 </style>
 </head>
 <body>
@@ -692,18 +696,26 @@ function stepFx(dt){for(const p of fx){p.t+=dt;p.vy-=14*dt;p.m.position.x+=p.vx*
   for(const k of cars)k.m.position.x+=k.v*dt;for(let i=cars.length-1;i>=0;i--)if(Math.abs(cars[i].m.position.x)>31){scene.remove(cars[i].m);cars.splice(i,1)}}
 // ---- cámara ----
 let camX=0,camZ=-3,camXT=0,camZT=-3,visW=10;
-function fitCam(){const a=camera.aspect||.55;visW=Math.max(16,Math.min(20,(LAY.xR-LAY.xL)+8));const hw=visW/2,hh=hw/a;camera.left=-hw;camera.right=hw;camera.top=hh;camera.bottom=-hh;camera.updateProjectionMatrix()}
+let ZOOM=1.35;
+function fitCam(){const a=camera.aspect||.55;visW=Math.max(16,Math.min(20,(LAY.xR-LAY.xL)+8))/ZOOM;const hw=visW/2,hh=hw/a;camera.left=-hw;camera.right=hw;camera.top=hh;camera.bottom=-hh;camera.updateProjectionMatrix()}
 function camPose(){const d=40,p=1.0;camera.position.set(camX,Math.sin(p)*d,camZ+Math.cos(p)*d);camera.lookAt(camX,0,camZ)}
-function clampCam(){const ext=Math.max(0,((LAY.xR-LAY.xL)+13-visW)/2);camXT=cl(camXT,(LAY.xL+LAY.xR)/2-ext,(LAY.xL+LAY.xR)/2+ext);camZT=cl(camZT,-LAY.D-6,12)}
+function clampCam(){const ext=Math.max(0,((LAY.xR-LAY.xL)+15-visW)/2);camXT=cl(camXT,(LAY.xL+LAY.xR)/2-ext,(LAY.xL+LAY.xR)/2+ext);camZT=cl(camZT,-LAY.D-6,12)}
 function homeCam(){camXT=(LAY.xL+LAY.xR)/2;camX=camXT;const g=document.getElementById('guide'),sr=stageEl.getBoundingClientRect();const top=(g&&!g.hidden&&g.getBoundingClientRect().height?g.getBoundingClientRect().bottom-sr.top:60)+18;
   let lo=-LAY.D-6,hi=12;for(let k=0;k<30;k++){const mid=(lo+hi)/2;camZ=mid;camPose();camera.updateMatrixWorld();const y=proj(camX,1.1,-LAY.D).y;if(y<top)hi=mid;else lo=mid}camZT=camZ;clampCam()}
 function resize(){const r=stageEl.getBoundingClientRect();renderer.setSize(r.width,r.height,false);cv.style.width=r.width+'px';cv.style.height=r.height+'px';camera.aspect=r.width/r.height;fitCam()}
 addEventListener('resize',resize);
 const tv=new THREE.Vector3();function proj(x,y,z){tv.set(x,y,z).project(camera);const r=cv.getBoundingClientRect(),s=stageEl.getBoundingClientRect();return{x:(tv.x+1)/2*r.width+(r.left-s.left),y:(1-tv.y)/2*r.height+(r.top-s.top)}}
 // arrastrar para mover la cámara
-let drag=null;cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,cx:camXT,cz:camZT}});
-addEventListener('pointermove',e=>{if(!drag)return;const r=cv.getBoundingClientRect(),k=visW/r.width;camXT=drag.cx-(e.clientX-drag.x)*k;camZT=drag.cz-(e.clientY-drag.y)*k*1.15;clampCam()});
-addEventListener('pointerup',()=>drag=null);
+let drag=null;const PTR=new Map();let pinch=null;
+function setZoom(z){ZOOM=cl(z,.75,2.6);fitCam();clampCam()}
+cv.addEventListener('pointerdown',e=>{PTR.set(e.pointerId,{x:e.clientX,y:e.clientY});if(PTR.size===2){const [a,b]=[...PTR.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:ZOOM};drag=null}else drag={x:e.clientX,y:e.clientY,cx:camXT,cz:camZT}});
+addEventListener('pointermove',e=>{if(PTR.has(e.pointerId))PTR.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pinch&&PTR.size>=2){const [a,b]=[...PTR.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);setZoom(pinch.z*d/Math.max(20,pinch.d));return}
+  if(!drag)return;const r=cv.getBoundingClientRect(),k=visW/r.width;camXT=drag.cx-(e.clientX-drag.x)*k;camZT=drag.cz-(e.clientY-drag.y)*k*1.15;clampCam()});
+const endP=e=>{PTR.delete(e.pointerId);if(PTR.size<2)pinch=null;if(!PTR.size)drag=null};addEventListener('pointerup',endP);addEventListener('pointercancel',endP);
+cv.addEventListener('wheel',e=>{e.preventDefault();setZoom(ZOOM*(e.deltaY<0?1.1:.9))},{passive:false});
+// iOS: gesto nativo de pellizco
+document.addEventListener('gesturestart',e=>{e.preventDefault();pinch={g:1,z:ZOOM}});document.addEventListener('gesturechange',e=>{e.preventDefault();if(pinch&&pinch.g)setZoom(pinch.z*e.scale)});document.addEventListener('gestureend',e=>{e.preventDefault();pinch=null});
 // ---- textos flotantes ----
 const FLs=new Map();function syncFloats(){const seen=new Set();for(const f of R.floats){seen.add(f);let el=FLs.get(f);if(!el){el=document.createElement('div');el.className='fl out1';el.textContent=f.txt;el.style.color=f.col;stageEl.appendChild(el);FLs.set(f,el)}const p=proj(f.x,2+f.t*1.4,f.z);el.style.transform=`translate(${p.x}px,${p.y}px) translate(-50%,-50%)`;el.style.opacity=Math.max(0,1-f.t/1.2)}for(const [k,el] of FLs)if(!seen.has(k)){el.remove();FLs.delete(k)}}
 function render(t,a,dt){if(dirty)buildStatic();camX+=(camXT-camX)*Math.min(1,dt*8);camZ+=(camZT-camZ)*Math.min(1,dt*8);camPose();syncEnts(t,a);stepFx(dt);syncFloats();renderer.render(scene,camera)}
@@ -729,8 +741,8 @@ let flying=0;function flyCoin(x,z){if(flying>8)return;const p=proj(x,1.6,z),tg=$
 const ov=document.createElement('div');ov.className='ov';stageEl.appendChild(ov);const OVB=new Map();
 function ovBtn(id,html,cls,x,y,z,onTap){let b=OVB.get(id);if(!b){b=document.createElement('button');b.className='wb';b.addEventListener('click',e=>{e.stopPropagation();onTap()});ov.appendChild(b);OVB.set(id,b)}b._seen=1;if(b._h!==html){b.innerHTML=html;b._h=html}b.className='wb '+cls;const p=proj(x,y,z),tf=`translate(${p.x}px,${p.y}px) translate(-50%,-50%)`;b.style.transform=tf;b.style.setProperty('--t',tf)}
 function syncOverlay(){for(const b of OVB.values())b._seen=0;const m=RUN.money;
-  if(!inNight){LAY.stations.forEach(s=>{const i=s.i,L=RUN.lvl[i];if(L>0){const c=upCost(i);ovBtn('st'+i,`<b>⬆</b><i>${fmtM(c)}</i>`,m>=c?'up ok':'up',s.x,.4,s.z+(i%2?1.9:.9),()=>buyAct('up',i))}
-    else if(i===unlocked().length){const c=unlockCost(i);ovBtn('st'+i,`<b>🔓</b><i>${fmtM(c)}</i>`,m>=c?'lock ok':'lock',s.x,.4,s.z+(i%2?1.9:.9),()=>buyAct('unlock',i))}});
+  if(!inNight){LAY.stations.forEach(s=>{const i=s.i,L=RUN.lvl[i];if(L>0){const c=upCost(i);ovBtn('st'+i,`<b>⬆</b><em class="lv">${L}</em>`,m>=c?'up rnd ok':'up rnd',s.x,1.5,s.z+.35,()=>buyAct('up',i))}
+    else if(i===unlocked().length){const c=unlockCost(i);ovBtn('st'+i,`<b>🔒</b><em class="lv">${fmtM(c)}</em>`,m>=c?'lock rnd ok':'lock rnd',s.x,1.5,s.z+.35,()=>buyAct('unlock',i))}});
   if(LAY.nextSpot&&RUN.seats<LAY.maxSeats){const c=seatCost(RUN.seats);ovBtn('seat',`<b>＋ MESA</b><i>${fmtM(c)} €</i>`,m>=c?'seat ok':'seat',LAY.nextSpot.x,.6,LAY.nextSpot.z,()=>buyAct('seat'))}
   RUN.riv.forEach((rv,j)=>{if(rv.own)return;const x=rcx(j);if(!rv.open){const c=rivalBuy(j);ovBtn('rv'+j,`<b>🏚️ COMPRAR</b><i>${fmtM(c)} €</i>`,m>=c?'buy ok':'buy',x,3,7.6,()=>buyAct('rival',j))}
 })}
@@ -959,7 +971,7 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 24 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 25 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
@@ -1386,8 +1398,7 @@ function buyLevels(i,mode){const p=upPlan(i,mode);if(RUN.money<p.cost||!p.n){sfx
   stPulse(i);save();return true}
 const PULSE={};function stPulse(i){PULSE[i]=performance.now()}
 // ---- botones del mapa: ⬆ abre el panel de esa cocina ----
-const _so=syncOverlay;syncOverlay=function(){_so();if(inNight)return;LAY.stations.forEach(s=>{const b=OVB.get('st'+s.i),L=RUN.lvl[s.i];if(!b||!L)return;const ok=RUN.money>=upCost(s.i),h=`<b>⬆ ${L}</b><i>${fmtM(upCost(s.i))}</i>`;if(b._h!==h){b.innerHTML=h;b._h=h}
-  const pl=PULSE[s.i]&&performance.now()-PULSE[s.i]<250;b.style.scale=pl?'1.25':''})};
+const _so=syncOverlay;syncOverlay=function(){_so();if(inNight)return;LAY.stations.forEach(s=>{const b=OVB.get('st'+s.i);if(!b)return;const pl=PULSE[s.i]&&performance.now()-PULSE[s.i]<250;b.style.scale=pl?'1.25':''})};
 // los clics de los botones ⬆ ya tenían un listener que compraba: lo cambiamos por abrir el panel
 document.addEventListener('click',e=>{const b=e.target.closest('.wb.up');if(!b)return;e.stopImmediatePropagation();const id=[...OVB.entries()].find(([k,v])=>v===b);if(id&&id[0].startsWith('st'))openSt(+id[0].slice(2))},true);
 function openSt(i){stSel=i;if(sheetKind==='st'){renderSheet(true);return}sheetKind=null;openSheet('st')}
@@ -1427,7 +1438,7 @@ addEventListener('pointerup',stopHold);addEventListener('pointercancel',stopHold
 const _ns=MA.nextStreet;MA.nextStreet=()=>{_ns();RUN.up={};RUN.ub={};save()};
 // ---- dock: "Mejoras" con aviso cuando puedes comprar algo ----
 (function(){const b=document.querySelector('[data-sheet="cocina"]');if(b){b.dataset.sheet='mej';b.innerHTML='<span>🔨</span><em>Mejoras</em>';b.onclick=null;const nb=b.cloneNode(true);b.replaceWith(nb);nb.addEventListener('click',()=>openSheet('mej'))}
-  const l=document.querySelector('[data-sheet="libro"]');if(l){const e=l.querySelector('em');if(e)e.textContent='Libro ⭐'}})();
+  const l=document.querySelector('[data-sheet="libro"]');if(l){const e=l.querySelector('em');if(e)e.textContent='Libro'}})();
 setInterval(()=>{if(document.hidden)return;$('#inc').textContent=inNight?'':'+'+fmtM(ips())+' €/s';const any=UPGS().some(u=>RUN.money>=u.cost)||unlocked().some(i=>RUN.money>=upCost(i));const b=document.querySelector('[data-sheet="mej"]');if(b){let d=b.querySelector('.badge');if(any&&!inNight&&!d){d=document.createElement('i');d.className='badge';d.textContent='!';b.appendChild(d)}else if((!any||inNight)&&d)d.remove()}SV.ips=ips()},500);
 // ---- ganancias mientras no estabas ----
 (function(){const gone=(Date.now()-(SV.t||Date.now()))/1000;if(gone>300&&SV.ips>0){const g=Math.round(Math.min(gone,7200)*SV.ips*.35);if(g>0){RUN.money+=g;setTimeout(()=>{if($('#modal').hidden)openModal(`<div class="emo">💤💰</div><h2>Mientras no estabas…</h2><p>Tu equipo ha seguido sirviendo croquetas y ha ganado <b>${fmtM(g)} €</b>.</p><button class="cb" data-m="close">¡GENIAL!</button>`)},1600)}}})();
