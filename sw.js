@@ -1,4 +1,4 @@
-const CACHE='fogones-v17';
+const CACHE='fogones-v18';
 const CORE=['./','index.html','three.min.js','manifest.json','icon-180.png','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>Promise.all(CORE.map(u=>fetch(u,{cache:'reload'}).then(r=>c.put(u,r))))).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
@@ -9,7 +9,7 @@ self.addEventListener('fetch',e=>{
   const isPage=req.mode==='navigate'||(url.origin===location.origin&&(url.pathname.endsWith('/')||url.pathname.endsWith('.html')));
   if(isPage){
     // página: siempre la versión más nueva si hay internet; si no, la copia guardada
-    e.respondWith(Promise.race([fetch(req,{cache:'no-store'}).then(r=>save(req,r)),new Promise((_,rej)=>setTimeout(rej,4000))])
+    e.respondWith(Promise.race([fetch(req,{cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return save(req,r)}),new Promise((_,rej)=>setTimeout(rej,4000))])
       .catch(()=>caches.match(req,{ignoreSearch:true}).then(h=>h||caches.match('index.html'))));
     return;
   }
