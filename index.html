@@ -366,6 +366,9 @@ body.isnight .dock,body.isnight .pbar,body.isnight .clock,body.isnight .side{vis
 .needs .low u{background:#ff5a4e}.needs .low b{color:#ffb0a8;animation:pulse 1s infinite}
 .stepn{text-align:center;font-family:var(--f-d);font-size:13px;color:#8a6a40}
 .bugs{position:absolute;inset:0;z-index:4;pointer-events:none}.bug{position:absolute;left:0;top:0;font-size:28px;background:none;border:0;padding:6px;pointer-events:auto;filter:drop-shadow(0 2px 1px rgba(0,0,0,.3));transition:filter .1s}.bug.hit{filter:brightness(2) drop-shadow(0 0 6px #fff)}
+.stnav{display:flex;gap:5px;justify-content:center;margin-top:4px}.stnav button{flex:1;background:#fff;border:2.5px solid #e3d1ad;border-radius:12px;padding:4px 2px;font-size:22px;line-height:1}.stnav button small{display:block;font:900 10px var(--f-b);color:#8a6a40}.stnav button.on{border-color:#2a1405;background:#fff3c4}.stnav button.off{opacity:.45}
+.cb.xl{font-size:20px!important;padding:12px 18px!important;flex:1}.vtabs .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff3d6e;margin-left:4px;vertical-align:middle}
+.wb{transition:scale .12s}
 </style>
 </head>
 <body>
@@ -435,8 +438,8 @@ function newSave(){return{v:2,run:newRun(0,0),stars:0,perks:{},life:null,streets
 let SV=null,RUN=null;
 const ST=()=>STREETS[RUN.s];
 const mult=()=>1+RUN.lap*1.5;
-const dishPrice=i=>{const d=ST().dishes[i],L=RUN.lvl[i];return d[2]*mult()*(1+.13*(L-1))*Math.pow(1.9,milesOf(L))};
-const dishTime=i=>ST().dishes[i][3]/(1+.35*milesOf(RUN.lvl[i]));
+const dishPrice=i=>{const d=ST().dishes[i],L=RUN.lvl[i];return d[2]*mult()*(1+.13*(L-1))*Math.pow(1.9,milesOf(L))*(RUN.up&&RUN.up['pm'+i]||1)};
+const dishTime=i=>ST().dishes[i][3]/(1+.35*milesOf(RUN.lvl[i]))/(RUN.up&&RUN.up['ck'+i]||1);
 const upCost=i=>Math.ceil(ST().dishes[i][2]*mult()*1.5*Math.pow(1.13,RUN.lvl[i]-1)*(1+.2*milesOf(RUN.lvl[i])));
 const unlockCost=i=>Math.ceil(ST().dishes[i][2]*mult()*14*Math.pow(1.5,i));
 const seatCost=n=>Math.ceil(12*mult()*Math.pow(1.55,n-2));
@@ -509,7 +512,7 @@ function freeSeat(){const taken=new Set(R.custs.filter(c=>c.seat>=0).map(c=>c.se
 function earn(x,z,amt,txt,col){RUN.money+=amt;R.stats.earned+=amt;R.floats.push({x,z,t:0,txt:txt||'+'+fmtM(amt),col:col||'#ffd84d'});if(window.onCoin)onCoin(x,z)}
 function step(dt){R.t+=dt;if(R.celeb>0)R.celeb-=dt;RUN.riv.forEach(rv=>{if(rv.shut>0)rv.shut-=dt});
   const open=R.t<DAYLEN;
-  if(open){const lam=(.8+RUN.fame/260+(SV.life?SV.life.pop/160:0))*mod('spawn')*(R.celeb>0?2.5:1)*(1+perk('cli')*.15)*(R.rush>0?2.4:1);R.spawn+=dt*lam;while(R.spawn>=1){R.spawn--;spawnCust()}}
+  if(open){const lam=(.8+RUN.fame/260+(SV.life?SV.life.pop/160:0))*mod('spawn')*(R.celeb>0?2.5:1)*(1+perk('cli')*.15)*(R.rush>0?2.4:1)*(RUN.up&&RUN.up['cli']||1);R.spawn+=dt*lam;while(R.spawn>=1){R.spawn--;spawnCust()}}
   if(R.rush>0)R.rush-=dt;if(R.turbo>0)R.turbo-=dt;
   syncStaff();
   const qx=(i)=>({x:.9+i*.55,z:.75});
@@ -521,9 +524,9 @@ function step(dt){R.t+=dt;if(R.celeb>0)R.celeb-=dt;RUN.riv.forEach(rv=>{if(rv.sh
        if(c.wait>25*TYPES[c.ty].pat){c.mood='😤';c.moodT=2;R.stats.lost++;R.custs.filter(k=>k.st==='queue'&&k.qi>c.qi).forEach(k=>{k.qi--;k.path=[qx(k.qi)]});c.st='leave';c.path=[{x:c.x,z:1.2},{x:c.x>0?17:-17,z:1.2}]}break;
      case 'rival':if(walk(c,c.sp,dt))c.dead=1;break;
      case 'in':if(walk(c,c.sp,dt)){c.st='sit';c.dir=LAY.seats[c.seat].face;const u=unlocked();c.dish=pk(u.slice(-3).concat(u));c.wait=0;R.orders.push({c,dish:c.dish,st:'new'})}break;
-     case 'sit':c.wait+=dt;if(c.wait>40*TYPES[c.ty].pat*(1+perk('pat')*.2)){c.mood='😡';c.moodT=3;R.stats.angry++;RUN.fame=Math.max(0,RUN.fame-1.5);R.stats.n++;leaveC(c)}break;
+     case 'sit':c.wait+=dt;if(c.wait>40*TYPES[c.ty].pat*(1+perk('pat')*.2)*(RUN.up&&RUN.up['pat']||1)){c.mood='😡';c.moodT=3;R.stats.angry++;RUN.fame=Math.max(0,RUN.fame-1.5);R.stats.n++;leaveC(c)}break;
      case 'eat':c.t-=dt;if(c.t<=0){const T=TYPES[c.ty],mp=myPrice(),base=dishPrice(c.dish)*mp;const sat=cl(1.2-c.wait/(30*T.pat)-(mp>T.tol*.9?.3:0)+(mp<T.tol*.75?.2:0),0,1);
-       const tip=base*T.tip*sat*(1+perk('tip')*.25)*(c.ty==='fan'?2:1);const amt=(base+tip)*mod('money')*(1+perk('leg')*.1);const s=LAY.seats[c.seat];earn(s.x,s.z,amt);R.stats.served++;R.stats.tips+=tip;R.stats.sat+=sat;R.stats.n++;R.stats.byType[c.ty]=(R.stats.byType[c.ty]||0)+1;
+       const tip=base*T.tip*sat*(1+perk('tip')*.25)*(RUN.up&&RUN.up['tip']||1)*(c.ty==='fan'?2:1);const amt=(base+tip)*mod('money')*(1+perk('leg')*.1);const s=LAY.seats[c.seat];earn(s.x,s.z,amt);R.stats.served++;R.stats.tips+=tip;R.stats.sat+=sat;R.stats.n++;R.stats.byType[c.ty]=(R.stats.byType[c.ty]||0)+1;
        RUN.fame=Math.min(999,RUN.fame+(c.ty==='cri'?(sat>.6?6:-6):sat*.35));c.mood=sat>.8?'😍':sat>.5?'😋':'😐';c.moodT=2;leaveC(c)}break;
      case 'leave':if(walk(c,c.sp,dt)){if(c.z<.9){c.path=[{x:c.x,z:1.2},{x:c.x>0?17:-17,z:1.2}]}else c.dead=1}break}}
   R.custs=R.custs.filter(c=>!c.dead);
@@ -531,14 +534,14 @@ function step(dt){R.t+=dt;if(R.celeb>0)R.celeb-=dt;RUN.riv.forEach(rv=>{if(rv.sh
   const ck=(R.turbo>0?2:1)*mod('cook')*(1+perk('ck')*.15);
   for(const ch of R.chefs){ch.ox=ch.x;ch.oz=ch.z;
     if(ch.st==='idle'){const o=R.orders.find(o=>o.st==='new'&&o.c.st==='sit');if(o){o.st='cook';ch.o=o;ch.st='toSt';const s=LAY.stations[o.dish];go(ch,s.x,s.z+.75)}else if(Math.hypot(ch.x-ch.home.x,ch.z-ch.home.z)>.3&&!ch.path)go(ch,ch.home.x,ch.home.z);else walk(ch,2,dt)}
-    else if(ch.st==='toSt'){if(walk(ch,2.6,dt)){ch.st='cook';ch.t=dishTime(ch.o.dish);ch.dir=Math.PI}}
+    else if(ch.st==='toSt'){if(walk(ch,2.6*(RUN.up&&RUN.up['walk']||1),dt)){ch.st='cook';ch.t=dishTime(ch.o.dish);ch.dir=Math.PI}}
     else if(ch.st==='cook'){ch.t-=dt*ck;if(ch.t<=0&&(!ch.o.c||ch.o.c.st!=='sit')){R.orders=R.orders.filter(o=>o!==ch.o);ch.o=null;ch.st='idle';ch.path=null;continue}if(ch.t<=0){ch.carry=ST().dishes[ch.o.dish][0];if(R.waiters.length){ch.st='toPass';const px=cl(LAY.stations[ch.o.dish].x,LAY.pass.x0+.3,LAY.pass.x1-.3);go(ch,px,LAY.pass.z-.45)}else{ch.st='deliver';const s=LAY.seats[ch.o.c.seat];go(ch,s.x+(s.side?0:0),s.z-.55)}}}
-    else if(ch.st==='toPass'){if(walk(ch,2.6,dt)){R.plates.push({o:ch.o,x:ch.x,z:LAY.pass.z,e:ch.carry});ch.carry=null;ch.o=null;ch.st='idle';ch.path=null}}
-    else if(ch.st==='deliver'){if(!ch.o.c||ch.o.c.st!=='sit'){ch.carry=null;ch.st='idle';ch.path=null;R.orders=R.orders.filter(o=>o!==ch.o);continue}if(walk(ch,2.7,dt)){serveC(ch.o);ch.carry=null;ch.o=null;ch.st='idle';ch.path=null}}}
+    else if(ch.st==='toPass'){if(walk(ch,2.6*(RUN.up&&RUN.up['walk']||1),dt)){R.plates.push({o:ch.o,x:ch.x,z:LAY.pass.z,e:ch.carry});ch.carry=null;ch.o=null;ch.st='idle';ch.path=null}}
+    else if(ch.st==='deliver'){if(!ch.o.c||ch.o.c.st!=='sit'){ch.carry=null;ch.st='idle';ch.path=null;R.orders=R.orders.filter(o=>o!==ch.o);continue}if(walk(ch,2.7*(RUN.up&&RUN.up['walk']||1),dt)){serveC(ch.o);ch.carry=null;ch.o=null;ch.st='idle';ch.path=null}}}
   for(const w of R.waiters){w.ox=w.x;w.oz=w.z;
     if(w.st==='idle'){const p=R.plates.find(p=>!p.taken);if(p){p.taken=1;w.p=p;w.st='toPass';go(w,p.x,LAY.pass.z+.45)}else if(!w.path&&Math.hypot(w.x-w.home.x,w.z-w.home.z)>.3)go(w,w.home.x,w.home.z);else walk(w,2,dt)}
-    else if(w.st==='toPass'){if(walk(w,w.kid?2:2.4,dt)){w.carry=w.p.e;R.plates=R.plates.filter(p=>p!==w.p);const c=w.p.o.c;if(!c||c.st!=='sit'){w.carry=null;w.st='idle';w.path=null;continue}w.st='deliver';const s=LAY.seats[c.seat];go(w,s.x,s.z-.55)}}
-    else if(w.st==='deliver'){const c=w.p.o.c;if(!c||c.st!=='sit'){w.carry=null;w.st='idle';w.path=null;continue}if(walk(w,w.kid?2:2.4,dt)){serveC(w.p.o);w.carry=null;w.st='idle';w.path=null}}}
+    else if(w.st==='toPass'){if(walk(w,(w.kid?2:2.4)*(RUN.up&&RUN.up['wait']||1),dt)){w.carry=w.p.e;R.plates=R.plates.filter(p=>p!==w.p);const c=w.p.o.c;if(!c||c.st!=='sit'){w.carry=null;w.st='idle';w.path=null;continue}w.st='deliver';const s=LAY.seats[c.seat];go(w,s.x,s.z-.55)}}
+    else if(w.st==='deliver'){const c=w.p.o.c;if(!c||c.st!=='sit'){w.carry=null;w.st='idle';w.path=null;continue}if(walk(w,(w.kid?2:2.4)*(RUN.up&&RUN.up['wait']||1),dt)){serveC(w.p.o);w.carry=null;w.st='idle';w.path=null}}}
   for(const f of R.floats)f.t+=dt;R.floats=R.floats.filter(f=>f.t<1.2)}
 function serveC(o){const c=o.c;R.orders=R.orders.filter(x=>x!==o);if(!c||c.st!=='sit')return;c.st='eat';c.t=3+Math.random()*2}
 function leaveC(c){R.orders=R.orders.filter(o=>o.c!==c);c.st='leave';c.seat=-1;go(c,0,.9)}
@@ -956,7 +959,7 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 23 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 24 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
@@ -1356,6 +1359,81 @@ deep('shower','🛁 Ducha',[
 CARDS.find(c=>c.id==='abu').f=()=>story('👵 Cena con la abuela',[{e:'👵',t:'¿De qué le hablas a la abuela Lola?',o:[['🧠','Le pides consejo sobre tu vida'],['🗣️','Cotilleos del barrio'],['👴','Le preguntas por el abuelo Paco'],['💶','Le pides dinero «para el negocio»']]}],
  p=>{const v=p[0][1];let g=0;aiRes('👵','La abuela dice…',`La abuela Lola (cariñosa, cotilla, muy graciosa) responde a esto: «${v}». Relaciónalo con la vida actual del protagonista.`,()=>{relv('abu',v.includes('dinero')?2:10);need('ham',40);need('soc',20);hap(6);g=gain(ECO(v.includes('dinero')?12:3))},
   ()=>(v.includes('consejo')?'«Cariño, un cliente contento trae a dos amigos. Y uno enfadado, a diez enemigos.»':v.includes('Cotilleos')?`«${R3()[0][2]} tiene un amante. Lo sé porque soy yo.»`:v.includes('Paco')?'«Tu abuelo escondía la receta por el barrio… algún día la encontrarás.»':'«¿Otra vez? Toma, pero no se lo digas a tu madre.»')+` Te mete ${fmtM(g)} € en el bolsillo.`)});
+
+// ================= EATVENTURE DE VERDAD: panel de cocina, mantener pulsado, x1/x10/MAX, mejoras con dinero, €/s =================
+RUN.up=RUN.up||{};RUN.ub=RUN.ub||{};
+// ---- tienda de mejoras con dinero (se reinician en cada calle, como en Eatventure) ----
+const UPG_TIERS=[[2,3],[2,25],[3,220],[3,2000],[5,18000]];
+function UPGS(){const L=[];const add=(id,ic,n,s,cost,k,v)=>{if(!RUN.ub[id])L.push({id,ic,n,s,cost:Math.ceil(cost),k,v})};
+  unlocked().forEach(i=>{const d=ST().dishes[i],base=unlockCost(i)||d[2]*mult()*8;
+    UPG_TIERS.forEach(([x,m],t)=>add(`pm${i}_${t}`,d[0],`${d[1]} x${x}`,`Cada ${d[1].toLowerCase()} vale el ${x===2?'doble':x===3?'triple':'quíntuple'}`,base*m*1.4,'pm'+i,x));
+    [1.5,1.5,2].forEach((x,t)=>add(`ck${i}_${t}`,d[0],`${d[1]} exprés`,`Se cocina un ${Math.round((1-1/x)*100)} % más rápido`,base*(t?40*Math.pow(12,t):4),'ck'+i,x))});
+  const g=mult();[['walk','👟','Zapatillas para cocineros','Andan un 25 % más rápido',60],['wait','🛼','Patines para camareros','Llevan los platos un 30 % más rápido',150],['cli','📣','Cartel luminoso','+25 % clientes',90],['tip','💶','Jarra de propinas','Propinas x1,5',120],['pat','🪑','Sillas comodísimas','Esperan un 40 % más',80]].forEach(([k,ic,n,s,c])=>
+    [0,1,2].forEach(t=>add(`${k}_${t}`,ic,n+(t?' '+['','II','III'][t]:''),s,c*g*Math.pow(14,t),k,{walk:1.25,wait:1.3,cli:1.25,tip:1.5,pat:1.4}[k])));
+  return L.sort((a,b)=>a.cost-b.cost)}
+function applyUp(){const u={};for(const id in RUN.ub){const m=RUN.ub[id];u[m.k]=(u[m.k]||1)*m.v}RUN.up=u}
+// ---- €/s ----
+const incLog=[];const _earn=earn;earn=function(x,z,amt,txt,col){_earn(x,z,amt,txt,col);incLog.push([performance.now(),amt])};
+function ips(){const now=performance.now();while(incLog.length&&now-incLog[0][0]>15000)incLog.shift();return incLog.reduce((a,x)=>a+x[1],0)/15}
+// ---- comprar varios niveles ----
+let buyMode=1,stSel=0;
+function upPlan(i,mode){const L0=RUN.lvl[i],costAt=L=>{RUN.lvl[i]=L;const c=upCost(i);RUN.lvl[i]=L0;return c};const max=mode==='max'?500:mode;let n=0,cost=0,m=RUN.money;
+  while(n<max){const c=costAt(L0+n);if(m<c)break;m-=c;cost+=c;n++}
+  if(n===0||(mode!=='max'&&n<mode)){n=mode==='max'?1:mode;cost=0;for(let k=0;k<n;k++)cost+=costAt(L0+k)}return{n,cost}}
+function buyLevels(i,mode){const p=upPlan(i,mode);if(RUN.money<p.cost||!p.n){sfx.bad();return false}const was=milesOf(RUN.lvl[i]);RUN.money-=p.cost;RUN.lvl[i]+=p.n;
+  const s=LAY.stations[i];R.floats.push({x:s.x,z:s.z+.4,t:0,txt:`⬆ Nv ${RUN.lvl[i]}`,col:'#7cd36b'});
+  if(milesOf(RUN.lvl[i])>was){bigText(ST().dishes[i][0]+' ¡NIVEL '+RUN.lvl[i]+'!','Precio x1,9 y cocina más rápida');sfx.big();burst(s.x,s.z,26,'⭐')}else tone(600+RUN.lvl[i]%12*40,.05,'triangle',.04);
+  stPulse(i);save();return true}
+const PULSE={};function stPulse(i){PULSE[i]=performance.now()}
+// ---- botones del mapa: ⬆ abre el panel de esa cocina ----
+const _so=syncOverlay;syncOverlay=function(){_so();if(inNight)return;LAY.stations.forEach(s=>{const b=OVB.get('st'+s.i),L=RUN.lvl[s.i];if(!b||!L)return;const ok=RUN.money>=upCost(s.i),h=`<b>⬆ ${L}</b><i>${fmtM(upCost(s.i))}</i>`;if(b._h!==h){b.innerHTML=h;b._h=h}
+  const pl=PULSE[s.i]&&performance.now()-PULSE[s.i]<250;b.style.scale=pl?'1.25':''})};
+// los clics de los botones ⬆ ya tenían un listener que compraba: lo cambiamos por abrir el panel
+document.addEventListener('click',e=>{const b=e.target.closest('.wb.up');if(!b)return;e.stopImmediatePropagation();const id=[...OVB.entries()].find(([k,v])=>v===b);if(id&&id[0].startsWith('st'))openSt(+id[0].slice(2))},true);
+function openSt(i){stSel=i;if(sheetKind==='st'){renderSheet(true);return}sheetKind=null;openSheet('st')}
+// ---- hojas nuevas: panel de cocina y "Mejoras" con pestañas ----
+let mtab='platos';
+const pctBar=(L)=>{const pm=MILES.filter(x=>x<=L).pop()||0,nm=nextMile(L);return(L-pm)/(nm-pm)*100};
+extraSheet=function(k){const m=RUN.money;
+  if(k==='st'){const i=stSel,d=ST().dishes[i],L=RUN.lvl[i];if(!L)return hdr(d[0],d[1],'Plato bloqueado')+`<div class="list"><button class="cb o xl" data-a="unlock:${i}">ABRIR · ${fmtM(unlockCost(i))} €</button></div>`;
+    const p=upPlan(i,buyMode),nm=nextMile(L),pre=dishPrice(i),tm=dishTime(i);
+    return hdr(d[0],`${d[1]} <span class="lvl">Nv ${L}</span>`,'Cocina de tu local')+`<div class="list">
+     <div class="mbar"><i style="width:${pctBar(L)}%"></i><span>⭐ Nv ${nm}: precio x1,9 y más rápido</span></div>
+     <div class="chips"><div class="chip"><b>${fmtM(pre)} €</b>por plato</div><div class="chip"><b>${tm.toFixed(1).replace('.',',')} s</b>en cocinarse</div><div class="chip"><b>${fmtM(pre/tm*RUN.chefs)} €/s</b>máximo</div></div>
+     <div class="uprow"><div class="seg">${[1,10,'max'].map(x=>`<button data-a="bm:${x}" class="${buyMode===x?'on':''}">${x==='max'?'MAX':'x'+x}</button>`).join('')}</div>
+     <button class="cb xl ${m>=p.cost?'':'no'}" data-h="up">MEJORAR${p.n>1?' x'+p.n:''}<small>${fmtM(p.cost)} €</small></button></div>
+     <p class="note">💡 Mantén pulsado MEJORAR para subir muchos niveles seguidos.</p>
+     ${UPGS().filter(u=>u.k==='pm'+i||u.k==='ck'+i).slice(0,2).map(u=>`<div class="it upg"><span class="ic">${u.ic}</span><span class="tx"><b>${u.n}</b><small>${u.s}</small></span><button class="cb ${m>=u.cost?'':'no'}" data-a="upg:${u.id}">COMPRAR<small>${fmtM(u.cost)} €</small></button></div>`).join('')}
+     <div class="stnav">${ST().dishes.map((dd,j)=>`<button data-a="stsel:${j}" class="${j===i?'on':''} ${RUN.lvl[j]?'':'off'}">${dd[0]}<small>${RUN.lvl[j]?'Nv '+RUN.lvl[j]:'🔒'}</small></button>`).join('')}</div></div>`}
+  if(k==='mej'){const U=UPGS();const tabs=`<div class="vtabs"><button data-a="mtab:platos" class="${mtab==='platos'?'on':''}">🍳 Platos</button><button data-a="mtab:upg" class="${mtab==='upg'?'on':''}">🔨 Mejoras ${U.some(u=>m>=u.cost)?'<i class="dot"></i>':''}</button></div>`;
+    let h=hdr('🔨','Mejoras',`Ganas ${fmtM(ips())} €/s · ${ST().n}`)+tabs+'<div class="list">';
+    if(mtab==='platos')h+=ST().dishes.map((d,i)=>{const L=RUN.lvl[i];if(!L){const c=unlockCost(i),nx=i===unlocked().length;return`<div class="it ${nx?'':'lockit'}"><span class="ic">${d[0]}</span><span class="tx"><b>${d[1]}</b><small>${nx?'Plato nuevo: más variedad, más clientes':'Abre antes el anterior'}</small></span><button class="cb ${m>=c&&nx?'o':'no'}" data-a="unlock:${i}">ABRIR<small>${fmtM(c)} €</small></button></div>`}
+      const c=upCost(i);return`<div class="it" data-a="stsel:${i}"><span class="ic">${d[0]}</span><span class="tx"><b>${d[1]} · Nv ${L}</b><small>${fmtM(dishPrice(i))} € · ${dishTime(i).toFixed(1).replace('.',',')} s</small><div class="hp"><i style="width:${pctBar(L)}%;background:#ffb23f"></i></div></span><button class="cb ${m>=c?'':'no'}" data-a="upq:${i}">⬆ x1<small>${fmtM(c)} €</small></button></div>`}).join('');
+    else h+=U.length?U.slice(0,14).map(u=>`<div class="it upg"><span class="ic">${u.ic}</span><span class="tx"><b>${u.n}</b><small>${u.s}</small></span><button class="cb ${m>=u.cost?'':'no'}" data-a="upg:${u.id}">COMPRAR<small>${fmtM(u.cost)} €</small></button></div>`).join(''):'<p class="note">¡Lo tienes todo en esta calle!</p>';
+    return h+'</div>'}
+  return''};
+extraAct=function(k,x){if(k==='bm'){buyMode=x==='max'?'max':+x;sfx.tap();renderSheet(true);return true}
+  if(k==='stsel'){stSel=+x;if(sheetKind!=='st'){sheetKind='st';$('#sheet').classList.add('open')}sfx.tap();renderSheet(true);return true}
+  if(k==='mtab'){mtab=x;sfx.tap();renderSheet(true);return true}
+  if(k==='upq'){buyLevels(+x,1);renderSheet(true);return true}
+  if(k==='upg'){const u=UPGS().find(u=>u.id===x);if(!u||RUN.money<u.cost){sfx.bad();return true}RUN.money-=u.cost;RUN.ub[u.id]={k:u.k,v:u.v};applyUp();sfx.big();bigText(u.ic+' '+u.n.toUpperCase(),u.s);save();renderSheet(true);return true}
+  return false};
+// ---- mantener pulsado MEJORAR ----
+let hold=null;
+$('#sheet').addEventListener('pointerdown',e=>{const b=e.target.closest('[data-h="up"]');if(!b)return;e.preventDefault();let n=0;const go=()=>{if(!hold)return;if(buyLevels(stSel,buyMode)){n++;renderSheet(true)}else{stopHold();return}hold.t=setTimeout(go,Math.max(55,260-n*25))};hold={};go()});
+function stopHold(){if(hold){clearTimeout(hold.t);hold=null}}
+addEventListener('pointerup',stopHold);addEventListener('pointercancel',stopHold);
+// ---- al cambiar de calle se reinician las mejoras ----
+const _ns=MA.nextStreet;MA.nextStreet=()=>{_ns();RUN.up={};RUN.ub={};save()};
+// ---- dock: "Mejoras" con aviso cuando puedes comprar algo ----
+(function(){const b=document.querySelector('[data-sheet="cocina"]');if(b){b.dataset.sheet='mej';b.innerHTML='<span>🔨</span><em>Mejoras</em>';b.onclick=null;const nb=b.cloneNode(true);b.replaceWith(nb);nb.addEventListener('click',()=>openSheet('mej'))}
+  const l=document.querySelector('[data-sheet="libro"]');if(l){const e=l.querySelector('em');if(e)e.textContent='Libro ⭐'}})();
+setInterval(()=>{if(document.hidden)return;$('#inc').textContent=inNight?'':'+'+fmtM(ips())+' €/s';const any=UPGS().some(u=>RUN.money>=u.cost)||unlocked().some(i=>RUN.money>=upCost(i));const b=document.querySelector('[data-sheet="mej"]');if(b){let d=b.querySelector('.badge');if(any&&!inNight&&!d){d=document.createElement('i');d.className='badge';d.textContent='!';b.appendChild(d)}else if((!any||inNight)&&d)d.remove()}SV.ips=ips()},500);
+// ---- ganancias mientras no estabas ----
+(function(){const gone=(Date.now()-(SV.t||Date.now()))/1000;if(gone>300&&SV.ips>0){const g=Math.round(Math.min(gone,7200)*SV.ips*.35);if(g>0){RUN.money+=g;setTimeout(()=>{if($('#modal').hidden)openModal(`<div class="emo">💤💰</div><h2>Mientras no estabas…</h2><p>Tu equipo ha seguido sirviendo croquetas y ha ganado <b>${fmtM(g)} €</b>.</p><button class="cb" data-m="close">¡GENIAL!</button>`)},1600)}}})();
+// la guía usa el panel nuevo
+GUIDE[0].t='Toca <b>⬆</b> en tu refresco y luego <b>MEJORAR</b> (puedes mantenerlo pulsado)';
+GUIDE.splice(5,0,{t:'Compra una <b>mejora</b> en 🔨 Mejoras → pestaña Mejoras',ok:()=>Object.keys(RUN.ub).length>0,tgt:()=>document.querySelector('[data-sheet="mej"]'),rw:80});
 
 </script>
 <script>
