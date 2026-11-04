@@ -356,6 +356,7 @@ body.isnight .dock,body.isnight .pbar,body.isnight .clock,body.isnight .side{vis
 .wb.hp{display:flex;flex-direction:column;gap:2px}.wb.hp em{font-size:11px;white-space:nowrap}
 .wb.up{background:#5fd068}.wb.lock{background:#ffb23f}.wb.seat{background:#4aa8ff}.wb.buy{background:#ff5a4e;font-size:13px}
 .wb{padding:2px 6px!important;min-width:0!important;border-width:2.5px!important;border-radius:10px!important}.wb b{font-size:11.5px!important}.wb i{font-size:10px!important}
+#app{position:fixed!important;inset:0!important;height:auto!important;max-width:none!important;padding:0!important}
 </style>
 </head>
 <body>
@@ -676,8 +677,9 @@ function stepFx(dt){for(const p of fx){p.t+=dt;p.vy-=14*dt;p.m.position.x+=p.vx*
 let camX=0,camZ=-3,camXT=0,camZT=-3,visW=10;
 function fitCam(){const a=camera.aspect||.55;visW=Math.max(16,Math.min(20,(LAY.xR-LAY.xL)+8));const hw=visW/2,hh=hw/a;camera.left=-hw;camera.right=hw;camera.top=hh;camera.bottom=-hh;camera.updateProjectionMatrix()}
 function camPose(){const d=40,p=1.0;camera.position.set(camX,Math.sin(p)*d,camZ+Math.cos(p)*d);camera.lookAt(camX,0,camZ)}
-function clampCam(){const ext=Math.max(0,((LAY.xR-LAY.xL)+13-visW)/2);camXT=cl(camXT,(LAY.xL+LAY.xR)/2-ext,(LAY.xL+LAY.xR)/2+ext);camZT=cl(camZT,-LAY.D+1.5,5)}
-function homeCam(){camXT=(LAY.xL+LAY.xR)/2;camZT=(-LAY.D+9.6)/2-2.1;clampCam()}
+function clampCam(){const ext=Math.max(0,((LAY.xR-LAY.xL)+13-visW)/2);camXT=cl(camXT,(LAY.xL+LAY.xR)/2-ext,(LAY.xL+LAY.xR)/2+ext);camZT=cl(camZT,-LAY.D-6,12)}
+function homeCam(){camXT=(LAY.xL+LAY.xR)/2;camX=camXT;const g=document.getElementById('guide'),sr=stageEl.getBoundingClientRect();const top=(g&&!g.hidden&&g.getBoundingClientRect().height?g.getBoundingClientRect().bottom-sr.top:60)+18;
+  let lo=-LAY.D-6,hi=12;for(let k=0;k<30;k++){const mid=(lo+hi)/2;camZ=mid;camPose();camera.updateMatrixWorld();const y=proj(camX,1.1,-LAY.D).y;if(y<top)hi=mid;else lo=mid}camZT=camZ;clampCam()}
 function resize(){const r=stageEl.getBoundingClientRect();renderer.setSize(r.width,r.height,false);cv.style.width=r.width+'px';cv.style.height=r.height+'px';camera.aspect=r.width/r.height;fitCam()}
 addEventListener('resize',resize);
 const tv=new THREE.Vector3();function proj(x,y,z){tv.set(x,y,z).project(camera);const r=cv.getBoundingClientRect(),s=stageEl.getBoundingClientRect();return{x:(tv.x+1)/2*r.width+(r.left-s.left),y:(1-tv.y)/2*r.height+(r.top-s.top)}}
@@ -940,12 +942,12 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 14 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 15 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
 // ---- arranque ----
-SV=load()||newSave();RUN=SV.run;if(!SV.life)SV.life=L0();R=newRT();buildLayout();resize();homeCam();camX=camXT;camZ=camZT;paintPrice();rivCast();
+SV=load()||newSave();RUN=SV.run;if(!SV.life)SV.life=L0();R=newRT();buildLayout();resize();setTimeout(()=>{resize();homeCam();camZ=camZT},350);homeCam();camX=camXT;camZ=camZT;paintPrice();rivCast();
 requestAnimationFrame(t=>{last=t;loop(t)});
 if(!SV.seen){SV.seen=1;openModal(`<div class="emo">👵🍳</div><h2>Guerra de Fogones 2</h2><p>La abuela Lola te deja su barra de bar en la Calle Fogones. Tu vida tiene dos mitades:</p>
   <div class="keep"><span>☀️ <b>De día (2 min):</b> cocina, sirve y gana dinero. Compra mesas y platos tocando los botones del local.</span><span>🏷️ <b>El precio importa:</b> abajo ves qué clientes aceptan tu precio. Los que no, se van a la competencia.</span><span>🏚️ <b>Hunde a los 2 rivales</b> de la calle y compra sus locales para crecer.</span><span>🌙 <b>De noche:</b> tu vida. Carrera, amor, hijos, fiestas, sabotajes… y lo que hagas cambia el día siguiente.</span></div><button class="cb" data-m="close">¡A COCINAR!</button>`);save()}
@@ -964,7 +966,7 @@ const GUIDE=[
  {t:'Compra su local cerrado: toca <b>🏚️ COMPRAR</b>',ok:()=>RUN.riv.some(r=>r.own),tgt:()=>OVB.get('rv0')||OVB.get('rv1'),rw:800}];
 function guideStep(){SV.g=SV.g||0;return SV.g<GUIDE.length?GUIDE[SV.g]:null}
 const hand=document.createElement('div');hand.className='hand';hand.textContent='👆';document.body.appendChild(hand);
-function paintGuide(){const g=guideStep(),el=$('#guide');if(!g||inNight){el.hidden=true;hand.style.display='none';return}el.hidden=false;
+function paintGuide(){const g=guideStep(),el=$('#guide');const wasH=el.hidden;if(!g||inNight){el.hidden=true;hand.style.display='none';return}el.hidden=false;
   const done=g.ok();const h=`<span class="gn">${SV.g+1}/${GUIDE.length}</span><span class="gt">${g.t}</span>${done?`<button class="cb gok" id="gOk">+${fmtM(g.rw*mult())} €</button>`:`<span class="gr">🎁 ${fmtM(g.rw*mult())} €</span>`}`;if(el._h!==h){el.innerHTML=h;el._h=h}
   const t=!done&&g.tgt();if(t&&t.getBoundingClientRect){const r=t.getBoundingClientRect();if(r.width){hand.style.display='block';hand.style.left=(r.left+r.width/2-14)+'px';hand.style.top=(r.bottom-6)+'px';return}}hand.style.display='none'}
 $('#guide').addEventListener('click',e=>{if(!e.target.closest('#gOk'))return;const g=guideStep();if(!g||!g.ok())return;RUN.money+=g.rw*mult();SV.g++;sfx.big();burst((LAY.xL+LAY.xR)/2,-2,20,'💰');save();paintGuide()});
