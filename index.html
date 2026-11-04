@@ -1,3 +1,17 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fogones">
+<meta name="theme-color" content="#23262f">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<style>:root{color-scheme:light}body{margin:0}</style>
 <title>Guerra de Fogones</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2215,3 +2229,9 @@ fitCam();
 setInterval(()=>{if(document.hidden||!aiOn())return;aiT-=5;if(aiT>0)return;aiT=240+rint(120);if($('#modal').hidden&&!sheetKind&&!dlgOn)aiEvent()},5000);
 
 </script>
+<script>
+if('serviceWorker' in navigator){let re=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(re)return;re=true;location.reload()});
+navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{const u=()=>r.update().catch(()=>{});u();document.addEventListener('visibilitychange',()=>{if(!document.hidden)u()})}).catch(()=>{})}
+</script>
+</body>
+</html>
