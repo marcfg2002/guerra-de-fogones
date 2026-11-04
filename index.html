@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}body{margin:0}</style>
+<style>:root{color-scheme:light}body{margin:0}</style>
 <title>Guerra de Fogones</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -188,12 +188,7 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .db.wide.live{background:#ff7a2e;box-shadow:0 5px 0 #c4501a}
 .db .cdv{position:absolute;inset:0;background:conic-gradient(rgba(0,0,0,.35) calc(var(--cd,0)*360deg),transparent 0);pointer-events:none}
 .ov{position:absolute;inset:0;pointer-events:none;z-index:3}
-.wb{position:absolute;left:0;top:0;pointer-events:auto;will-change:transform}
-.wb.up{width:38px;height:38px;border-radius:50%;background:#ff3b30;border:3px solid #fff;box-shadow:0 3px 0 rgba(0,0,0,.25);color:#fff;font-size:20px;font-family:var(--f-d);display:grid;place-items:center;animation:hop 1s infinite}
 @keyframes hop{0%,100%{margin-top:0}50%{margin-top:-6px}}
-.wb.build{background:#3fb0ff;border:2.5px solid #fff;border-radius:11px;padding:3px 6px 4px;color:#fff;font-family:var(--f-d);font-size:13px;line-height:1;box-shadow:0 4px 0 #1f7cc4;white-space:nowrap;display:flex;flex-direction:column;gap:1px;align-items:center;min-width:44px}
-.wb.build i{font-style:normal;font-size:16px}
-.wb.build.no{background:#9aa3ad;box-shadow:0 4px 0 #6d757e}
 .fly{position:fixed;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a0,#ffbf2e 55%,#e8930a);border:2.5px solid #c77d00;z-index:90;pointer-events:none;transition:transform .6s cubic-bezier(.5,-0.3,.7,1)}
 .sheet{border:0;border-radius:22px 22px 0 0;box-shadow:0 -6px 20px rgba(0,0,0,.25);background:#fff8e6}
 .upg .ic{background:#fff3d6;border-radius:12px}
@@ -320,9 +315,8 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .pmid span{display:flex;gap:4px}.pmid i{font-style:normal;font-size:18px;position:relative}.pmid i.n{opacity:.3;filter:grayscale(1)}.pmid i.n::after{content:'✕';position:absolute;left:3px;top:-2px;color:#d0392b;font-size:15px;font-weight:900;opacity:1}
 .wb{position:absolute;left:0;top:0;border:3px solid #2a1405;border-radius:12px;background:#ddd;font-family:var(--f-d);color:#fff;padding:3px 7px;display:flex;flex-direction:column;align-items:center;line-height:1.05;box-shadow:0 3px 0 #2a1405;pointer-events:auto;opacity:.75}
 .wb.ok{opacity:1;animation:bob 1s ease-in-out infinite}.wb b{font-weight:400;font-size:15px}.wb i{font-style:normal;font-size:11px}
-.wb.up{background:#5fd068}.wb.lock{background:#ffb23f}.wb.seat{background:#4aa8ff}.wb.buy{background:#ff5a4e;font-size:13px}
 .wb.hp{background:#fff;color:#2a1405;opacity:1;padding:4px 6px;border-width:2px;min-width:70px}.wb.hp em{font-style:normal;font-size:11px}.rhp{display:block;width:64px;height:8px;border-radius:9px;background:#eee;overflow:hidden}.rhp i{display:block;height:100%;background:#ff5a4e}
-@keyframes bob{50%{transform:var(--t,none) translateY(-3px)}}
+@keyframes bob{0%,100%{transform:var(--t,none)}50%{transform:var(--t,none) translateY(-4px)}}
 .ov{position:absolute;inset:0;pointer-events:none;z-index:3}
 .flycoin{position:absolute;z-index:6;font-size:22px;transition:transform .55s cubic-bezier(.5,0,.8,.6),opacity .55s;pointer-events:none}
 .sum{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.sum span{background:#fff;border-radius:12px;padding:6px 2px;text-align:center;font-size:20px}.sum b{display:block;font-family:var(--f-d);font-weight:400;font-size:16px}.sum span{font-size:11px;font-weight:800}
@@ -346,6 +340,22 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .npeople,.nlog{display:flex;flex-wrap:wrap;gap:5px;background:rgba(255,255,255,.08);border-radius:14px;padding:8px;font-size:12px;font-weight:800}.npeople b,.nlog b{width:100%;font-family:var(--f-d);font-weight:400;font-size:14px}.npeople span{background:rgba(255,255,255,.12);border-radius:99px;padding:3px 8px}.nlog span{width:100%;opacity:.85}
 .nsleep{background:linear-gradient(#8c7cff,#5b4bd6)!important;font-size:18px!important}
 body.isnight .dock,body.isnight .pbar,body.isnight .clock,body.isnight .side{visibility:hidden}
+.topbar{padding-top:max(8px,env(safe-area-inset-top,0px))!important}
+.sheet:not(.open){visibility:hidden;transition:transform .28s,visibility 0s .28s}
+.dock{padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
+.db em{font-style:normal;font-family:var(--f-d);font-size:11px;line-height:1;margin-top:1px;text-shadow:0 1px 0 rgba(0,0,0,.25)}
+.db.wide small{font-size:11px}.sb em{position:absolute;bottom:2px;left:0;right:0;font-style:normal;font-family:var(--f-d);font-size:9.5px;color:#2a1405}.sb span{margin-top:-8px}
+.guide{position:absolute;left:8px;right:8px;top:46px;z-index:6;display:flex;align-items:center;gap:8px;background:#fff;border-radius:14px;padding:6px 8px;box-shadow:0 3px 0 rgba(0,0,0,.2);border:3px solid #ffb23f;font-weight:800;font-size:13px;line-height:1.2}
+.guide .gn{background:#ffb23f;color:#fff;font-family:var(--f-d);border-radius:8px;padding:2px 6px;font-size:12px}.guide .gt{flex:1}.guide{font-size:12.5px;padding:4px 8px}.guide .gr{font-size:11.5px;color:#8a6a40;white-space:nowrap}
+.guide .gok{font-size:13px!important;padding:6px 10px!important;animation:bob 1s infinite}
+.hand{position:fixed;z-index:40;font-size:34px;pointer-events:none;display:none;animation:tapH 1s ease-in-out infinite;filter:drop-shadow(0 3px 2px rgba(0,0,0,.35))}
+@keyframes tapH{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.pbar .pm{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;width:44px;height:44px}.pbar .pm small{font-size:9.5px;font-family:var(--f-b);font-weight:900}
+.pmid em{font-style:normal;font-size:10.5px;font-weight:800;color:#8a6a40}.pmid i.y::after{content:'✓';position:absolute;right:-5px;bottom:-4px;font-size:11px;color:#2e9e48;font-weight:900}
+.wb b{font-size:13px}.wb{padding:4px 8px;min-width:58px}
+.wb.hp{display:flex;flex-direction:column;gap:2px}.wb.hp em{font-size:11px;white-space:nowrap}
+.wb.up{background:#5fd068}.wb.lock{background:#ffb23f}.wb.seat{background:#4aa8ff}.wb.buy{background:#ff5a4e;font-size:13px}
+.wb{padding:2px 6px!important;min-width:0!important;border-width:2.5px!important;border-radius:10px!important}.wb b{font-size:11.5px!important}.wb i{font-size:10px!important}
 </style>
 </head>
 <body>
@@ -357,20 +367,20 @@ body.isnight .dock,body.isnight .pbar,body.isnight .clock,body.isnight .side{vis
   </header>
   <div class="stage" id="stage">
     <canvas id="cv"></canvas>
-    <div class="clock" id="clock"></div>
+    <div class="clock" id="clock"></div><div class="guide" id="guide"></div>
     <div class="side right">
-      <button class="sb boostb" id="bRush" aria-label="Gentío"><span>📣</span><b class="cdt"></b></button>
+      <button class="sb boostb" id="bRush" aria-label="Gentío"><span>📣</span><b class="cdt"></b><em>Gentío</em></button>
     </div>
     <div class="pbar" id="pbar"></div>
     <div class="big" id="big" hidden></div>
     <div class="night" id="night" hidden></div>
   </div>
   <nav class="dock">
-    <button class="db" data-sheet="cocina" aria-label="Cocina"><span>🍳</span></button>
-    <button class="db" data-sheet="equipo" aria-label="Equipo"><span>👨‍🍳</span></button>
+    <button class="db" data-sheet="cocina" aria-label="Cocina"><span>🍳</span><em>Cocina</em></button>
+    <button class="db" data-sheet="equipo" aria-label="Equipo"><span>👨‍🍳</span><em>Equipo</em></button>
     <button class="db wide" id="bTurbo"><b>🔥 TURBO</b><small class="cdt">x2 · 25 s</small></button>
-    <button class="db" data-sheet="calle" aria-label="Calle"><span>🏙️</span></button>
-    <button class="db" data-sheet="libro" aria-label="Libro del Chef"><span>📖</span></button>
+    <button class="db" data-sheet="calle" aria-label="Calle"><span>🏙️</span><em>Rivales</em></button>
+    <button class="db" data-sheet="libro" aria-label="Libro del Chef"><span>📖</span><em>Mejoras ⭐</em></button>
   </nav>
   <div class="sheet" id="sheet"></div>
 </div>
@@ -430,7 +440,7 @@ const mod=k=>MODS.filter(m=>m.k===k).reduce((a,m)=>a*m.v,1);
 // ---- layout dinámico del local ----
 let LAY=null;
 function buildLayout(){const st=ST(),xL=RUN.xL,xR=RUN.xR,D=st.D,W=xR-xL;const L={xL,xR,D,stations:[],seats:[],tables:[],obst:[],door:0,pass:null};
-  const kz=-D+.55;st.dishes.forEach((d,i)=>{const n=st.dishes.length,x=xL+.9+i*Math.min(1.5,(W-1.8)/(n-1));L.stations.push({x,z:kz,i})});
+  const kz=-D+.55;st.dishes.forEach((d,i)=>{const n=st.dishes.length,x=xL+W*(i+.5)/n;L.stations.push({x,z:kz,i})});
   L.stations.forEach(s=>L.obst.push([s.x-.5,s.z-.45,s.x+.5,s.z+.45]));
   const pz=-D+2.1;L.pass={x0:xL+.3,x1:xR-1.4,z:pz};L.obst.push([xL,pz-.2,xR-1.3,pz+.2]);
   // asientos: primero una barra con taburetes, luego mesas de 2, luego de 4
@@ -625,11 +635,11 @@ function buildStatic(){if(staticG)scene.remove(staticG);staticG=new THREE.Group(
   // acera de enfrente y rivales al otro lado de la calle
   A(mesh(G.box,'#dcdce2',0,.02,5.85,80,.08,1.1));A(mesh(G.box,'#c4c4cc',0,.07,5.25,80,.1,.12));
   RUN.riv.forEach((rv,j)=>{const r=st.riv[j],cx=rcx(j),col=rv.own?'#9ad48a':rv.open?r[4]:'#8a8a92';if(rv.own){A(mesh(G.box,'#9ad48a',cx,.05,7.8,5.6,.1,2.8));tree(A,cx-1.5,7.8,.8);tree(A,cx+1.5,7.8,.8);return}
-    A(mesh(G.box,'#fbf3e4',cx,1.1,7.9,5.4,2.2,2.8));A(mesh(G.box,col,cx,2.25,7.9,5.6,.14,3));for(let k=-2;k<=2;k++)A(mesh(G.box,k%2?'#fff8ec':col,cx+k*1.1,2.34,7.9,1.1,.05,2.6));
+    A(mesh(G.box,'#fbf3e4',cx,.8,7.3,5.4,1.6,1.6));A(mesh(G.box,col,cx,1.65,7.3,5.6,.14,1.8));for(let k=-2;k<=2;k++)A(mesh(G.box,k%2?'#fff8ec':col,cx+k*1.1,1.74,7.3,1.1,.05,1.6));
     const aw=new THREE.Mesh(G.box,new THREE.MeshLambertMaterial({map:ctex(128,32,x=>{for(let i=0;i<8;i++){x.fillStyle=i%2?col:'#fff8ec';x.fillRect(i*16,0,16,32)}})}));aw.position.set(cx,1.55,6.35);aw.scale.set(5.2,.1,.8);aw.rotation.x=-.35;A(aw);
     A(mesh(G.box,'#3a2a20',cx,.6,6.48,.9,1.2,.05));
-    const lb=new THREE.Mesh(G.plane,new THREE.MeshBasicMaterial({map:labelTex((rv.open?r[1]+' ':'🔒 ')+r[0].toUpperCase(),'#fff3d6','#2a1405',448,96,40),transparent:true}));lb.position.set(cx,3.1,7.4);lb.scale.set(4.6,1,1);lb.rotation.x=-.9;lb.renderOrder=2;A(lb);
-    const ow=sprite(r[3],.9);ow.position.set(cx+2.1,2.7,7.4);A(ow)});
+    const lb=new THREE.Mesh(G.plane,new THREE.MeshBasicMaterial({map:labelTex((rv.open?r[1]+' ':'🔒 ')+r[0].toUpperCase(),'#fff3d6','#2a1405',448,96,40),transparent:true}));lb.position.set(cx,2.3,7.3);lb.scale.set(4.4,.95,1);lb.rotation.x=-.95;lb.renderOrder=2;A(lb);
+    const ow=sprite(r[3],.9);ow.position.set(cx+2.3,2.2,7.1);A(ow)});
   scene.add(staticG);dirty=false;buildStations()}
 // ---- cocinas (dinámico: nivel) ----
 function buildStations(){for(const o of STN)scene.remove(o.g);STN.length=0;
@@ -664,10 +674,10 @@ function stepFx(dt){for(const p of fx){p.t+=dt;p.vy-=14*dt;p.m.position.x+=p.vx*
   for(const k of cars)k.m.position.x+=k.v*dt;for(let i=cars.length-1;i>=0;i--)if(Math.abs(cars[i].m.position.x)>31){scene.remove(cars[i].m);cars.splice(i,1)}}
 // ---- cámara ----
 let camX=0,camZ=-3,camXT=0,camZT=-3,visW=10;
-function fitCam(){const a=camera.aspect||.55;visW=Math.max(13.5,Math.min(18,(LAY.xR-LAY.xL)+6));const hw=visW/2,hh=hw/a;camera.left=-hw;camera.right=hw;camera.top=hh;camera.bottom=-hh;camera.updateProjectionMatrix()}
+function fitCam(){const a=camera.aspect||.55;visW=Math.max(16,Math.min(20,(LAY.xR-LAY.xL)+8));const hw=visW/2,hh=hw/a;camera.left=-hw;camera.right=hw;camera.top=hh;camera.bottom=-hh;camera.updateProjectionMatrix()}
 function camPose(){const d=40,p=1.0;camera.position.set(camX,Math.sin(p)*d,camZ+Math.cos(p)*d);camera.lookAt(camX,0,camZ)}
 function clampCam(){const ext=Math.max(0,((LAY.xR-LAY.xL)+13-visW)/2);camXT=cl(camXT,(LAY.xL+LAY.xR)/2-ext,(LAY.xL+LAY.xR)/2+ext);camZT=cl(camZT,-LAY.D+1.5,5)}
-function homeCam(){camXT=(LAY.xL+LAY.xR)/2;camZT=(-LAY.D+9.6)/2+.6;clampCam()}
+function homeCam(){camXT=(LAY.xL+LAY.xR)/2;camZT=(-LAY.D+9.6)/2-2.1;clampCam()}
 function resize(){const r=stageEl.getBoundingClientRect();renderer.setSize(r.width,r.height,false);cv.style.width=r.width+'px';cv.style.height=r.height+'px';camera.aspect=r.width/r.height;fitCam()}
 addEventListener('resize',resize);
 const tv=new THREE.Vector3();function proj(x,y,z){tv.set(x,y,z).project(camera);const r=cv.getBoundingClientRect(),s=stageEl.getBoundingClientRect();return{x:(tv.x+1)/2*r.width+(r.left-s.left),y:(1-tv.y)/2*r.height+(r.top-s.top)}}
@@ -698,13 +708,13 @@ let flying=0;function flyCoin(x,z){if(flying>8)return;const p=proj(x,1.6,z),tg=$
   requestAnimationFrame(()=>{el.style.transform=`translate(${tg.left-s.left-p.x}px,${tg.top-s.top-p.y}px) scale(.6)`;el.style.opacity=.3});setTimeout(()=>{el.remove();flying--},600)}
 // ---- capa de botones sobre el mapa (estilo Eatventure) ----
 const ov=document.createElement('div');ov.className='ov';stageEl.appendChild(ov);const OVB=new Map();
-function ovBtn(id,html,cls,x,y,z,onTap){let b=OVB.get(id);if(!b){b=document.createElement('button');b.className='wb';b.addEventListener('click',e=>{e.stopPropagation();onTap()});ov.appendChild(b);OVB.set(id,b)}b._seen=1;if(b._h!==html){b.innerHTML=html;b._h=html}b.className='wb '+cls;const p=proj(x,y,z);b.style.transform=`translate(${p.x}px,${p.y}px) translate(-50%,-50%)`}
+function ovBtn(id,html,cls,x,y,z,onTap){let b=OVB.get(id);if(!b){b=document.createElement('button');b.className='wb';b.addEventListener('click',e=>{e.stopPropagation();onTap()});ov.appendChild(b);OVB.set(id,b)}b._seen=1;if(b._h!==html){b.innerHTML=html;b._h=html}b.className='wb '+cls;const p=proj(x,y,z),tf=`translate(${p.x}px,${p.y}px) translate(-50%,-50%)`;b.style.transform=tf;b.style.setProperty('--t',tf)}
 function syncOverlay(){for(const b of OVB.values())b._seen=0;const m=RUN.money;
-  if(!inNight){LAY.stations.forEach(s=>{const i=s.i,L=RUN.lvl[i];if(L>0){const c=upCost(i);ovBtn('st'+i,`<b>⬆</b><i>${fmtM(c)}</i>`,m>=c?'up ok':'up',s.x,2.1,s.z,()=>buyAct('up',i))}
-    else if(i===unlocked().length){const c=unlockCost(i);ovBtn('st'+i,`<b>🔒</b><i>${fmtM(c)}</i>`,m>=c?'lock ok':'lock',s.x,1.6,s.z,()=>buyAct('unlock',i))}});
-  if(LAY.nextSpot&&RUN.seats<LAY.maxSeats){const c=seatCost(RUN.seats);ovBtn('seat',`<b>＋🪑</b><i>${fmtM(c)}</i>`,m>=c?'seat ok':'seat',LAY.nextSpot.x,.6,LAY.nextSpot.z,()=>buyAct('seat'))}
+  if(!inNight){LAY.stations.forEach(s=>{const i=s.i,L=RUN.lvl[i];if(L>0){const c=upCost(i);ovBtn('st'+i,`<b>⬆</b><i>${fmtM(c)}</i>`,m>=c?'up ok':'up',s.x,.4,s.z+(i%2?1.9:.9),()=>buyAct('up',i))}
+    else if(i===unlocked().length){const c=unlockCost(i);ovBtn('st'+i,`<b>🔓</b><i>${fmtM(c)}</i>`,m>=c?'lock ok':'lock',s.x,.4,s.z+(i%2?1.9:.9),()=>buyAct('unlock',i))}});
+  if(LAY.nextSpot&&RUN.seats<LAY.maxSeats){const c=seatCost(RUN.seats);ovBtn('seat',`<b>＋ MESA</b><i>${fmtM(c)} €</i>`,m>=c?'seat ok':'seat',LAY.nextSpot.x,.6,LAY.nextSpot.z,()=>buyAct('seat'))}
   RUN.riv.forEach((rv,j)=>{if(rv.own)return;const x=rcx(j);if(!rv.open){const c=rivalBuy(j);ovBtn('rv'+j,`<b>🏚️ COMPRAR</b><i>${fmtM(c)} €</i>`,m>=c?'buy ok':'buy',x,3,7.6,()=>buyAct('rival',j))}
-    else ovBtn('hp'+j,`<span class="rhp"><i style="width:${rv.hp}%"></i></span><em>${rv.promo?'2x1 · ':''}x${rv.price.toFixed(2)}</em>`,'hp',x,2.2,5.9,()=>openSheet('calle'))})}
+    else ovBtn('hp'+j,`<em>❤️ ${ST().riv[j][0]}${rv.promo?' · 2x1':''}</em><span class="rhp"><i style="width:${rv.hp}%"></i></span>`,'hp',x,4.9,7.3,()=>openSheet('calle'))})}
   for(const [k,b] of OVB)if(!b._seen){b.remove();OVB.delete(k)}}
 // ---- compras ----
 function buyAct(k,x){let c=0;
@@ -721,8 +731,8 @@ function buyAct(k,x){let c=0;
 function relayout(){const keep=R.custs.filter(c=>c.st==='walk'||c.st==='rival'||c.st==='leave');R.custs.forEach(c=>{if(!keep.includes(c))c.dead=1});R.custs=keep;R.orders=[];R.plates=[];R.chefs=[];R.waiters=[];buildLayout();dirty=true;fitCam();clampCam()}
 // ---- barra de precio: se ve quién entra y quién no ----
 function paintPrice(){const p=myPrice(),[pv,pl]=PRICES[RUN.price];const types=Object.keys(ST().mix).concat(['cri']);
-  $('#pbar').innerHTML=`<button class="pm" data-p="-1">−</button><div class="pmid"><b>🏷️ ${pl} <small>x${p.toFixed(2)}</small></b><span>${types.map(t=>`<i class="${TYPES[t].tol>=p?'y':'n'}">${TYPES[t].e}</i>`).join('')}</span></div><button class="pm" data-p="1">+</button>`}
-$('#pbar').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b)buyAct('price',+b.dataset.p)});
+  $('#pbar').innerHTML=`<button class="pm" data-p="-1">−<small>barato</small></button><div class="pmid"><b>🏷️ ${pl} <small>x${p.toFixed(2)} · ${types.filter(t=>TYPES[t].tol>=p).length}/${types.length} aceptan</small></b><span>${types.map(t=>`<i class="${TYPES[t].tol>=p?'y':'n'}" data-t="${t}">${TYPES[t].e}</i>`).join('')}</span></div><button class="pm" data-p="1">+<small>caro</small></button>`}
+$('#pbar').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b)return buyAct('price',+b.dataset.p);const t=e.target.closest('[data-t]');if(t){const T=TYPES[t.dataset.t];toast(`${T.e} <b>${T.n}</b>: ${T.tol>=myPrice()?'acepta este precio ✅':'le parece caro y se va a la competencia ❌'}`)}});
 // ---- hojas ----
 let sheetKind=null;
 function openSheet(k){if(sheetKind===k)return closeSheet();sheetKind=k;sfx.open();renderSheet(true);$('#sheet').classList.add('open')}
@@ -930,7 +940,7 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 13 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 14 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
@@ -939,6 +949,26 @@ SV=load()||newSave();RUN=SV.run;if(!SV.life)SV.life=L0();R=newRT();buildLayout()
 requestAnimationFrame(t=>{last=t;loop(t)});
 if(!SV.seen){SV.seen=1;openModal(`<div class="emo">👵🍳</div><h2>Guerra de Fogones 2</h2><p>La abuela Lola te deja su barra de bar en la Calle Fogones. Tu vida tiene dos mitades:</p>
   <div class="keep"><span>☀️ <b>De día (2 min):</b> cocina, sirve y gana dinero. Compra mesas y platos tocando los botones del local.</span><span>🏷️ <b>El precio importa:</b> abajo ves qué clientes aceptan tu precio. Los que no, se van a la competencia.</span><span>🏚️ <b>Hunde a los 2 rivales</b> de la calle y compra sus locales para crecer.</span><span>🌙 <b>De noche:</b> tu vida. Carrera, amor, hijos, fiestas, sabotajes… y lo que hagas cambia el día siguiente.</span></div><button class="cb" data-m="close">¡A COCINAR!</button>`);save()}
+
+// ================= GUÍA PASO A PASO (muy intuitivo) =================
+const GUIDE=[
+ {t:'Toca <b>⬆</b> en tu refresco para subirlo de nivel',ok:()=>RUN.lvl[0]>=3,tgt:()=>OVB.get('st0'),rw:20},
+ {t:'Compra una mesa nueva: toca <b>＋ MESA</b>',ok:()=>RUN.seats>=6,tgt:()=>OVB.get('seat'),rw:30},
+ {t:'Abre un plato nuevo: toca el candado naranja <b>🔓</b> de la cocina',ok:()=>RUN.lvl[1]>0,tgt:()=>OVB.get('st1'),rw:60},
+ {t:'Sube el refresco a <b>nivel 10</b>: cada hito vende x1,9',ok:()=>RUN.lvl[0]>=10,tgt:()=>OVB.get('st0'),rw:80},
+ {t:'Contrata un <b>camarero</b> en 👨‍🍳 Equipo',ok:()=>RUN.waiters>=1,tgt:()=>document.querySelector('[data-sheet="equipo"]'),rw:120},
+ {t:'Prueba a subir y bajar el <b>precio</b>: mira qué clientes lo aceptan',ok:()=>RUN.price!==2,tgt:()=>document.querySelector('#pbar [data-p="1"]'),rw:50},
+ {t:'Termina tu primer día sirviendo a <b>15 clientes</b>',ok:()=>(R.stats.served>=15)||RUN.day>1,tgt:()=>null,rw:100},
+ {t:'Por la noche: elige tu <b>carrera</b> 🌟',ok:()=>!!SV.life.car,tgt:()=>null,rw:150},
+ {t:'Hunde a <b>'+'un rival'+'</b>: quítale clientes hasta que su ❤️ llegue a 0',ok:()=>RUN.riv.some(r=>!r.open||r.own),tgt:()=>OVB.get('hp0'),rw:400},
+ {t:'Compra su local cerrado: toca <b>🏚️ COMPRAR</b>',ok:()=>RUN.riv.some(r=>r.own),tgt:()=>OVB.get('rv0')||OVB.get('rv1'),rw:800}];
+function guideStep(){SV.g=SV.g||0;return SV.g<GUIDE.length?GUIDE[SV.g]:null}
+const hand=document.createElement('div');hand.className='hand';hand.textContent='👆';document.body.appendChild(hand);
+function paintGuide(){const g=guideStep(),el=$('#guide');if(!g||inNight){el.hidden=true;hand.style.display='none';return}el.hidden=false;
+  const done=g.ok();const h=`<span class="gn">${SV.g+1}/${GUIDE.length}</span><span class="gt">${g.t}</span>${done?`<button class="cb gok" id="gOk">+${fmtM(g.rw*mult())} €</button>`:`<span class="gr">🎁 ${fmtM(g.rw*mult())} €</span>`}`;if(el._h!==h){el.innerHTML=h;el._h=h}
+  const t=!done&&g.tgt();if(t&&t.getBoundingClientRect){const r=t.getBoundingClientRect();if(r.width){hand.style.display='block';hand.style.left=(r.left+r.width/2-14)+'px';hand.style.top=(r.bottom-6)+'px';return}}hand.style.display='none'}
+$('#guide').addEventListener('click',e=>{if(!e.target.closest('#gOk'))return;const g=guideStep();if(!g||!g.ok())return;RUN.money+=g.rw*mult();SV.g++;sfx.big();burst((LAY.xL+LAY.xR)/2,-2,20,'💰');save();paintGuide()});
+setInterval(()=>{if(!document.hidden)paintGuide()},300);
 
 </script>
 <script>
