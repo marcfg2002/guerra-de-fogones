@@ -197,6 +197,34 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .sheet{border:0;border-radius:22px 22px 0 0;box-shadow:0 -6px 20px rgba(0,0,0,.25);background:#fff8e6}
 .upg .ic{background:#fff3d6;border-radius:12px}
 </style>
+<style>
+/* ===== v4: historia ===== */
+.dlg{position:absolute;left:8px;right:8px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;display:flex;align-items:flex-end;gap:0;animation:dlgin .3s cubic-bezier(.3,1.4,.5,1)}
+@keyframes dlgin{from{transform:translateY(30px);opacity:0}}
+.dp{width:86px;height:86px;flex-shrink:0;border-radius:50%;background:#fff;border:4px solid var(--pc,#ffb23f);display:grid;place-items:center;font-size:54px;box-shadow:0 5px 0 rgba(0,0,0,.25);margin-right:-18px;z-index:2;animation:talk .5s ease-in-out infinite alternate}
+@keyframes talk{to{transform:translateY(-3px) rotate(-3deg)}}
+.dbx{flex:1;background:#fff;border-radius:18px;padding:10px 14px 8px 28px;box-shadow:0 5px 0 rgba(0,0,0,.25);min-height:78px;box-sizing:border-box}
+.dbx b{display:inline-block;font-family:var(--f-d);font-weight:400;font-size:15px;color:#fff;background:var(--pc,#ffb23f);padding:2px 10px;border-radius:8px;margin-bottom:4px}
+.dbx p{margin:0;font-weight:800;font-size:14.5px;line-height:1.35;color:#23262f;min-height:2.7em}
+.dbx small{display:block;text-align:right;font-family:var(--f-d);color:#9aa3ad;font-size:12px}
+.rbub{position:absolute;left:0;top:0;z-index:5;background:#fff;border-radius:14px;padding:6px 10px;font-weight:900;font-size:12.5px;max-width:170px;line-height:1.25;box-shadow:0 3px 0 rgba(0,0,0,.2);pointer-events:none;opacity:0;transition:opacity .25s;display:flex;gap:6px;align-items:center}
+.rbub.on{opacity:1}
+.rbub::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-8px;border:8px solid transparent;border-top-color:#fff;border-bottom:0}
+.rbub i{font-style:normal;font-size:20px}
+.choice{display:flex;flex-direction:column;gap:8px}
+.choice button{display:flex;align-items:center;gap:10px;text-align:left;background:#fff;border:3px solid #23262f;border-radius:14px;padding:9px 12px;box-shadow:0 4px 0 #23262f;font-weight:900}
+.choice button:active{transform:translateY(3px);box-shadow:0 1px 0 #23262f}
+.choice button span{font-size:26px}
+.choice button small{display:block;font-weight:800;color:#7a6a50;font-size:12px}
+.who{display:flex;align-items:center;gap:10px;justify-content:center}
+.who span{width:62px;height:62px;border-radius:50%;background:#fff;border:4px solid var(--pc);display:grid;place-items:center;font-size:38px}
+.who b{font-family:var(--f-d);font-weight:400;font-size:20px}
+.chap{font-family:var(--f-d);font-size:13px;letter-spacing:.06em;color:#fff;background:#23262f;border-radius:8px;padding:2px 8px;display:inline-block}
+.story-it{display:flex;gap:10px;align-items:flex-start;background:#fff;border-radius:14px;padding:8px 10px;box-shadow:0 2px 0 #f0e2c4}
+.story-it span{font-size:26px}.story-it b{font-family:var(--f-d);font-weight:400;font-size:15px;display:block}.story-it small{font-weight:800;color:#7a6a50;font-size:12px;line-height:1.3;display:block}
+.story-it.lock{opacity:.45}
+.mission .mi{font-size:22px;background:#fff3d6;border:2px solid var(--pc,#ffb23f)}
+</style>
 </head>
 <body>
 
@@ -210,12 +238,10 @@ body{background:#23262f;padding-left:0;padding-right:0}
   <div class="stage" id="stage">
     <canvas id="cv"></canvas>
     <div class="side left">
-      <button class="sb" id="misSide" aria-label="Misión"><span>🎯</span></button>
-      <button class="sb" data-sheet="calle" aria-label="Calle"><span>🏙️</span></button>
+      <button class="sb" data-sheet="historia" aria-label="Historia"><span>📜</span></button>
     </div>
     <div class="side right">
       <button class="sb boostb" id="bRush" aria-label="Gentío"><span>📣</span><i class="cdv"></i><b class="cdt"></b></button>
-      <button class="sb" data-sheet="precios" aria-label="Precios"><span>🏷️</span></button>
     </div>
     <div class="mission" id="mission"></div>
     <div class="ticker" id="ticker"></div>
@@ -229,6 +255,7 @@ body{background:#23262f;padding-left:0;padding-right:0}
     <button class="db" data-sheet="precios" aria-label="Precios"><span>🏷️</span></button>
   </nav>
   <div class="sheet" id="sheet"></div>
+  <div class="dlg" id="dlg" hidden><div class="dp" id="dP"></div><div class="dbx"><b id="dN"></b><p id="dT"></p><small>Toca para seguir ▸</small></div></div>
 </div>
 <div class="modal" id="modal" hidden><div class="card" id="card"></div></div>
 <div class="toast" id="toast"></div>
@@ -347,7 +374,7 @@ function spawnCustomer(S,R,opts={}){
   let best=0+gumbel(),pick=null;
   const mySeatZ=ownedZones(S).map(j=>[j,freeSeat(S,R,j)]).filter(a=>a[1]>=0);
   const okB=new Set(mySeatZ.map(a=>bld(a[0])));const md=myDishes(S).filter(d=>okB.has(bld(stationPos(d).j)));
-  if(mySeatZ.length&&md.length){for(const d of md){const u=myUtil(S,R,d)+gumbel()+(c.vip?0.5:0);if(u>best){best=u;pick={me:1,d}}}}
+  if(mySeatZ.length&&md.length&&!(R.bribe>0)){for(const d of md){const u=myUtil(S,R,d)+gumbel()+(c.vip?0.5:0);if(u>best){best=u;pick={me:1,d}}}}
   let hurt=false;
   for(let j=1;j<4;j++){const z=S.zones[j];if(z.own||!z.open)continue;const k=freeSeat(S,R,j);if(k<0)continue;
     const u=rivalUtil(S,j)+gumbel();if(u>best){best=u;pick={j}}}
@@ -367,7 +394,7 @@ function earn(S,R,amt,x,y,txt){S.money+=amt;S.earned+=amt;R.incWin+=amt;R.floats
 
 function step(S,R,dt){
   R.t+=dt;R.tick++;buildGrid(S);
-  if(R.turbo>0)R.turbo-=dt;if(R.rush>0)R.rush-=dt;if(R.ad>0)R.ad-=dt;
+  if(R.turbo>0)R.turbo-=dt;if(R.bribe>0)R.bribe-=dt;if(R.rush>0)R.rush-=dt;if(R.ad>0)R.ad-=dt;
   // ritmo de llegada
   const lam=(0.6+0.0015*S.fame+0.12*(ownedZones(S).length-1))*(R.rush>0?2.6:1)*((S.up&&S.up.gSpawn)||1);
   R.spawnAcc+=dt*lam;while(R.spawnAcc>=1){R.spawnAcc-=1;spawnCustomer(S,R)}
@@ -423,7 +450,7 @@ function leave(S,R,c){const j=c.target;c.path=null;if(j>=0&&R.seats[j][c.seat]==
   const o=R.orders.find(o=>o.c===c);if(o)o.state='x';c.state='out'}
 function serve(S,R,c){const d=c.dish,s=S.st[d],fair=fairOf(d,s.lvl),price=fair*s.r*(1+S.fr);
   const fast=c.wait<12;let tip=fast&&s.r<=1.05?0.15:0;
-  const amt=price*(1+tip)*(c.vip?3:1)*((S.up&&S.up['m_'+d])||1)*((S.up&&S.up.gProfit)||1);
+  const amt=price*(1+tip)*(c.vip?3:1)*((S.up&&S.up['m_'+d])||1)*((S.up&&S.up.gProfit)||1)*((S.up&&S.up.gProfitTmp)||1);
   const g=GEO[c.target].seats[c.seat];earn(S,R,amt,g.x,g.y-14);
   S.served++;c.food=d;
   if(s.r>1.45){S.fame=Math.max(0,S.fame-0.6);c.mood='😒'}
@@ -513,13 +540,13 @@ function shade(hex,f){const n=parseInt(hex.slice(1),16),r=n>>16,g=n>>8&255,b=n&2
 
 // ---------- MOTOR 3D ----------
 const stageEl=$('#stage'),cv=$('#cv');
-const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;
 renderer.setPixelRatio(Math.min(2,devicePixelRatio||1));
 renderer.outputEncoding=THREE.sRGBEncoding;
 const scene=new THREE.Scene();
 const camera=new THREE.OrthographicCamera(-6,6,6,-6,.5,300);
 scene.add(new THREE.HemisphereLight(0xffffff,0x8a7a6a,.62));
-const sun=new THREE.DirectionalLight(0xfff4e4,.8);sun.position.set(-9,18,7);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-18,right:18,top:20,bottom:-20,near:1,far:70});sun.shadow.bias=-.0015;sun.shadow.radius=3;scene.add(sun);scene.add(sun.target);
+const sun=new THREE.DirectionalLight(0xfff4e4,.8);sun.position.set(-9,18,7);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-18,right:18,top:20,bottom:-20,near:1,far:70});sun.shadow.bias=-.0015;sun.shadow.radius=3;scene.add(sun);scene.add(sun.target);
 const Wx=x=>(x-210)/20,Wz=y=>(y-330)/20;
 let dirtyBg=true,cam=0,camT=0,camBase={d:40,pitch:.95},SC=1;
 const MC={};const lin=c=>new THREE.Color(c).convertSRGBToLinear();scene.background=lin('#86cf63');const mat=(c,o)=>{const k=c+(o||'');return MC[k]||(MC[k]=new THREE.MeshLambertMaterial({color:lin(c),transparent:!!o,opacity:o||1}))};
@@ -649,10 +676,10 @@ let lastT=0;
 function syncEnts(t){const dt=Math.min(.1,Math.max(0,t-lastT));lastT=t;const seen=new Set();
   for(const c of R.custs){seen.add(c);let o=ENT.get(c);
     if(!o){o={g:chibi(c.vip?'vip':'cust'),px:c.x,py:c.y};scene.add(o.g);ENT.set(c,o)}
-    const g=o.g,sit=c.state==='seated'||c.state==='eat',dx=c.x-o.px,dy=c.y-o.py,mv=Math.hypot(dx,dy)>.02;
-    g.position.set(Wx(c.x),0,Wz(c.y));
+    const g=o.g,sit=c.state==='seated'||c.state==='eat',ox=c.ox??c.x,oy=c.oy??c.y,dx=c.x-ox,dy=c.y-oy,mv=Math.hypot(dx,dy)>.05,ix=ox+dx*ALPHA,iy=oy+dy*ALPHA;
+    g.position.set(Wx(ix),0,Wz(iy));
     g.visible=!c.hidden;if(sit){const st=GEO[c.target].seats[c.seat];turnTo(g,st.side<0?Math.PI/2:-Math.PI/2,dt)}else if(mv)turnTo(g,Math.atan2(dx,dy),dt);
-    poseChibi(g,c.state==='eat'?'eat':sit?'sit':mv?'walk':'idle',t+(c.speed||0),dt);o.px=c.x;o.py=c.y;
+    poseChibi(g,c.state==='eat'?'eat':sit?'sit':mv?'walk':'idle',t+(c.speed||0)*.1,dt);
     const own=c.target>=0&&S.zones[c.target]&&S.zones[c.target].own;
     if(c.state==='seated'&&own){const b=Math.min(9,Math.floor(c.wait/(32*((S.up&&S.up.gPat)||1))*10));if(!o.bub||o.bb!==b){if(o.bub){scene.remove(o.bub);o.bub.material.map.dispose();o.bub.material.dispose()}
         o.bub=new THREE.Sprite(new THREE.SpriteMaterial({map:bubbleTex(DISH[c.dish].e,b/10),depthTest:false}));o.bub.renderOrder=8;o.bub.scale.set(.95,.95,1);scene.add(o.bub);o.bb=b}
@@ -663,9 +690,9 @@ function syncEnts(t){const dt=Math.min(.1,Math.max(0,t-lastT));lastT=t;const see
     if(o.fs){if(c.state==='eat'){const st=GEO[c.target].seats[c.seat];o.fs.position.set(Wx(c.x-st.side*13),.95,Wz(c.y))}else o.fs.position.set(g.position.x,2.1,g.position.z)}}
   for(const ch of R.chefs){seen.add(ch);let o=ENT.get(ch);
     if(!o){o={g:chibi('chef'),px:ch.x,py:ch.y};scene.add(o.g);ENT.set(ch,o)}
-    const g=o.g,dx=ch.x-o.px,dy=ch.y-o.py,mv=Math.hypot(dx,dy)>.02;g.position.set(Wx(ch.x),0,Wz(ch.y));
+    const g=o.g,ox=ch.ox??ch.x,oy=ch.oy??ch.y,dx=ch.x-ox,dy=ch.y-oy,mv=Math.hypot(dx,dy)>.05;g.position.set(Wx(ox+dx*ALPHA),0,Wz(oy+dy*ALPHA));
     if(mv)turnTo(g,Math.atan2(dx,dy),dt);else if(ch.state==='cook')turnTo(g,0,dt);
-    poseChibi(g,ch.state==='cook'?'cook':mv?(ch.carry?'carry':'walk'):'idle',t*1.1+R.chefs.indexOf(ch),dt);o.px=ch.x;o.py=ch.y;
+    poseChibi(g,ch.state==='cook'?'cook':mv?(ch.carry?'carry':'walk'):'idle',t*1.1+R.chefs.indexOf(ch),dt);
     if(ch.carry!==o.ce){if(o.cs){g.remove(o.cs);o.cs=null}if(ch.carry){o.cs=new THREE.Group();const pl=mesh(G.cyl,'#ffffff',0,0,0,.26,.04,.26);o.cs.add(pl);const sp=sprite(ch.carry,.55);sp.position.y=.25;o.cs.add(sp);o.cs.position.set(0,1.05,.42);g.add(o.cs)}o.ce=ch.carry}
     if((R.turbo>0)!==o.tb){o.tb=R.turbo>0;if(o.fire){g.remove(o.fire);o.fire=null}if(o.tb){o.fire=sprite('🔥',.45);o.fire.position.set(-.35,.3,-.2);g.add(o.fire)}}}
   for(const [k,o] of ENT)if(!seen.has(k)){scene.remove(o.g);if(o.bub)scene.remove(o.bub);if(o.fs)scene.remove(o.fs);ENT.delete(k)}}
@@ -739,10 +766,10 @@ let sheetCamSaved=null;
 function updCam(){if(sheetKind!=='st')return;const st=stageEl.getBoundingClientRect(),sh=$('#sheet').getBoundingClientRect();
   const limit=1-2*((sh.top-st.top-30)/st.height);const p=stationPos(sheetArg);const xm2=Math.max(0,11.5-VIS_W/2),x=Math.max(-xm2,Math.min(xm2,Wx(p.x)));
   for(let z=Wz(p.y)-12;z<=Wz(p.y)+8;z+=.2){camPose(tmpC,x,z);tmpC.updateProjectionMatrix();tmpV.set(Wx(p.x),0,Wz(p.y)+.6).project(tmpC);if(tmpV.y>=limit+.04){camXT=x;camZT=z;return}}}
-let T3=0;
+let T3=0,ALPHA=1;
 function render(){if(dirtyBg){buildStatic();STN.forEach(o=>scene.remove(o.g));STN.clear()}
-  T3+=1/60;camX+=(camXT-camX)*.2;camZ+=(camZT-camZ)*.2;camPose(camera,camX,camZ);
-  buildStations(T3);animStations(T3);syncEnts(R.t);syncBags(T3);syncFloats();syncOverlay();
+  T3=performance.now()/1000;camX+=(camXT-camX)*.2;camZ+=(camZT-camZ)*.2;camPose(camera,camX,camZ);
+  buildStations(T3);animStations(T3);syncEnts(performance.now()/1000);syncBags(T3);syncFloats();syncOverlay();syncRivalBubbles();
   stageEl.classList.toggle('turbo',R.turbo>0);stageEl.classList.toggle('rush',R.rush>0);
   renderer.render(scene,camera)}
 // toques
@@ -793,6 +820,13 @@ function flyCoin(x,y){if(flying>10)return;const cr=cv.getBoundingClientRect(),tg
   requestAnimationFrame(()=>requestAnimationFrame(()=>{c.style.transform=`translate(${tgt.left+tgt.width/2}px,${tgt.top+tgt.height/2}px) scale(.6)`}));
   setTimeout(()=>{c.remove();flying--;const b=$('#cashBox');b.classList.remove('bump');void b.offsetWidth;b.classList.add('bump')},620)}
 
+const BUB=new Map();
+function rivalSay(j,txt){if(!S.zones[j]||S.zones[j].own)return;let b=BUB.get(j);if(!b){b=document.createElement('div');b.className='rbub';stageEl.appendChild(b);BUB.set(j,b)}
+  b.innerHTML=`<i>${ZONES[j].e}</i>${txt}`;b.classList.remove('on');void b.offsetWidth;b.classList.add('on');clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('on'),4200)}
+function syncRivalBubbles(){const cr=cv.getBoundingClientRect(),sr=stageEl.getBoundingClientRect();for(const [j,b] of BUB){if(!b.classList.contains('on'))continue;const g=GEO[j];
+  tmpV.set(Wx(g.cx),2.4,Wz((g.y0+g.y1)/2)).project(camera);let x=(tmpV.x+1)/2*cr.width+(cr.left-sr.left),y=(1-tmpV.y)/2*cr.height+(cr.top-sr.top);
+  x=Math.max(90,Math.min(sr.width-90,x));y=Math.max(70,Math.min(sr.height-40,y));b.style.transform=`translate(${x}px,${y}px) translate(-50%,-100%)`}}
+
 // ---------- BOOSTS ----------
 const BOOST={turbo:{dur:30,cd:120,t:'🔥 ¡TURBO!',s:'Cocineros x2 durante 30 s'},rush:{dur:20,cd:150,t:'📣 ¡GENTÍO!',s:'Llega el doble de gente a la calle'}};
 function useBoost(k){const now=Date.now();if(now<S.cd[k]){toast('Aún se está recargando ⏳');return}
@@ -804,6 +838,7 @@ function paintBoosts(){const now=Date.now();for(const [k,id] of [['turbo','#bTur
 
 // ---------- MISIONES ----------
 const lv=d=>S.st[d].lvl;
+const MIS_WHO=['👵','👵','👵','👵','👵','👵','🧔🏻','👵','👵','🧐','👵','🧑🏻‍🍳','👵','👵','🤠','🤠','👵'];
 const MIS=[
  ['🥤','Toca la cocina de 🥤 y mejórala a nivel 5',()=>lv('soda')/5,30],
  ['🍟','Desbloquea las Patatas (toca el 🔒)',()=>lv('fries')>0?1:S.money/DISH.fries.unlock,50],
@@ -822,12 +857,11 @@ const MIS=[
  ['🌮','Arruina a El Güey',()=>S.flags.closed3||S.zones[3].own?1:0,3e4],
  ['👑','Quédate con toda la calle',()=>S.zones[3].own?1:0,6e4],
  ['🏢','Abre tu primera franquicia (Calle)',()=>S.fr>0?1:0,0]];
-function curMis(){if(S.mis<MIS.length){const m=MIS[S.mis];return{ic:m[0],t:m[1],p:Math.min(1,m[2]()),rw:Math.max(m[3],Math.round(S.incAvg*30))}}
+function curMis(){if(S.mis<MIS.length){const m=MIS[S.mis];return{ic:MIS_WHO[S.mis]||'👵',t:m[1],p:Math.min(1,m[2]()),rw:Math.max(m[3],Math.round(S.incAvg*30))}}
   const top=Math.max(...myDishes(S).map(lv)),target=(Math.floor(top/10)+1)*10;
   return{ic:'📈',t:`Sube cualquier plato a nivel ${target}`,p:top/target,rw:Math.round(Math.max(100,S.incAvg*60))}}
-let misKey='',misHide=false;$('#misSide').onclick=()=>{misHide=!misHide;$('#mission').classList.toggle('hide',misHide);sfx.tap()};
+let misKey='';
 function paintMission(){const m=curMis(),done=m.p>=1,key=S.mis+'|'+done+'|'+Math.round(m.p*60);if(key===misKey)return;misKey=key;
-  if(done&&misHide){misHide=false;$('#mission').classList.remove('hide')}const sb=$('#misSide');let bd=sb.querySelector('.badge');if(done&&!bd){bd=document.createElement('i');bd.className='badge';bd.textContent='!';sb.appendChild(bd)}else if(!done&&bd)bd.remove();
   $('#mission').innerHTML=`<span class="mi">${m.ic}</span><span class="mt">${m.t}${done?'':`<div class="pb"><i style="width:${m.p*100}%"></i></div>`}</span>${done?`<button class="cb pulse" id="misBtn">COBRAR<small>${fmtM(m.rw)} €</small></button>`:''}`}
 $('#mission').addEventListener('click',e=>{if(!e.target.closest('#misBtn'))return;const m=curMis();if(m.p<1)return;S.money+=m.rw;S.mis++;sfx.unlock();burst(VW/2,VH*.4,26,'💰');misKey='';paintMission();save()});
 
@@ -929,7 +963,7 @@ function paintTop(){$('#money').firstChild.textContent=fmtM(S.money)+' €';$('#
   const canUp=UPGS().some(u=>S.money>=u.cost);const mb=document.querySelector('.dock [data-sheet="mejoras"]');let b2=mb.querySelector('.badge');if(canUp&&!b2){b2=document.createElement('i');b2.className='badge';b2.textContent='!';mb.appendChild(b2)}else if(!canUp&&b2)b2.remove()}
 let last=performance.now(),acc=0,uiT=0;
 function loop(now){const dt=Math.min(.25,(now-last)/1000);last=now;
-  if(!document.hidden){acc+=dt;while(acc>=.05){step(S,R,.05);acc-=.05}stepFx(dt);render();
+  if(!document.hidden){acc+=dt;while(acc>=.05){for(const e of R.custs){e.ox=e.x;e.oy=e.y}for(const e of R.chefs){e.ox=e.x;e.oy=e.y}step(S,R,.05);acc-=.05}ALPHA=acc/.05;stepFx(dt);render();
     uiT+=dt;if(uiT>.3){uiT=0;paintTop();paintBoosts();paintMission();renderSheet();if(sheetKind==='st')updCam()}}
   requestAnimationFrame(loop)}
 function catchUp(){const dt=(Date.now()-(S.lastSave||Date.now()))/1000;if(dt<60||!S.incAvg)return;
@@ -960,6 +994,63 @@ function helpHTML(){return`<div class="emo">🍳🔥</div><h2>Guerra de Fogones<
 
 S.up=S.up||{};S.bought=S.bought||[];resize();homeCam();camX=camXT;camZ=camZT;catchUp();paintTop();paintMission();requestAnimationFrame(loop);
 if(!S.seen){S.seen=1;save();setTimeout(()=>openModal(helpHTML()),300)}
+
+// ================= HISTORIA, PERSONAJES Y DECISIONES =================
+const CAST={abu:{e:'👵',n:'Abuela Lola',c:'#ffb23f'},mas:{e:'🧔🏻',n:'Don Massimo',c:'#e9574f'},ken:{e:'🧑🏻‍🍳',n:'Sensei Kenji',c:'#3f86d6'},gue:{e:'🤠',n:'Ramón «El Güey»',c:'#2fb37a'},cri:{e:'🧐',n:'Paca Gourmet',c:'#b07cff'},inf:{e:'🤳',n:'Lucía Influencer',c:'#ff6fb5'},pro:{e:'🧑‍🌾',n:'Paco el proveedor',c:'#8a5a32'}};
+const STORY=[
+ {id:'intro',ch:'Capítulo 1 · La herencia',ic:'🥤',when:()=>true,lines:[['abu','¡Bienvenid@ a la Calle Fogones! Este puestito fue mío cuarenta años. Desde hoy, es tuyo.'],['abu','Pero ojo: Don Massimo, Kenji y El Güey llevan años intentando quedarse con toda la calle.'],['gue','¿Un puesto de refrescos? Ja. En un mes este local será mío, abuela.'],['abu','No le hagas caso. Toca la cocina del 🥤 y mejórala. ¡Demuéstrales quién manda!']]},
+ {id:'fries',ch:'Capítulo 1 · La herencia',ic:'🍟',when:()=>S.st.fries.lvl>0,lines:[['abu','¡Patatas! Huelen igual que cuando las freía tu abuelo… Cuantos más platos tengas, más gente querrá entrar.']]},
+ {id:'angry',ch:'Capítulo 1 · La herencia',ic:'😡',when:()=>S.flags.angry,lines:[['abu','Ay, ese cliente se ha ido enfadado. Si tardas, pierdes fama ⭐. Contrata cocineros 👨‍🍳 o pulsa el 🔥 TURBO.']]},
+ {id:'mas1',ch:'Capítulo 2 · Guerra de precios',ic:'🍕',when:()=>S.served>=25,lines:[['mas','Mamma mia! ¿Quién es esta criatura que me roba clientes? ¡Bajo mis precios y te hundo!'],['abu','Massimo siempre fue un fanfarrón. Si te quita clientes, ajusta tus precios en 🏷️ o mejora tus platos.']],after:()=>{const z=S.zones[1];if(z.open&&!z.own)z.r=Math.max(.6,z.r-.1)}},
+ {id:'closed1',ch:'Capítulo 2 · Guerra de precios',ic:'🏚️',when:()=>S.flags.closed1,lines:[['mas','¡No puede ser! Mi nonna se revolverá en su tumba… ¡Me has arruinado!'],['abu','¡Su local está en traspaso! Cómpralo en 🏙️ Calle antes de que se recupere.']]},
+ {id:'own1',ch:'Capítulo 3 · El samurái',ic:'🍕',when:()=>S.zones[1].own,lines:[['abu','¡Hemos tirado la pared! Ahora también hacemos pizza. Tu abuelo estaría orgulloso.'],['ken','Interesante… Pero la paciencia del samurái no tiene fin. Conmigo no será tan fácil.']]},
+ {id:'closed2',ch:'Capítulo 3 · El samurái',ic:'🏚️',when:()=>S.flags.closed2,lines:[['ken','Mi honor… queda en tus manos. Hai.'],['abu','¡Rápido, a 🏙️ Calle! Que no se te escape el local de Kenji.']]},
+ {id:'own2',ch:'Capítulo 4 · El jefe final',ic:'🍣',when:()=>S.zones[2].own,lines:[['abu','¡Media calle es nuestra!'],['gue','Órale, chamaco, ahora sí me enojaste. Mi taquería tiene más caja que tú en toda tu vida. Ven por ella si puedes.'],['abu','El Güey está al otro lado de la carretera. Va a ser duro… pero confío en ti.']]},
+ {id:'closed3',ch:'Capítulo 4 · El jefe final',ic:'🏚️',when:()=>S.flags.closed3,lines:[['gue','No manches… Nunca pensé que un puestito de refrescos me ganaría. Te vendo el local… a precio de oro.']]},
+ {id:'own3',ch:'Epílogo · La reina de la calle',ic:'👑',when:()=>S.zones[3].own,lines:[['abu','Lo has hecho. La Calle Fogones entera es tuya.'],['abu','¿Y si abrimos otra calle? Dicen que en el centro hay rivales aún más duros… Mira en 🏙️ Calle: Franquicia.']]},
+ {id:'fran',ch:'Nueva calle',ic:'🏢',when:()=>S.fr>0&&!S.story['fran'+S.fr],key:()=>'fran'+S.fr,lines:[['abu','Calle nueva, rivales nuevos. Y esta vez van en serio. ¡A por ellos!']]}];
+S.story=S.story||{};
+let dlgQ=[],dlgOn=false,dlgTyping=null,dlgFull='';
+function say(lines,after){lines.forEach(l=>dlgQ.push(l));if(after)dlgQ.push(['__fn',after]);if(!dlgOn)nextLine()}
+function nextLine(){const l=dlgQ.shift();const el=$('#dlg');if(!l){dlgOn=false;el.hidden=true;return}
+  if(l[0]==='__fn'){l[1]();nextLine();return}
+  dlgOn=true;const c=CAST[l[0]];el.hidden=false;el.style.setProperty('--pc',c.c);$('#dP').textContent=c.e;$('#dN').textContent=c.n;
+  dlgFull=l[1];let i=0;clearInterval(dlgTyping);$('#dT').textContent='';
+  dlgTyping=setInterval(()=>{i+=2;$('#dT').textContent=dlgFull.slice(0,i);if(i%6===0)tone(l[0]==='gue'||l[0]==='mas'?320:520,.03,'square',.015);if(i>=dlgFull.length)clearInterval(dlgTyping)},22)}
+$('#dlg').addEventListener('click',()=>{if($('#dT').textContent.length<dlgFull.length){clearInterval(dlgTyping);$('#dT').textContent=dlgFull;return}sfx.tap();nextLine()});
+function storyTick(){if(dlgOn||!$('#modal').hidden)return;
+  for(const b of STORY){const id=b.key?b.key():b.id;if(S.story[id])continue;if(!b.when())continue;S.story[id]=Date.now();save();
+    if(b.ch&&b.id!=='intro'&&!['fries','angry'].includes(b.id))bigText(b.ic+' '+b.ch.split('·').pop().trim().toUpperCase(),b.ch.split('·')[0].trim());
+    setTimeout(()=>say(b.lines,b.after),b.id==='intro'?400:900);return}}
+// pullas de los rivales
+const TAUNT={1:['¡Mis pizzas tienen 100 años de receta!','Hoy 2x1 en margaritas, ¿eh?','¿Eso es una patata o un chiste?','Mamma mia, qué cola tengo…'],2:['El sushi requiere disciplina.','Tu cocina es… ruidosa.','Hoy he cortado 400 nigiris.','La calma vence a la prisa.'],3:['¡Aquí los tacos van con todo, güey!','Tengo más caja que todo tu barrio.','¿Refrescos? Yo regalo horchata.','Algún día esta calle será mía.']};
+let tauntT=12;function tauntTick(dt){tauntT-=dt;if(tauntT>0)return;tauntT=18+Math.random()*16;const open=[1,2,3].filter(j=>S.zones[j].open&&!S.zones[j].own);if(!open.length||dlgOn)return;
+  const j=open[Math.floor(Math.random()*open.length)];const L=TAUNT[j];rivalSay(j,L[Math.floor(Math.random()*L.length)])}
+// decisiones (rol)
+const evCost=s=>Math.max(30,Math.round(S.incAvg*s));
+const EVENTS=[
+ {id:'critic',who:'cri',ok:()=>S.served>15,t:()=>'Vengo a escribir una reseña de tu local. ¿Me invitas a comer?',o:[['🍽️','Invitarla','−'+fmtM(evCost(20))+' € · +25 de fama',()=>{S.money-=Math.min(S.money,evCost(20));S.fame+=25;toast('⭐ «¡Una joya escondida!» +25 fama')}],['💶','Cobrarle como a todos','+'+fmtM(evCost(10))+' € · −10 de fama',()=>{S.money+=evCost(10);S.fame=Math.max(0,S.fame-10);toast('🧐 «Correcto, sin más…» −10 fama')}]]},
+ {id:'pact',who:'mas',ok:()=>S.zones[1].open&&!S.zones[1].own&&S.served>20,t:()=>'Hagamos un trato, bambino: subimos los dos los precios un 20 %. Todos ganamos, ¿sí?',o:[['🤝','Aceptar el pacto','Tus precios +20 % · Massimo respira',()=>{for(const d of myDishes(S))S.st[d].r=Math.min(2,S.st[d].r+.2);S.zones[1].r+=.2;S.zones[1].cash*=1.3;rivalSay(1,'Perfetto! Somos socios… por ahora.')}],['✋','Rechazarlo','+5 fama · guerra de precios',()=>{S.fame+=5;S.zones[1].r=Math.max(.6,S.zones[1].r-.15);rivalSay(1,'¡Te arrepentirás! −15 % en todo!')}]]},
+ {id:'spy',who:'ken',ok:()=>S.zones[2].open&&!S.zones[2].own&&S.served>40,t:()=>'Un cliente sospechoso está haciendo fotos a tu cocina… lleva un delantal de Sushi Zen.',o:[['🚪','Echarlo','−5 fama, pero tus recetas a salvo',()=>{S.fame=Math.max(0,S.fame-5);rivalSay(2,'Mi espía ha vuelto… vacío.')}],['🤷','Dejarlo','Kenji mejora su cocina',()=>{S.zones[2].lvl+=2;rivalSay(2,'Gracias por la inspiración.')}]]},
+ {id:'influ',who:'inf',ok:()=>S.served>10,t:()=>'¡Holiii! ¿Puedo grabar un vídeo en tu local para mis 2 millones de seguidores?',o:[['🎥','¡Claro que sí!','Hora punta gratis 40 s',()=>{R.rush=40;bigText('📱 ¡VIRAL!','Llega muchísima gente');sfx.boost()}],['💸','Solo si paga','+'+fmtM(evCost(8))+' € · −5 fama',()=>{S.money+=evCost(8);S.fame=Math.max(0,S.fame-5)}]]},
+ {id:'supplier',who:'pro',ok:()=>S.served>30,t:()=>'Traigo ingredientes de la huerta, de primera. Con esto tus platos valen el doble… un ratito.',o:[['🥕','Comprar','−'+fmtM(evCost(15))+' € · beneficios x2 durante 60 s',()=>{S.money-=Math.min(S.money,evCost(15));S.up.gProfitTmp=2;R.prem=60;bigText('🥕 ¡PRODUCTO PREMIUM!','x2 beneficios 60 s')}],['🙅','No, gracias','Nada cambia',()=>{}]]},
+ {id:'bribe',who:'gue',ok:()=>S.zones[3].open&&!S.zones[3].own&&S.zones[1].own,t:()=>'Te propongo algo, compadre: te doy lana si cierras tu cocina medio minutito. Nadie se entera.',o:[['💰','Aceptar el soborno','+'+fmtM(evCost(25))+' € · tus clientes se van a él',()=>{S.money+=evCost(25);R.rush=0;R.bribe=30;S.zones[3].cash*=1.15;rivalSay(3,'¡Así me gusta!')}],['🦸','Rechazarlo','+15 fama · El Güey se enfada',()=>{S.fame+=15;S.zones[3].r=Math.max(.6,S.zones[3].r-.1);rivalSay(3,'¡Ya verás, chamaco!')}]]},
+ {id:'recipe',who:'abu',once:1,ok:()=>S.st.soda.lvl>=10,t:()=>'¡Mira lo que he encontrado en el desván! Mi receta secreta de limonada. Es tuya.',o:[['🍋','Usar la receta','Refresco x1,5 para siempre',()=>{S.up.m_soda=(S.up.m_soda||1)*1.5;bigText('🍋 ¡RECETA DE LA ABUELA!','Refresco x1,5 para siempre')}]]}];
+let evT=100;function eventTick(dt){if(R.prem>0){R.prem-=dt;if(R.prem<=0)S.up.gProfitTmp=1}
+  evT-=dt;if(evT>0||dlgOn||!$('#modal').hidden||!S.story.intro)return;evT=110+Math.random()*80;
+  const pool=EVENTS.filter(e=>e.ok()&&!(e.once&&S.story['ev_'+e.id]));if(!pool.length)return;const ev=pool[Math.floor(Math.random()*pool.length)];if(ev.once)S.story['ev_'+ev.id]=1;
+  const c=CAST[ev.who];sfx.open();curEv=ev;
+  openModal(`<div class="who" style="--pc:${c.c}"><span>${c.e}</span><b>${c.n}</b></div><p>${ev.t()}</p><div class="choice">${ev.o.map((o,i)=>`<button data-m="evPick" data-i="${i}"><span>${o[0]}</span><span style="font-size:15px">${o[1]}<small>${o[2]}</small></span></button>`).join('')}</div>`)}
+let curEv=null;MA.evPick=b=>{const o=curEv&&curEv.o[+b.dataset.i];closeModal();if(o){o[3]();sfx.unlock();save()}curEv=null};
+// historia en el panel
+const _rs=renderSheet;renderSheet=function(force){if(sheetKind==='historia'){if(pressing&&!force)return;const el=$('#sheet');
+  el.innerHTML=hdr('📜','Tu historia','La Calle Fogones y sus rivales')+`<div class="list">`+STORY.filter(b=>b.id!=='fran').map(b=>{const got=S.story[b.id];const c=CAST[b.lines[0][0]];
+    return`<div class="story-it ${got?'':'lock'}"><span>${got?b.ic:'🔒'}</span><span><b>${b.ch}</b><small>${got?'«'+b.lines[b.lines.length-1][1]+'»':'Sigue jugando para descubrirlo…'}</small></span></div>`}).join('')+
+    `<button class="cb b" data-a="replay" style="margin-top:4px">VOLVER A VER LA INTRO</button></div>`;return}return _rs(force)};
+const _act=act;act=function(a){if(a==='replay'){closeSheet();say(STORY[0].lines);return false}return _act(a)};
+R.onAngry=()=>{sfx.bad();S.flags.angry=1};
+const _hook=hook;hook=function(){_hook();R.onAngry=()=>{sfx.bad();S.flags.angry=1}};
+let stT=0;setInterval(()=>{if(document.hidden)return;storyTick();tauntTick(.5);eventTick(.5)},500);
 
 </script>
 
