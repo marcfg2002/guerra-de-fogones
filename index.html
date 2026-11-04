@@ -1,17 +1,3 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Fogones">
-<meta name="theme-color" content="#23262f">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" href="icon-192.png">
-<style>:root{color-scheme:light}body{margin:0}</style>
 <title>Guerra de Fogones</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -317,10 +303,24 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .dock{padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
 #app{position:fixed!important;left:0!important;right:0!important;top:0!important;bottom:auto!important;max-width:none!important;padding:0!important}html,body{background:#23262f!important}
 .sheet:not(.open){visibility:hidden;transition:transform .28s,visibility 0s .28s}
+/*v7*/
+.stepn{font:900 12px var(--f-b);color:#9a7b4f;text-transform:uppercase;letter-spacing:.5px}
+.seg3{display:flex;gap:6px;justify-content:center}.seg3.wrap{flex-wrap:wrap}
+.seg3 button{flex:1 1 30%;min-height:40px;padding:6px 8px;border-radius:12px;background:#fff;border:3px solid #e3d1ad;font:900 13px var(--f-b);color:#23262f}
+.seg3 button.on{border-color:#23262f;background:#ffe2a8;box-shadow:0 0 0 2px #ffb23f}
+.illc{background:#fff4f0;border:2px solid #ffb4a2;border-radius:12px;padding:8px 10px;margin:6px 0;font:700 14px var(--f-b);text-align:left}
+.illc.pand{background:#f3efff;border-color:#c4b2ff}
+.tomc{background:#fffbe6;border:2px solid #ffd76a;border-radius:12px;padding:8px 10px;margin:6px 0;font:700 13px var(--f-b);display:flex;flex-direction:column;gap:3px;text-align:left}
+.needs7{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+.needs7 span{background:#fff;border:2px solid #e3d1ad;border-radius:12px;padding:6px 8px;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:2px 6px;font:800 13px var(--f-b)}
+.needs7 span i{grid-row:span 2;font-style:normal;font-size:20px}.needs7 span.low{border-color:#ff5a4e;animation:pulse7 1s infinite}
+@keyframes pulse7{50%{background:#ffe3df}}
+.bugs{position:absolute;inset:0;pointer-events:none;z-index:6;overflow:hidden}
+.bug{position:absolute;left:0;top:0;pointer-events:auto;background:none;border:0;font-size:26px;width:46px;height:46px;padding:0;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35));transition:filter .1s}
+.bug.hit{filter:brightness(2) drop-shadow(0 0 6px #fff)}
+.dock .db{position:relative}.dock .db em{display:block;font:900 10px var(--f-b);font-style:normal;color:#fff;margin-top:1px;text-shadow:0 1px 0 #000}
+.dock .db span{line-height:1}
 </style>
-<style>body:has(.modal:not([hidden])) .dlg{visibility:hidden}</style>
-</head>
-<body>
 
 <div id="app">
   <header class="topbar">
@@ -352,7 +352,7 @@ body{background:#23262f;padding-left:0;padding-right:0}
 </div>
 <div class="modal" id="modal" hidden><div class="card" id="card"></div></div>
 <div class="toast" id="toast"></div>
-<script src="three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ================= GUERRA DE FOGONES · simulación =================
 const VW=420,VH=640,STREET=330,SIDE_Y=312,ZW=120;
@@ -1072,7 +1072,7 @@ function openSet(){openModal(`<h2>Ajustes</h2>
   <button class="tog ${S.music?'on':''}" data-m="tMusic"><span>🎵 Música</span><i></i></button>
   <button class="tog ${S.sound?'on':''}" data-m="tSound"><span>🔊 Sonido</span><i></i></button>
   <button class="cb b" data-m="help">CÓMO SE JUEGA</button>
-  <p style="font-size:12px;color:#8a6a40">Versión 26 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
+  <p style="font-size:12px;color:#8a6a40">Versión 27 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
   <button class="lnk" style="color:#d8352a" data-m="wipe">Borrar partida</button>
   <button class="cb" data-m="close">SEGUIR</button>`)}
 MA.tMusic=()=>{S.music=!S.music;music();openSet();save()};MA.tSound=()=>{S.sound=!S.sound;music();openSet();save()};
@@ -2004,10 +2004,214 @@ setInterval(()=>{if(!document.hidden)celebUnlock()},2000);
 
 function fitApp(){const a=document.getElementById('app');a.style.height=window.innerHeight+'px';document.body.style.height=window.innerHeight+'px'}fitApp();addEventListener('resize',()=>{fitApp();resize()});addEventListener('orientationchange',()=>setTimeout(()=>{fitApp();resize()},300));setTimeout(()=>{fitApp();resize()},400);
 
+// ================= VIDA 7: todo lo nuevo de la vida, sobre el restaurante de siempre =================
+// ---------- utilidades ----------
+function V7(){const L=V5();L.id=L.id||{g:'n',o:'bi',made:0};if(L.id.o==='pan')L.id.o='bi';L.nd=L.nd||{ham:70,hig:70,div:60,soc:60};L.cd7=L.cd7||{};L.buf=L.buf||[];if(L.pest==null)L.pest=0;return L}
+V7();
+const hp7=v=>{const L=V7();L.hp=cl((L.hp??100)+v,0,100)};
+const need=(k,v)=>{const n=V7().nd;n[k]=cl(n[k]+v,0,100)};
+const esc7=s=>String(s??'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+const RV=j=>({n:ZONES[j].name,e:ZONES[j].e,o:CAST[RK[j-1]].n,k:RK[j-1]});
+const openRiv=()=>[1,2,3].filter(j=>S.zones[j].open&&!S.zones[j].own);
+// texto con el género del personaje
+function gtxt(s){const g=V7().id.g;return String(s).replace(/\b(\p{L}+?)o\/a(s?)\b/gu,(_,w,pl)=>w+(g==='m'?'o':g==='f'?'a':'e')+pl).replace(/\bel\/la\b/g,g==='m'?'el':g==='f'?'la':'le').replace(/\bun\/una\b/g,g==='m'?'un':g==='f'?'una':'une')}
+const _wr7=withRes;withRes=function(ic,t,fn){return _wr7(ic,gtxt(t),()=>gtxt(fn()||''))};
+// ---------- efectos temporales en el restaurante (lo que haces en tu vida se nota en el local) ----------
+function buff(k,v,secs,label){const L=V7();L.buf.push({k,v,until:Date.now()+secs*1000,label});applyItems();toast(gtxt(`☀️ ${label} · ${Math.round(secs/60)} min`),2600)}
+applyItems=(function(prev){return function(){prev();const L=V7(),now=Date.now();L.buf=L.buf.filter(b=>b.until>now);for(const b of L.buf){const k={spawn:'sp',money:'pm',cook:'ck'}[b.k];if(k)S.it[k]*=b.v}if(bugs7&&bugs7.length)S.it.sp*=Math.max(.45,1-bugs7.length*.08)}})(applyItems);
+let bugs7=[];
+// ---------- motor de historias (varios pasos) ----------
+let ST7=null;
+function story(title,steps,finish){ST7={title,steps,finish,i:0,pick:[]};paintStory()}
+function paintStory(){const s=ST7,st=s.steps[s.i],o=typeof st.o==='function'?st.o(s.pick):st.o;s.cur=o;sfx.open();
+  openModal(`<div class="stepn">${s.title} · paso ${s.i+1}/${s.steps.length}</div><div class="emo">${st.e||'❓'}</div><h2>${gtxt(typeof st.t==='function'?st.t(s.pick):st.t)}</h2><div class="choice">${o.map((x,i)=>`<button data-m="st7" data-i="${i}"><span>${x[0]}</span><span style="font-size:15px">${gtxt(x[1])}${x[2]?`<small>${gtxt(x[2])}</small>`:''}</span></button>`).join('')}</div>`)}
+MA.st7=b=>{const s=ST7;if(!s)return;s.pick.push(s.cur[+b.dataset.i]);s.i++;if(s.i<s.steps.length)return paintStory();closeModal();ST7=null;s.finish(s.pick.map(x=>x[1]),s.pick)};
+const has=(a,s)=>a.some(x=>String(x).includes(s));
+// ---------- IA: Claude (en el enlace) o Gemini (clave propia) ----------
+let _smp;
+async function aiCall(prompt){try{if(window.claude&&claude.use){if(_smp===undefined)_smp=await claude.use('sample');if(_smp)return await _smp.json(prompt,{modelTier:'quick'})}}catch(e){}
+  const key=S.gemKey;if(key&&navigator.onLine){try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:1.1}})});const j=await r.json();return JSON.parse(j.candidates[0].content.parts[0].text)}catch(e){}}return null}
+const aiOn=()=>!!(window.claude||S.gemKey);
+const GEN={m:{n:'Hombre',e:'👨‍🍳',pr:'él'},f:{n:'Mujer',e:'👩‍🍳',pr:'ella'},n:{n:'No binario',e:'🧑‍🍳',pr:'elle'}};
+const ORI={het:'Hetero',gay:'Gay / Lesbiana',bi:'Bisexual',ace:'Asexual',cro:'Solo croquetas 🍤'};
+const me7=()=>{const L=V7();return{nombre:L.look.name||'sin nombre',genero:GEN[L.id.g].n,pronombres:GEN[L.id.g].pr,orientacion:ORI[L.id.o],edad:L.age,pareja:L.love?L.love.n:'nadie',hijos:L.kids.map(k=>k.n),calle:curStreet().n,felicidad:Math.round(L.hap),diario:L.log.slice(0,4).map(e=>e.t)}};
+const RULES='Español de España, humor absurdo y blanco, nada sexual explícito (como mucho insinuado), sin marcas ni famosos reales. Usa el género gramatical correcto según los pronombres (él/ella/elle con -e). Trata identidad y orientación con naturalidad y cariño, nunca como chiste.';
+async function aiText(task,max=220){if(!aiOn())return null;const r=await aiCall(`${RULES}\nProtagonista: ${JSON.stringify(me7())}\nTarea: ${task}\nDevuelve SOLO JSON {"texto":"máx ${max} caracteres"}`);return r&&typeof r.texto==='string'?esc7(r.texto.slice(0,max+40)):null}
+function aiRes(ic,t,task,fx,fallback){if(!aiOn())return withRes(ic,t,()=>{fx();return fallback()});openModal(`<div class="emo">${ic}</div><h2>${gtxt(t)}</h2><p class="note">✨ Pensando…</p>`);let done=0;const fin=x=>{if(done)return;done=1;closeModal();withRes(ic,t,()=>{fx();return x||fallback()})};aiText(task).then(fin);setTimeout(()=>fin(null),7000)}
+// evento sorpresa inventado por la IA cada pocos minutos
+let aiT=200;
+async function aiEvent(){const r=await aiCall(`${RULES}\nJuego "Guerra de Fogones" (restaurante + vida estilo BitLife). Estado: ${JSON.stringify({...me7(),rivales:openRiv().map(j=>RV(j).n+' de '+RV(j).o),fama:Math.round(S.fame),dinero:fmtM(S.money)})}.
+Inventa una situación NUEVA, surrealista y concreta para el protagonista. SOLO JSON: {"emoji":"","titulo":"máx 40","texto":"1-2 frases","opciones":[{"emoji":"","texto":"máx 40","resultado":"1-2 frases graciosas","dinero":-3..6,"fama":-10..20,"felicidad":-20..20,"salud":-15..10,"popularidad":-10..15,"efecto":{"tipo":"spawn|cook|money|none","valor":0.6..2,"etiqueta":"emoji + efecto corto en el restaurante"}}]} con 2-3 opciones.`);
+  if(!r||!Array.isArray(r.opciones)||!r.opciones.length||!$('#modal').hidden||sheetKind||dlgOn)return;const op=r.opciones.slice(0,3);window._aio7=op;sfx.open();
+  openModal(`<div class="stepn">✨ Situación inventada para ti</div><div class="emo">${esc7(String(r.emoji||'✨').slice(0,4))}</div><h2>${esc7(r.titulo)}</h2><p>${esc7(r.texto)}</p><div class="choice">${op.map((o,i)=>`<button data-m="ai7" data-i="${i}"><span>${esc7(String(o.emoji||'👉').slice(0,4))}</span><span style="font-size:15px">${esc7(String(o.texto).slice(0,60))}</span></button>`).join('')}</div>`)}
+const num=(v,a,b)=>cl(+v||0,a,b);
+MA.ai7=b=>{const o=window._aio7[+b.dataset.i];closeModal();withRes(esc7(String(o.emoji||'✨').slice(0,4)),esc7(String(o.texto).slice(0,60)),()=>{const d=num(o.dinero,-3,6);if(d>0)gain(ECO(d*5));else if(d<0)lose(ECO(-d*5));S.fame=Math.max(0,S.fame+num(o.fama,-10,20));hap(num(o.felicidad,-20,20));hp7(num(o.salud,-15,10));pop(num(o.popularidad,-10,15));
+  const e=o.efecto;if(e&&['spawn','cook','money'].includes(e.tipo))buff(e.tipo,num(e.valor,.6,2),150,esc7(String(e.etiqueta||'✨ Efecto sorpresa').slice(0,50)));L2().surreal++;return esc7(o.resultado)})};
+// ---------- crea tu personaje ----------
+let CR7=null;const AV7=['🧑‍🍳','👩‍🍳','👨‍🍳','👩🏽‍🍳','👨🏾‍🍳','🧔','👱‍♀️','🧑‍🎤','🤠','🥷','🧛','🧙','👽','🤖','🐸','🐷','👩🏼‍🦰','🧑🏻‍🦱','👨🏿'];
+function createChar(first){const L=V7();CR7={name:L.look.name||'',g:L.id.g,o:L.id.o,av:L.look.av||GEN[L.id.g].e,first};paintCreate()}
+function paintCreate(){const c=CR7,b=(k,v,lab)=>`<button data-m="cr7" data-k="${k}" data-v="${v}" class="${c[k]===v?'on':''}">${lab}</button>`;
+  openModal(`<h2>${c.first?'👶 Crea tu personaje':'✏️ Tu personaje'}</h2><input id="cr7n" class="lkin" maxlength="16" placeholder="¿Cómo te llamas?" value="${esc7(c.name)}">
+   <b class="lkh">Género</b><div class="seg3">${Object.entries(GEN).map(([k,g])=>b('g',k,g.n)).join('')}</div>
+   <b class="lkh">Te atraen…</b><div class="seg3 wrap">${Object.entries(ORI).map(([k,o])=>b('o',k,o)).join('')}</div>
+   <b class="lkh">Cara</b><div class="lkg">${AV7.map(a=>b('av',a,a)).join('')}</div>
+   <p class="note">Cambia con quién ligas, cómo te habla el juego y lo que te pasa. Puedes cambiarlo cuando quieras.</p><button class="cb" data-m="cr7ok">${c.first?'¡EMPEZAR MI VIDA!':'GUARDAR'}</button>`)}
+MA.cr7=b=>{CR7.name=$('#cr7n').value;CR7[b.dataset.k]=b.dataset.v;paintCreate()};
+MA.cr7ok=()=>{const L=V7();L.look.name=$('#cr7n').value.trim().slice(0,16);L.look.av=CR7.av;L.id.g=CR7.g;L.id.o=CR7.o;const first=!L.id.made;L.id.made=1;closeModal();applyLook();save();if(first){toast(`${L.look.av} ¡Hola, ${L.look.name||'chef'}!`);logL('👶',gtxt(`Empieza la vida de ${L.look.name||'un/una chef'}.`))}};
+const crI=setInterval(()=>{if(V7().id.made)return clearInterval(crI);if($('#modal').hidden&&!dlgOn&&!sheetKind){clearInterval(crI);createChar(true)}},1500);
+// ligar según tu orientación
+const LOV7=[['Rocío','👩🏽','f','domadora de calamares'],['Iker','🧔🏻','m','campeón de petanca'],['Vera','👩🏻‍🦰','f','habla con las plantas'],['Dani','🧑🏽','n','14 gatos y un pódcast'],['Nuria','👩🏼','f','abogada de famosos y palomas'],['Hugo','👨🏻','m','DJ de pasodobles'],['Alba','👱🏻‍♀️','f','astronauta en paro'],['Leo','👨🏾','m','poeta de la mayonesa'],['Carla','👩🏾','f','bombera y repostera'],['Álex','🧑🏼','n','imitador de pájaros'],['Pablo','👨🏽','m','bombero que llora con Disney'],['Noa','🧑🏻‍🦰','n','diseñadora de videojuegos'],['Irene','👩🏽‍🦱','f','dentista que odia el azúcar'],['Marcos','🧑🏻','m','influencer de calcetines']];
+const OBJ7=[['Paco','🍳','sartén con bigote'],['Croqueta Rebeca','🍤','crujiente por fuera, tierna por dentro'],['Tostadora Romeo','🍞','escribe poesía cuando se calienta'],['Microondas Lola','📦','te espera con lucecita a las 3 a. m.'],['Cucharón Íñigo','🥄','te sostiene en los malos momentos'],['Batidora Vanesa','🌀','intensa, siempre a tope']];
+function likes7(p){const id=V7().id;if(['bi','ace'].includes(id.o)||id.g==='n')return true;if(id.o==='het')return p[2]!==id.g;return p[2]===id.g||p[2]==='n'}
+act=(function(prev){return function(a){if(a==='love:find'){const L=V7();if((L.cd.love||0)>Date.now()){toast('⏳ La app dice que esperes un poco');return false}L.cd.love=Date.now()+60000;
+  matches=(L.id.o==='cro'?[...OBJ7]:LOV7.filter(likes7).map(p=>[p[0],p[1],p[3]])).sort(()=>Math.random()-.5).slice(0,3);closeSheet();
+  openModal(`<div class="emo">💘</div><h2>Fogón Match</h2><p class="note">Buscando: ${ORI[L.id.o].toLowerCase()}</p><div class="choice">${matches.map((m,i)=>`<button data-m="lovePick" data-i="${i}"><span>${m[1]}</span><span style="font-size:15px">${m[0]}<small>${m[2]}</small></span></button>`).join('')}</div><button class="lnk" data-m="close">Paso del amor</button>`);return false}
+  if(a==='love:ring'){ringStory();return false}if(a==='love:wed'){wedStory();return false}if(a==='love:date'){dateStory();return false}if(a==='kid:new'){babyStory();return false}if(a==='me:edit'){createChar(false);return false}
+  if(a.startsWith('plan:')){doPlan(a.slice(5));return false}return prev(a)}})(act);
+// ---------- necesidades tipo Sims · enfermedades · pandemias · plagas: cada día ----------
+const NEEDS={ham:['🍔','Hambre'],hig:['🛁','Higiene'],div:['🎮','Diversión'],soc:['🫂','Social']};
+const ILLS={croq:['🍤','Croquetitis aguda','Solo puedes decir «croqueta».','money',1.1],hipo:['😵‍💫','Hipo cuántico','Cada hipo te teletransporta tres metros.','cook',.85],verso:['🎭','Fiebre del verso','Solo hablas en verso.','spawn',1.15],bigo:['🥸','Bigotitis espontánea','Te crece un bigote cada mañana.','none',1],
+ pollo:['🐔','Gripe del pollo cantor','Cacareas al amanecer y espantas clientes.','spawn',.85],zomb:['🧟','Zombitis leve','Cocinas a ritmo zombi.','cook',.8],brill:['✨','Brillitis','Brillas en la oscuridad: la gente viene a verte.','spawn',1.1],rev:['🪞','Síndrome del espejo','Lo haces todo al revés.','cook',.9],gir:['🦒','Cuello de jirafa','Ves la cocina desde arriba.','cook',1.15],eco:['🗣️','Eco personal','Todo se repite tres veces… veces… veces.','none',1]};
+const PANDS=[['🐦','Gripe Palomar','Las palomas estornudan purpurina.','spawn',.7],['🥱','Bostezo Contagioso','Todo el país bosteza a la vez.','cook',.8],['💃','Fiebre del Baile','Nadie puede parar de bailar… entran a comer bailando.','spawn',1.25],['🧀','Peste del Queso','Todo huele a queso. TODO.','money',.85],['🐌','Lentitis Galopante','Todo va a cámara lenta.','cook',.85]];
+let risk7=0;
+const _dt7=dayTick;dayTick=function(dt){const L=V7(),d0=L.day;_dt7(dt);if(L.day===d0)return;const lines=[];
+  for(const k in L.nd)L.nd[k]=cl(L.nd[k]-(12+rint(8)),0,100);if(L.nd.hig<25)buff('spawn',.8,150,'🦨 Hueles fatal: −20 % clientes');if(L.nd.ham<25)hp7(-6);if(L.nd.soc<25)hap(-6);if(L.nd.div<25)hap(-4);
+  if(L.pand){const P=PANDS[L.pand.i];buff(P[3],P[4],150,`${P[0]} Pandemia ${P[1]}`);if(--L.pand.d<=0){lines.push(`🎉 Se acabó la ${P[1]}`);L.pand=null}}else if(L.day>3&&Math.random()<.07){const i=rint(PANDS.length),P=PANDS[i];L.pand={i,d:3+rint(3)};lines.push(`🦠 ¡PANDEMIA! ${P[0]} ${P[1]}: ${P[2]}`);logL(P[0],'Empieza la pandemia de '+P[1]+'.');buff(P[3],P[4],150,`${P[0]} ${P[1]}`)}
+  if(L.ill){const I=ILLS[L.ill.k];if(I[3]!=='none')buff(I[3],I[4],150,`${I[0]} ${I[1]}`);if(--L.ill.d<=0){lines.push(`💪 Te has curado de ${I[1].toLowerCase()}`);L.ill=null}}
+  else if(Math.random()<.05+risk7*.12+(L.pand?.2:0)+(L.hp<40?.1:0)){const k=pk(Object.keys(ILLS)),I=ILLS[k];L.ill={k,d:2+rint(3)};lines.push(gtxt(`🤒 ¡Te has contagiado de ${I[1]}! ${I[2]}`));logL(I[0],'Contagio: '+I[1]+'.')}
+  risk7=0;
+  if(bugs7.length>=4||L.pest>=5){const f=lose(ECO(8+bugs7.length*2));S.fame=Math.max(0,S.fame-6);lines.push(`🕵️ Inspección sorpresa: multa de ${fmtM(f)} € por los bichos`)}
+  if(Math.random()<.16)setTimeout(disaster,4000);
+  if(L.of){const g=gain(ofIncome());lines.push(`📸 OnlyFans: +${fmtM(g)} €`);if(Math.random()<.16)setTimeout(ofDrama,6000)}
+  if(aiOn())aiText('Escribe el titular del periódico del barrio de hoy, gracioso, sobre la vida del protagonista o su calle.',120).then(t=>{if(t)toast('📰 «'+t+'»',6000)});
+  if(lines.length)setTimeout(()=>{if(!$('#modal').hidden){lines.forEach((l,i)=>setTimeout(()=>toast(l,3500),i*3600));return}openModal(`<div class="emo">📰</div><h2>Nuevo día en ${curStreet().n}</h2>${lines.map(l=>`<div class="illc">${l}</div>`).join('')}<button class="cb" data-m="close">VALE</button>`)},1200)};
+// ---------- plagas en el local ----------
+const PESTS=[['🪳',1],['🐀',2],['🐦',1],['🦝',3],['🐜',1],['🦗',1]];
+const bugL=document.createElement('div');bugL.className='bugs';stageEl.appendChild(bugL);const tv7=new THREE.Vector3();
+function spawnBug(e){const g=GEO[0],P=e?[e,1]:pk(PESTS.slice(0,V7().pest>3?6:4));const b={x:g.x0+12+Math.random()*(g.x1-g.x0-24),y:g.y0+25+Math.random()*Math.max(30,Math.abs(g.counterY-g.y0)-50),vx:(Math.random()-.5)*30,vy:(Math.random()-.5)*30,hp:P[1]};
+  const el=document.createElement('button');el.className='bug';el.textContent=P[0];b.el=el;el.addEventListener('pointerdown',ev=>{ev.stopPropagation();b.hp--;tone(200+rint(200),.06,'square',.04);el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),120);if(b.hp<=0){b.dead=1;el.remove();const m=Math.max(1,Math.round(ECO(.3)));S.money+=m;toast('💥 ¡Aplastado! +'+fmtM(m)+' €',900);V7().pest=Math.max(0,V7().pest-.25);applyItems()}});bugL.appendChild(el);bugs7.push(b);applyItems()}
+let bugT=8;setInterval(()=>{const dt=.1;if(!$('#modal').hidden||document.hidden){bugL.style.display='none';return}bugL.style.display='';const L=V7(),g=GEO[0];bugT-=dt;
+  if(bugT<=0){bugT=7+Math.random()*9;if(Math.random()<Math.min(.8,.1+L.pest*.12)&&bugs7.length<9){const n=1+rint(Math.min(4,1+Math.ceil(L.pest)));for(let i=0;i<n;i++)spawnBug();if(!L.f2.bugSeen){L.f2.bugSeen=1;toast('🪳 ¡BICHOS EN EL LOCAL! Tócalos para aplastarlos',4000)}}}
+  const r=cv.getBoundingClientRect(),s=stageEl.getBoundingClientRect();for(const b of bugs7){if(b.dead)continue;b.x+=b.vx*dt;b.y+=b.vy*dt;if(b.x<g.x0+10||b.x>g.x1-10)b.vx*=-1;const yl=Math.min(g.y0,g.counterY)+20,yh=Math.max(g.y0,g.counterY)-20;if(b.y<yl||b.y>yh)b.vy*=-1;if(Math.random()<.02){b.vx=(Math.random()-.5)*34;b.vy=(Math.random()-.5)*34}
+   tv7.set(Wx(b.x),.1,Wz(b.y)).project(camera);b.el.style.transform=`translate(${(tv7.x+1)/2*r.width+r.left-s.left}px,${(1-tv7.y)/2*r.height+r.top-s.top}px) translate(-50%,-50%) scaleX(${b.vx<0?-1:1})`}
+  const n0=bugs7.length;bugs7=bugs7.filter(b=>!b.dead);if(n0!==bugs7.length)applyItems();L.pest=cl(L.pest+bugs7.length*dt*.004,0,10)},100);
+function disaster(){if(!$('#modal').hidden)return;const D=pk([['🧊','¡Se ha roto la nevera!','Hoy cocinas más lento hasta que venga el técnico.',()=>buff('cook',.75,120,'🧊 Nevera rota: cocina −25 %')],['💡','¡Apagón en la calle!','Los rivales también se quedan a oscuras.',()=>openRiv().forEach(j=>R.sab[j]=25)],
+  ['🌊','¡Inundación en el baño!','Un cliente sale nadando.',()=>buff('spawn',.85,120,'🌊 Baño inundado: −15 % clientes')],['🐦','¡Una paloma se cuela en el local!','Tócala para echarla.',()=>{spawnBug('🐦');spawnBug('🐦')}],['🎺','¡Una banda de música para delante de tu puerta!','Se forma una cola enorme.',()=>{R.rush=Math.max(R.rush||0,30)}]]);D[3]();bigText(D[0]+' '+D[1],D[2]);sfx.bad()}
+// ---------- OnlyFans de verdad (sugerente, nunca explícito) ----------
+const OFC=[['🔥','Brenda Fuego','34 años · reina del contenido atrevido',1.6],['💪','Toni Músculos','29 años · fotos haciendo pesas sin camiseta',1.3],['🌶️','Lady Chorizo','41 años · leyenda de la plataforma',2],['🔧','El Fontanero Misterioso','38 años · nadie le ha visto la cara',1.4],['💅','Divina Croissant','31 años · drag queen y empresaria',1.7]];
+const ofIncome=()=>{const o=V7().of;return o?Math.round(ECO(o.subs*o.pr/900)):0};
+function ofGrow(m){const o=V7().of,add=Math.round((30+rint(80))*m*(1+o.n*.05)/o.pr);o.subs+=add;o.n++;return add}
+function ofHub(){const L=V7();if(L.age<18)return;if(!L.of)return story('📸 Tu OnlyFans',[
+  {e:'🤳',t:'¿Qué nombre artístico eliges?',o:()=>[['🍑',(L.look.name||'Chef')+'Picante'],['🔥','ElFogónPrivado'],['🌙','ChefDeMedianoche'],['🧈','MantequillaDeVerdad']]},
+  {e:'💶',t:'¿Cuánto cobras al mes?',o:[['🪙','5 € al mes','Más subs, menos dinero'],['💶','15 € al mes'],['💎','50 € al mes','Exclusividad total']]},
+  {e:'🤫',t:'¿Se lo cuentas a alguien?',o:[['🤐','A nadie: es un secreto'],['👵','A la abuela, por si acaso'],['📢','Lo anuncias en el restaurante','Marketing agresivo']]}],
+  v=>{const pr={'5':.6,'15':1,'50':2.2}[v[1].match(/\d+/)[0]];L.of={nick:v[0],pr,subs:Math.round(40/pr),n:0};L.f2.of=1;
+   withRes('📸','¡Cuenta abierta!',()=>{hap(5);if(v[2].includes('abuela')){rel('abu',-5);return`La abuela te mira por encima de las gafas: «Mientras pagues la luz, cariño…». Ya tienes ${L.of.subs} suscriptores.`}if(v[2].includes('anuncias')){R.rush=Math.max(R.rush||0,30);pop(6);return'Cuelgas el QR en el restaurante. Viene MUCHA gente «a comer».'}return`Abres «${L.of.nick}» en secreto con ${L.of.subs} suscriptores. Nadie lo sabe… de momento.`})});
+  openModal(`<div class="emo">📸</div><h2>${esc7(L.of.nick)}</h2><div class="chips"><div class="chip"><b>${fmtM(L.of.subs)}</b>subs</div><div class="chip"><b>${fmtM(ofIncome())} €</b>al día</div><div class="chip"><b>${L.of.n}</b>posts</div></div>
+   <div class="choice"><button data-m="of7" data-v="post"><span>📷</span><span style="font-size:15px">Subir contenido nuevo<small>Elige temática y toque</small></span></button><button data-m="of7" data-v="collab"><span>🤝</span><span style="font-size:15px">Hacer un collab<small>Con otro creador adulto</small></span></button>
+   <button data-m="of7" data-v="live"><span>🔴</span><span style="font-size:15px">Directo en vivo<small>El chat manda… y paga</small></span></button><button data-m="of7" data-v="close"><span>🗑️</span><span style="font-size:15px">Cerrar la cuenta</span></button></div>`)}
+MA.of7=b=>{const v=b.dataset.v,L=V7();closeModal();risk7++;
+  if(v==='close'){L.of=null;return withRes('🗑️','Cuenta cerrada',()=>'Tus 3 suscriptores más fieles te mandan flores de despedida.')}
+  if(v==='post')return story('📷 Contenido nuevo',[{e:'📷',t:'¿Qué subes hoy?',o:[['🩲','Fotos en ropa interior','Clásico'],['🫧','Sesión en la bañera','Espuma estratégica'],['🧑‍🍳','Solo con el delantal','En la cocina, de noche'],['🦶','Fotos de pies','Un mercado ENORME']]},{e:'💡',t:'¿Qué toque le das?',o:[['🕯️','Velas y música romántica'],['😂','Haciendo el payaso'],['🌹','Pétalos de rosa por todas partes']]}],
+    p=>{const ok=Math.random()<.78;withRes(ok?'🔥':'😬',ok?'¡Lo petas!':'Fallo técnico',()=>{need('hig',-10);if(!ok){hap(-6);return pk(['Sale tu abuela de fondo saludando. Borras todo.','Se te olvida quitar la ubicación. Te escribe tu casero.','El gato salta justo en el momento. El gato se hace famoso.'])}
+      const add=ofGrow(p[0].includes('pies')?1.4:p[0].includes('delantal')?1.3:1);hap(4);return`Subes «${p[0].toLowerCase()}» con ${p[1].toLowerCase()}. +${fmtM(add)} suscriptores. ${pk(['Un señor de Albacete te deja una propina enorme.','Te llegan 40 mensajes; 38 piden la receta de las croquetas.','Tu móvil vibra hasta apagarse.'])}`})});
+  if(v==='collab'){const cs=[...OFC].sort(()=>Math.random()-.5).slice(0,3);return story('🤝 Collab',[{e:'🤝',t:'¿Con quién haces el collab?',o:cs.map(c=>[c[0],c[1],c[2]])},
+    {e:'🎬',t:p=>`${p[0][1]} acepta. ¿Qué grabáis?`,o:[['📸','Sesión de fotos juntos'],['🎭','Un sketch picante con guion'],['🍳','«Cocinando en pareja»… con poca ropa'],['🛁','Jacuzzi y mucha espuma']]},{e:'🎬',t:'En mitad de la grabación…',o:[['🚪','Llaman a la puerta'],['🤣','Os entra la risa floja'],['🤫','Seguís como profesionales']]}],
+    p=>{const c=OFC.find(x=>x[1]===p[0]),ok=Math.random()<.75;withRes(ok?'💥':'😳',ok?'¡Collab viral!':'Collab accidentado',()=>{let t=`Collab con ${c[1]}: «${p[1].toLowerCase()}». `;if(p[2].includes('puerta'))t+=pk(['Era el repartidor de Glovo. Ahora también tiene OnlyFans. ','Era tu abuela con un táper de croquetas. ','Era el inspector de sanidad, rojo como un tomate. ']);
+      if(!ok){hap(-5);return t+'Se corta justo en lo mejor por falta de batería. Fundido a negro… literalmente.'}const add=ofGrow(c[3]*1.5);pop(4);if(L.love){hap(-4);t+=`${L.love.n} se pone celoso/a. `}return t+`+${fmtM(add)} suscriptores. Lo que pasó después de apagar la cámara… no lo sabrá nadie.`})})}
+  if(v==='live')return story('🔴 Directo',[{e:'💬',t:'El chat pide: «¡Baila!»',o:[['💃','Bailas reguetón con poca ropa'],['🕺','Bailas la Macarena muy en serio'],['🙅','«Hoy no, que tengo agujetas»']]},{e:'💬',t:'«PacoElDelQuinto» manda una propina enorme y pide un saludo.',o:[['👋','Le saludas con cariño'],['😏','Le dices algo atrevido'],['🤨','¿Paco… tu vecino del quinto?']]},{e:'💬',t:'¿Cómo cierras el directo?',o:[['🫦','Despedida muy sugerente'],['🍤','Recomendando tu restaurante'],['🛑','Se va el wifi justo entonces']]}],
+    p=>{const tip=p.filter(x=>/reguetón|atrevido|sugerente/.test(x)).length;withRes('🔴','Directo terminado',()=>{const g=gain(ECO(4+tip*6)),add=ofGrow(.6+tip*.3);let t=`Ganas ${fmtM(g)} € en propinas y +${fmtM(add)} subs.`;if(p[1].includes('quinto'))t+=' Sí, era Paco. Mañana os cruzáis en el ascensor. Silencio absoluto.';if(p[2].includes('restaurante')){R.rush=Math.max(R.rush||0,30);t+=' Medio chat viene a comer.'}return t})})};
+function ofDrama(){const L=V7();if(!L.of||!$('#modal').hidden)return;withRes('📸','Drama de OnlyFans',()=>pk([()=>{rel('abu',-8);return'La abuela se ha suscrito «sin querer». 5 estrellas y un comentario: «Abrígate».'},()=>{const j=pk(openRiv().length?openRiv():[1]);rep(-6);pop(6);return`${RV(j).o} ha colgado tu OnlyFans en su escaparate. Lo sabe todo el barrio.`},()=>{R.rush=Math.max(R.rush||0,25);return'Un cliente te reconoce mientras le sirves. Se pone rojo y deja una propina enorme.'},()=>{if(!L.love)return'Un suscriptor te manda una carta de amor de 12 páginas. Con dibujos.';hap(-8);return`${L.love.n} ha encontrado tu OnlyFans. Discusión épica… que acaba con «¿y por qué no salgo yo?».`}])())}
+(()=>{const g=GIGS.find(x=>x.id==='of');if(g){g.n='Tu OnlyFans';g.d='Canal propio: contenido, collabs, directos';g.cd=60;g.f=()=>ofHub()}})();
+// ---------- historias de amor y familia ----------
+function dateStory(){const L=V7(),lv=L.love;if(!lv)return;if((L.cd.date||0)>Date.now())return toast('⏳ Dale espacio');L.cd.date=Date.now()+150000;closeSheet();
+  story('🍷 Cita con '+lv.n,[{e:'📍',t:'¿Dónde quedáis?',o:[['🍽️','En tu propio restaurante'],['🎳','En una bolera'],['🎤','En un karaoke'],['🪂','Haciendo puenting']]},{e:'💬',t:'En mitad de la cita…',o:[['😂','Cuentas tu chiste de la croqueta'],['🌹','Le regalas una rosa'],['🫣','Le confiesas un secreto'],['💃','Os ponéis a bailar']]}],
+   v=>{const ok=Math.random()<.72+(v[1].includes('rosa')?.08:0);aiRes(ok?'💞':'😬',ok?'¡Cita perfecta!':'Cita rara',`Describe una cita ${ok?'genial':'rara y graciosa'} con ${lv.n} (${lv.bio}) ${v[0].toLowerCase()}, en la que el protagonista ${v[1].toLowerCase()}.`,
+    ()=>{need('soc',25);if(ok){hap(12);lv.xp=(lv.xp||0)+1;if(lv.lv<2){lv.lv=2;logL('💘','Empiezas a salir con '+lv.n+'.')}}else hap(-4)},()=>ok?`${lv.n} se ríe hasta de tu chiste de la croqueta.`:`Se te cae la sopa encima de ${lv.n}.`)})}
+function ringStory(){const L=V7(),lv=L.love;if(!lv||lv.lv!==2)return;closeSheet();story('💍 La pedida',[{e:'📍',t:`¿Dónde se lo pides a ${lv.n}?`,o:[['🍽️','En tu restaurante, delante de todos'],['🌅','En la playa al atardecer'],['🎤','Cantando en un karaoke'],['🍤','Con el anillo dentro de una croqueta']]},{e:'💍',t:'¿Qué anillo?',o:[['🪙',`Uno barato · ${fmtM(ECO(15))} €`],['💎',`Uno carísimo · ${fmtM(ECO(45))} €`],['👵','El de la abuela','Gratis y con historia']]}],
+  v=>{const c=v[1].includes('barato')?ECO(15):v[1].includes('carísimo')?ECO(45):0;if(S.money<c)return toast('No tienes para ese anillo');lose(c);const ch=.65+(v[1].includes('carísimo')?.15:0)+(v[1].includes('abuela')?.2:0)-(v[0].includes('restaurante')?.1:0);
+   if(Math.random()<ch)withRes('💍','¡¡HA DICHO QUE SÍ!!',()=>{lv.lv=3;hap(25);logL('💍','Te prometes con '+lv.n+'.');if(v[1].includes('abuela'))rel('abu',15);return(v[0].includes('croqueta')?`${lv.n} casi se traga el anillo, tose y dice que SÍ.`:v[0].includes('karaoke')?'Cantas fatal pero todo el bar llora.':'Todo el mundo aplaude.')+(v[1].includes('abuela')?' La abuela llora: «Era de tu abuelo Paco».':'')});
+   else withRes('🙈','«Lo tengo que pensar»',()=>{hap(-15);return'Te quedas con el anillo y la cara de tonto/a.'})})}
+function wedStory(){const L=V7(),lv=L.love,c0=ECO(60);if(!lv||lv.lv!==3)return;if(S.money<c0)return toast('La boda cuesta '+fmtM(c0)+' €');closeSheet();
+  story('💒 Tu boda',[{e:'⛪',t:'¿Dónde os casáis?',o:[['🍽️','En tu restaurante'],['🏖️','En la playa'],['🎰','En Las Vegas con un Elvis'],['🏛️','En el ayuntamiento, rapidito']]},{e:'👥',t:'¿A quién invitas?',o:[['💑','Solo familia'],['🏘️','Al barrio entero'],['😈','A los rivales también']]},{e:'🎤',t:'¿Quién da el discurso?',o:[['😭','Tú, llorando sin parar'],['😂','Tú, con chistes malos'],['👵','La abuela Lola','Peligro']]}],
+   v=>{lose(c0);withRes('💒','¡VIVAN LOS NOVIOS!',()=>{lv.lv=4;hap(35);pop(10);logL('💒','Te casas con '+lv.n+'.');R.rush=Math.max(R.rush||0,v[0].includes('restaurante')?60:30);if(v[1].includes('barrio'))S.fame+=15;if(v[1].includes('rivales'))RK.forEach(k=>rel(k,15));
+    return(v[0].includes('Vegas')?'Elvis llora más que vosotros. ':'')+(v[2].includes('abuela')?'La abuela cuenta en el discurso lo de tu primera comunión. Ovación.':v[2].includes('chistes')?'Nadie se ríe de tus chistes, pero todos se ríen de ti.':'Lloras tanto que te traen un mantel.')})})}
+function babyStory(){const L=V7();if(!L.love||L.love.lv<2||L.kids.length>=5)return;if((L.cd.kid||0)>Date.now())return toast('⏳ Esperad un poquito');closeSheet();
+  story('👶 Ampliar la familia',[{e:'👶',t:`¿Cómo ampliáis la familia ${L.love.n} y tú?`,o:[['❤️','De la forma tradicional','Fundido a negro'],['📄','Adoptando','Amor infinito'],['🦩','Encargándolo a la cigüeña','Envío en 3-5 días']]},{e:'📛',t:'¿Cómo se va a llamar?',o:()=>[...KNAMES].sort(()=>Math.random()-.5).slice(0,3).map(k=>[k[1],k[0]]).concat([['🍤','Croqueta','Para que herede el negocio']])}],
+   v=>{const c=ECO(30);if(S.money<c)return toast('Te faltan '+fmtM(c-S.money)+' €');lose(c);L.cd.kid=Date.now()+300000;if(Math.random()>(v[0].includes('Adoptando')?.95:.75))return withRes('🍼','Esta vez no…',()=>{hap(-4);return'Os consoláis con croquetas.'});
+    const k0=KNAMES.find(k=>k[0]===v[1])||['Croqueta','👶'],t=pk(Object.keys(TRAITS));L.kids.push({n:v[1],e:k0[1],born:L.day,t,rel:60,work:false});withRes('👶',`¡Bienvenido/a, ${v[1]}!`,()=>{hap(25);need('soc',30);logL('👶','Llega '+v[1]+'.');return`Se le ve ${TRAITS[t][1].toLowerCase()} desde el primer día. La abuela ya le ha tejido un delantal.`})})}
+// ---------- PLANES: historias de varios pasos ----------
+const PLANS=[
+ {id:'party',ic:'🎉',n:'Salir de fiesta',d:'Dónde, qué haces y cómo acaba',cd:240,steps:[{e:'🪩',t:'¿Dónde sales?',o:[['🪩','A la discoteca de moda'],['🛥️','A una fiesta en un barco'],['🏭','A una rave en una nave'],['💒','A colarte en una boda','Comida gratis']]},{e:'🍹',t:'¿Qué haces?',o:[['💃','Bailar hasta el amanecer'],['🍹','Beber más de la cuenta'],['😏','Ligar a lo loco'],['🎤','Secuestrar el micro del DJ']]},{e:'🌅',t:'Son las 6 de la mañana…',o:[['🏠','A casa como una persona normal'],['🔁','Al after'],['🍩','Churros con chocolate'],['🚕','Te despiertas en un taxi en Zaragoza']]}],
+  end:v=>['🎉','¡Qué noche!',()=>{risk7++;hap(18);hp7(-6);need('soc',35);need('div',35);need('hig',-20);let t='';const L=V7();if(v[0].includes('boda')){need('ham',40);t+='La novia te saca a bailar pensando que eres del novio. '}if(v[1].includes('Beber')){hp7(-6);t+='Llamas a tu ex. Dos veces. '}
+   if(v[1].includes('Ligar')&&!L.love&&Math.random()<.5){const m=L.id.o==='cro'?pk(OBJ7):pk(LOV7.filter(likes7)).filter((_,i)=>i!==2);L.love={n:m[0],e:m[1],bio:m[2],lv:1};t+=`Conoces a ${m[0]} (${m[2]}). `}if(v[1].includes('micro')){pop(5);t+='Toda la discoteca canta contigo. '}
+   if(v[2].includes('taxi')){lose(ECO(6));t+='Volver te cuesta un riñón.'}else if(v[2].includes('after')){hp7(-8);t+='No recuerdas nada.'}else if(v[2].includes('Churros'))t+='Los mejores churros de tu vida.';else t+='Tu madre estaría orgullosa.';return t}]},
+ {id:'hparty',ic:'🏠',n:'Montar una fiesta en casa',d:'Invitados, temática y comida',cd:420,steps:[{e:'📨',t:'¿A quién invitas?',o:()=>[['🧑‍🍳','A tus cocineros'],['😈','A tus rivales',openRiv().map(j=>RV(j).o).join(', ')||'Ya no quedan…'],['📱','A gente random de Fogón Match'],['🏘️','Al barrio entero']]},{e:'🎭',t:'¿Temática?',o:[['🥕','Disfraces de verdura'],['🫧','Fiesta de la espuma'],['🎤','Karaoke hasta el amanecer'],['🍷','Cena elegante']]},{e:'🍕',t:'¿De comer?',o:[['🍤','Lo de tu restaurante'],['🍕','Pizza del rival'],['👵','Que cocine la abuela'],['🥨','Una bolsa de gusanitos']]}],
+  end:v=>['🎉','¡Fiestón!',()=>{need('soc',60);need('div',50);need('hig',-25);hap(15);let t=`Fiesta de ${v[1].toLowerCase()}. `;if(v[0].includes('rivales')){RK.forEach(k=>rel(k,15));t+='Tus rivales acaban llorando abrazados en tu bañera. '}if(v[2].includes('restaurante')){buff('spawn',1.3,180,'🎉 Tus invitados vienen a comer: +30 %');t+='Todos quieren ir a tu restaurante. '}if(v[2].includes('abuela'))rel('abu',10);
+   if((v[0].includes('barrio')||v[0].includes('random'))&&(v[1].includes('espuma')||v[1].includes('Karaoke'))&&Math.random()<.6){lose(ECO(10));t+='🚨 Viene la policía por el ruido, te multa y se queda a cantar Camela.'}else t+='Nadie olvidará esta noche. Sobre todo tus vecinos.';if(v[1].includes('verdura'))pop(5);return t}]},
+ {id:'spy',ic:'🕵️',n:'Espiar a un rival',d:'Cómo entras, qué robas, cómo sales',cd:200,ok:()=>openRiv().length>0,steps:[{e:'🥷',t:()=>`¿Cómo te cuelas en ${RV(openRiv()[0]).n}?`,o:[['🛵','Disfrazado/a de repartidor'],['🌬️','Por el conducto de ventilación'],['🧐','Fingiendo ser crítico'],['🐕','Dentro de un disfraz de perro']]},{e:'📂',t:'Ya estás dentro. ¿Qué robas?',o:[['📖','Su libro de recetas'],['📋','Su lista de proveedores'],['🧂','Su salero de la suerte'],['📸','Fotos de su cocina para sanidad']]},{e:'😱',t:'¡Te han visto!',o:[['🏃','Huir por la ventana'],['🎭','Inventar una excusa absurda'],['🙋','Pedirle trabajo'],['💃','Ponerte a bailar']]}],
+  end:v=>{const j=openRiv()[0],r=RV(j),ok=Math.random()<(v[0].includes('ventilación')?.45:v[0].includes('perro')?.7:.6)+(v[2].includes('bailar')?.1:0);return[ok?'🕵️':'🚨',ok?'¡Misión cumplida!':'¡Te han pillado!',()=>{let t='';if(ok){S.zones[j].cash*=v[1].includes('recetas')?.75:.85;rep(-4);t=`Te llevas ${v[1].toLowerCase()}. ${r.n} pierde caja. `;if(v[1].includes('Fotos')){buff('spawn',1.2,150,'📸 Rival denunciado: +20 %')}}else{rel(r.k,-20);S.fame=Math.max(0,S.fame-8);rep(-6);t=`${r.o} te pilla con las manos en la masa. `}
+   return t+(v[2].includes('ventana')?(ok?'Saltas como un ninja.':'Caes en un contenedor.'):v[2].includes('excusa')?'Dices que eres inspector de croquetas. Casi cuela.':v[2].includes('trabajo')?(Math.random()<.5?'¡Te contrata los martes!':'Te echa a escobazos.'):'Te aplaude y luego te echa.')}]}},
+ {id:'sab',ic:'🐀',n:'Sabotear a un rival',d:'Método y coartada',cd:300,ok:()=>openRiv().length>0,steps:[{e:'😈',t:'¿Cómo le saboteas?',o:[['🪳','40 cucarachas de juguete'],['🧂','Cambiarle la sal por azúcar'],['🐐','Soltarle una cabra en el local'],['🎵','Reguetón a todo volumen en su puerta']]},{e:'🕶️',t:'¿Y tu coartada?',o:[['👵','«Estaba con mi abuela»'],['🎥','Grabarte en otro sitio'],['🤷','Sin coartada']]}],
+  end:v=>{const j=openRiv()[0],r=RV(j),caught=Math.random()<(v[1].includes('Sin')?.5:v[1].includes('abuela')?.25:.12);return[caught?'🚔':'🐀',caught?'¡Te han descubierto!':'Sabotaje perfecto',()=>{if(caught){rep(-20);rel(r.k,-30);lose(ECO(10));return v[1].includes('abuela')?'La abuela te delata en 3 segundos.':'Multa y vergüenza en el periódico del barrio.'}R.sab[j]=40;rep(-12);rel(r.k,-15);return v[0].includes('cabra')?'La cabra se come el menú y la cortina.':v[0].includes('azúcar')?'Su gazpacho sabrá a natillas.':v[0].includes('reguetón')?'Sus clientes huyen… o perrean.':'Los clientes gritan y huyen.'}]}},
+ {id:'flyer',ic:'📣',n:'Repartir flyers',d:'Dónde y con qué diseño',cd:180,steps:[{e:'🗺️',t:'¿Dónde los repartes?',o:[['🎓','En la universidad'],['🛒','En el mercado'],['🪩','A la salida de la discoteca'],['😈','En la puerta de un rival']]},{e:'🎨',t:'¿Qué diseño?',o:[['🤳','Una foto tuya guapísimo/a'],['✏️','Un dibujo hecho en Paint'],['🎟️','Un cupón 2x1'],['😂','Un meme de un gato chef']]}],
+  end:v=>['📣','Flyers repartidos',()=>{hap(-2);let m=1.3;if(v[1].includes('2x1')){m=1.5;buff('money',.9,180,'🎟️ 2x1: −10 % por plato')}if(v[0].includes('rival')){const j=openRiv()[0];if(j){rel(RV(j).k,-15);S.zones[j].cash*=.9}}if(v[1].includes('foto')||v[1].includes('Paint'))pop(4);buff('spawn',m,180,`📣 Flyers: +${Math.round((m-1)*100)} % clientes`);return pk(['Te persiguen con un rodillo, pero funciona.','Un perro se lleva un flyer. Vendrá.','Tu dibujo es tan malo que se hace viral.'])}]},
+ {id:'course',ic:'📚',n:'Curso de cocina',d:'Qué curso y qué pasa en clase',cd:240,steps:[{e:'👨‍🏫',t:'¿Qué curso haces?',o:[['🍣','Cocina japonesa'],['🧁','Repostería extrema'],['⚡','Cocina rápida'],['📈','Gestión de restaurantes']]},{e:'🪑',t:'En mitad de la clase…',o:[['📝','Atiendes como nunca'],['😴','Te duermes encima de la masa'],['😏','Ligas con el profe'],['🔥','Prendes fuego a una sartén']]}],
+  end:v=>['📚','Clase terminada',()=>{const g=v[0].includes('rápida')?1.45:v[0].includes('japonesa')?1.3:1.2;if(v[0].includes('Gestión'))buff('money',1.2,180,'📈 Mejor gestión: +20 % por plato');if(v[1].includes('Atiendes')){buff('cook',g,180,`📚 Cocina +${Math.round((g-1)*100)} %`);return'Diploma con un 10.'}if(v[1].includes('profe')){buff('cook',g*.95,180,'📚 Cocina mejor (y más feliz)');hap(10);return'El profe te da su número «para dudas».'}if(v[1].includes('fuego')){hp7(-6);return'Los bomberos llegan en 4 minutos.'}buff('cook',1.08,180,'📚 Algo aprendiste');return'Te despiertas con la marca del rodillo en la frente.'}]},
+ {id:'social',ic:'📱',n:'Campaña en redes',d:'Red social y contenido',cd:200,steps:[{e:'📱',t:'¿En qué red?',o:[['🎵','TikTok'],['📸','Instagram'],['💼','LinkedIn'],['👨‍👩‍👧','El grupo de WhatsApp familiar']]},{e:'💡',t:'¿Qué publicas?',o:[['🍳','Una receta paso a paso'],['🧨','Una polémica sobre la paella'],['💃','Un baile con tu cocinero'],['🎁','Un sorteo de una cena']]}],
+  end:v=>['📱','Campaña lanzada',()=>{const m=v[0].includes('TikTok')?1.3:v[0].includes('LinkedIn')?.9:1.15;if(v[1].includes('polémica')){if(Math.random()<.5){pop(10);buff('spawn',1.6*m,180,'🧨 Polémica viral');return'Medio país te insulta, el otro medio viene a probar.'}rep(-8);return'Te cancelan en 40 minutos.'}buff('spawn',1.3*m,180,'📱 Campaña en redes');pop(4);return v[0].includes('LinkedIn')?'Te felicitan por «tu nueva etapa profesional».':'Funciona mejor de lo esperado.'}]},
+ {id:'market',ic:'🛒',n:'Mercado de madrugada',d:'Puesto y regateo',cd:220,steps:[{e:'🛒',t:'¿A qué puesto vas?',o:[['🐟','Al pescadero que grita'],['🍅','A la frutería de Encarna'],['🥩','Al carnicero luchador'],['🕶️','A un señor con gabardina','Mercado negro']]},{e:'💬',t:'¿Cómo negocias?',o:[['😤','Regatear sin piedad'],['💶','Pagar lo que pida'],['😘','Ligar con quien vende'],['😭','Llorar y contar tu vida']]}],
+  end:v=>['🛒','Compra hecha',()=>{hp7(-4);let q=v[0].includes('gabardina')?(Math.random()<.5?1.5:.7):1.25;if(v[1].includes('Regatear'))gain(ECO(3));if(v[1].includes('Llorar'))q+=.1;buff('money',q,180,`🛒 Producto ${q>1?'top':'cutre'}: ${q>1?'+':'−'}${Math.round(Math.abs(q-1)*100)} % por plato`);return v[0].includes('gabardina')?(q>1?'¡Era trufa blanca de verdad!':'Eran patatas pintadas de dorado.'):'Te llevas el mejor género del mercado.'}]},
+ {id:'abu',ic:'👵',n:'Cenar con la abuela',d:'Elige de qué habláis',cd:180,steps:[{e:'👵',t:'¿De qué le hablas?',o:[['🧠','Le pides consejo'],['🗣️','Cotilleos del barrio'],['👴','Le preguntas por el abuelo Paco'],['💶','Le pides dinero']]}],
+  end:v=>{let g=0;aiRes('👵','La abuela dice…',`La abuela Lola (cariñosa, cotilla, graciosa) responde a: «${v[0]}».`,()=>{rel('abu',v[0].includes('dinero')?2:10);need('ham',40);need('soc',20);hap(6);g=gain(ECO(v[0].includes('dinero')?12:3))},()=>(v[0].includes('consejo')?'«Un cliente contento trae a dos amigos.»':v[0].includes('Cotilleos')?'«Massimo tiene un amante. Lo sé porque soy yo.»':v[0].includes('Paco')?'«Tu abuelo escondía la receta por el barrio…»':'«¿Otra vez? Toma, pero no se lo digas a tu madre.»')+` Te da ${fmtM(g)} €.`);return null}},
+ {id:'eat',ic:'🍝',n:'Cenar bien',d:'🍔 Hambre',cd:90,steps:[{e:'🍳',t:'¿Qué cenas?',o:[['🧑‍🍳','Algo elaborado'],['📦','Pides a tu propio restaurante'],['🥣','Cereales a las 23:58']]},{e:'📺',t:'¿Cómo?',o:[['📺','Viendo una serie'],['🕯️','Con velas'],['🧍','De pie en la cocina']]}],end:v=>['🍝','Cena',()=>{need('ham',v[0].includes('Cereales')?25:55);return v[1].includes('serie')?'Netflix te pregunta si sigues ahí.':v[1].includes('velas')?'Cena a la luz de las velas, muy elegante.':'Comes de pie como un animal salvaje.'}]},
+ {id:'shower',ic:'🛁',n:'Ducharte',d:'🛁 Higiene',cd:90,steps:[{e:'🛁',t:'¿Qué ducha?',o:[['🎤','Concierto completo'],['🫧','Baño de espuma con patito'],['🥶','Ducha fría'],['🧖','Rutina completa de belleza']]}],end:v=>['🛁','Recién duchado/a',()=>{need('hig',65);if(v[0].includes('fría'))hp7(5);else hap(5);return v[0].includes('Concierto')?'Los vecinos aplauden por el patio.':'Sales brillando.'}]},
+ {id:'games',ic:'🎮',n:'Videojuegos',d:'🎮 Diversión',cd:120,steps:[{e:'🎮',t:'¿A qué juegas?',o:[['🔫','Shooter con niños que insultan'],['🧑‍🍳','Un simulador de restaurantes'],['🚗','Carreras con amigos']]},{e:'⏰',t:'Son las 2 a. m.…',o:[['🛑','Apagas como un adulto'],['🔁','«Una partida más»']]}],end:v=>['🎮','Game over',()=>{need('div',55);if(v[0].includes('amigos'))need('soc',30);if(v[1].includes('Una'))hp7(-6);return v[0].includes('simulador')?'Tu restaurante virtual va mejor que el real.':'Te lo pasas en grande.'}]},
+ {id:'friends',ic:'🫂',n:'Plan con amigos',d:'🫂 Social',cd:150,steps:[{e:'🫂',t:'¿Qué plan?',o:[['🎤','Karaoke'],['🎳','Bolera'],['🍻','Terraceo'],['🏕️','Acampada en la playa']]},{e:'💬',t:'En mitad del plan…',o:[['🗣️','Alguien cuenta un secreto'],['💔','Un amigo llora por su ex'],['🤯','Discusión: ¿tortilla con cebolla?']]}],end:v=>['🫂','Noche con el grupo',()=>{need('soc',55);need('div',30);if(v[0].includes('Acampada'))need('hig',-25);return v[1].includes('secreto')?'Mañana lo sabe todo el barrio.':v[1].includes('ex')?'Le consuelas toda la noche.':'3 horas de debate. Precioso.'}]},
+ {id:'idg',ic:'🏳️‍⚧️',n:'Explorar tu identidad',d:'Tu género, tu nombre, tus pronombres',cd:60,steps:[{e:'🏳️‍⚧️',t:'¿Qué quieres hacer?',o:()=>Object.entries(GEN).filter(([k])=>k!==V7().id.g).map(([k,g])=>[g.e,'Transicionar: vivir como '+g.n.toLowerCase(),'Pronombres: '+g.pr]).concat([['🫶','Estoy bien como estoy']])}],
+  end:v=>{if(v[0].includes('bien'))return['🫶','Te quieres tal y como eres',()=>{hap(10);return'Te guiñas un ojo en el espejo.'}];const g=Object.keys(GEN).find(k=>v[0].includes(GEN[k].n.toLowerCase()));const L=V7();L.id.g=g;if(['🧑‍🍳','👩‍🍳','👨‍🍳'].includes(L.look.av))L.look.av=GEN[g].e;applyLook();
+   return['🦋','¡Empieza tu nueva etapa!',()=>{hap(30);pop(4);rel('abu',10);logL('🦋',`Empiezas tu transición. Pronombres: ${GEN[g].pr}.`);return`La abuela encarga una tarta: «¡Felicidades, ${L.look.name||'cariño'}!». Tus cocineros te hacen un pasillo de honor con cucharones. Puedes cambiarte el nombre en ✏️.`}]}},
+ {id:'out',ic:'🏳️‍🌈',n:'Salir del armario',d:'Cena familiar con anuncio',cd:60,ok:()=>!['het','cro'].includes(V7().id.o)&&!V7().id.out,steps:[{e:'🏳️‍🌈',t:'¿Cómo se lo cuentas a la familia?',o:[['🍽️','Entre el primero y el segundo plato'],['🎂','Con una tarta con el mensaje'],['🎤','En un karaoke familiar']]}],end:v=>['🏳️‍🌈','¡Fuera del armario!',()=>{V7().id.out=1;rel('abu',15);hap(25);pop(3);logL('🏳️‍🌈','Sales del armario.');return'La abuela: «Cariño, lo sabía desde que tenías 6 años. ¿Me pasas la sal?». Y te abraza fortísimo.'}]},
+ {id:'pride',ic:'🌈',n:'Ir al Orgullo',d:'Tu local se llena',cd:600,ok:()=>V7().id.out||V7().id.g==='n',steps:[{e:'🌈',t:'¿Cómo vas al Orgullo?',o:[['🚚','Con una carroza con forma de croqueta'],['💃','Bailando todo el recorrido'],['🍤','Repartiendo croquetas arcoíris']]}],end:v=>['🌈','¡Orgullo!',()=>{hap(20);pop(5);buff('spawn',1.5,180,'🌈 Orgullo: +50 % clientes');return'Ganas el premio a la carroza más sabrosa.'}]},
+ {id:'doc',ic:'🩺',n:'Curarte',d:'Médico o remedio de la abuela',cd:30,ok:()=>!!V7().ill,steps:[{e:'🤒',t:()=>'¿Cómo te curas de '+ILLS[V7().ill.k][1].toLowerCase()+'?',o:()=>[['🩺','Ir al médico',fmtM(ECO(6))+' €'],['👵','Remedio de la abuela','Gratis · 60 %'],['🍤','Comer 12 croquetas','La ciencia no lo avala']]}],
+  end:v=>{const L=V7();if(v[0].includes('médico')){lose(ECO(6));L.ill=null;return['🩺','¡Curado/a!',()=>'El médico consulta un libro de 1820 y te receta bailar una sardana al revés. Mano de santo.']}if(Math.random()<(v[0].includes('abuela')?.6:.3)){L.ill=null;return['👵','¡Funciona!',()=>'Vicks, caldo con 14 ajos y 6 mantas. Te curas por puro miedo.']}return['😷','Nada…',()=>{hp7(-3);return'Sigues igual, pero oliendo a ajo.'}]}},
+ {id:'fumi',ic:'🧪',n:'Fumigar el local',d:'Bichos fuera',cd:60,ok:()=>V7().pest>=1.5||bugs7.length>0,steps:[{e:'🧪',t:'¿Cómo fumigas?',o:()=>[['👨‍🔬','Fumigador profesional',fmtM(ECO(8))+' €'],['🧴','Spray del chino','Barato y arriesgado'],['🐈','Adoptar 6 gatos','Solución natural'],['🧄','Ajo por todas partes','Receta de la abuela']]}],
+  end:v=>{const L=V7(),kill=()=>{bugs7.forEach(b=>{b.dead=1;b.el.remove()});bugs7=[];applyItems()};return['🧪','Resultado',()=>{if(v[0].includes('profesional')){lose(ECO(8));L.pest=0;kill();return'Un señor con traje de astronauta lo deja todo limpio.'}if(v[0].includes('chino')){if(Math.random()<.55){L.pest=0;kill();return'¡Funciona! Huele a lavanda química.'}hp7(-8);L.pest*=.6;return'Mata a la mitad y a ti te deja mareado/a.'}if(v[0].includes('gatos')){L.pest=0;kill();pop(5);buff('spawn',1.2,180,'🐈 Vienen a ver a los gatos');return'Ahora eres «el restaurante de los gatos».'}L.pest*=.4;kill();buff('money',.9,180,'🧄 Huele a ajo: −10 %');rel('abu',5);return'Los bichos huyen. Los clientes, un poco también.'}]}},
+ {id:'pand',ic:'😷',n:'Plantar cara a la pandemia',d:'Negocio o vacuna casera',cd:120,ok:()=>!!V7().pand,steps:[{e:'🦠',t:()=>'La '+PANDS[V7().pand.i][1]+' sigue. ¿Qué haces?',o:[['😷','Vender mascarillas de croqueta'],['🛵','Reparto a domicilio'],['💉','Inventar una vacuna casera','¿Héroe o desastre?']]}],
+  end:v=>{const L=V7(),P=PANDS[L.pand.i];if(v[0].includes('mascarillas'))return['😷','Mascarillas de croqueta',()=>{gain(ECO(12));rep(-3);return'No sirven para nada, pero huelen bien.'}];if(v[0].includes('Reparto'))return['🛵','¡Reparto!',()=>{buff('spawn',1.4,180,'🛵 Reparto: +40 % clientes');return'Tu app tiene de logo una croqueta con casco.'}];
+   if(Math.random()<.4){L.pand=null;return['🦸','¡HAS SALVADO EL BARRIO!',()=>{pop(20);S.fame+=30;return`Tu vacuna (caldo, pimentón y orujo) acaba con la ${P[1]}. Te hacen una estatua.`}]}const k=pk(Object.keys(ILLS));L.ill={k,d:2};return['🧪','Efecto secundario',()=>`No cura la ${P[1]}, pero te contagia de ${ILLS[k][1].toLowerCase()}.`]}}];
+function planLeft(p){return Math.max(0,((V7().cd7[p.id]||0)-Date.now())/1000)}
+function doPlan(id){const p=PLANS.find(x=>x.id===id);if(!p||(p.ok&&!p.ok()))return;if(planLeft(p)>0)return toast('⏳ Aún no');V7().cd7[id]=Date.now()+p.cd*1000;closeSheet();story(p.ic+' '+p.n,p.steps,v=>{const r=p.end(v);if(r)withRes(r[0],r[1],r[2]);save()})}
+// también las acciones de siempre usan historias
+(()=>{const a=ACTS.find(x=>x.id==='spy');if(a){a.f=()=>{V7().cd7.spy=0;doPlan('spy')}}const b=ACTS.find(x=>x.id==='sab');if(b){b.f=()=>{V7().cd7.sab=0;doPlan('sab')}}const c=ACTS.find(x=>x.id==='party');if(c){c.f=()=>{V7().cd7.party=0;doPlan('party')}}const d=ACTS.find(x=>x.id==='abu');if(d){d.f=()=>{V7().cd7.abu=0;doPlan('abu')}}})();
+// ---------- pestaña nueva en Vida: "🌟 Mi día" ----------
+VT.splice(1,0,['dia','🌟 Mi día']);
+const bar7=(v,c)=>`<div class="hp"><i style="width:${cl(v,0,100)}%;background:${c}"></i></div>`;
+renderSheet=(function(prev){return function(force){prev(force);if(sheetKind!=='vida'||vtab!=='dia')return;const list=$('#sheet .list');if(!list||list.dataset.d7)return;const L=V7(),now=Date.now();list.dataset.d7=1;
+  let h=`<div class="it"><span class="ic">${L.look.av}</span><span class="tx"><b>${esc7(L.look.name||'Sin nombre')} · ${GEN[L.id.g].n}</b><small>${ORI[L.id.o]} · pronombres: ${GEN[L.id.g].pr}</small></span><button class="cb b" data-a="me:edit">✏️</button></div>`;
+  h+=`<div class="needs7">${Object.entries(NEEDS).map(([k,[e,n]])=>`<span class="${L.nd[k]<25?'low':''}"><i>${e}</i><b>${n}</b>${bar7(L.nd[k],L.nd[k]<25?'#ff5a4e':'#7cd36b')}</span>`).join('')}</div>`;
+  if(L.ill){const I=ILLS[L.ill.k];h+=`<div class="illc">🤒 <b>${I[1]}</b> · ${L.ill.d} días · ${gtxt(I[2])}</div>`}if(L.pand){const P=PANDS[L.pand.i];h+=`<div class="illc pand">${P[0]} <b>Pandemia: ${P[1]}</b> · ${L.pand.d} días</div>`}
+  const bf=L.buf.filter(b=>b.until>now);if(bf.length)h+=`<div class="tomc"><b>☀️ Ahora en tu restaurante:</b>${bf.map(b=>`<span>${b.label} · ${Math.ceil((b.until-now)/60000)} min</span>`).join('')}</div>`;
+  if(L.of)h+=`<div class="it" data-a="plan:of"><span class="ic">📸</span><span class="tx"><b>${esc7(L.of.nick)} · ${fmtM(L.of.subs)} subs</b><small>Tu OnlyFans · ${fmtM(ofIncome())} € al día</small></span><span class="arrow">›</span></div>`;
+  h+='<p class="note">Planes: cada uno es una pequeña historia con decisiones. Lo que haces se nota en el restaurante.</p>'+PLANS.filter(p=>!p.ok||p.ok()).map(p=>{const l=planLeft(p);return`<div class="it"><span class="ic">${p.ic}</span><span class="tx"><b>${p.n}</b><small>${p.d} · ${p.steps.length} paso${p.steps.length>1?'s':''}</small></span><button class="cb ${l>0?'no':'o'}" data-a="plan:${p.id}">${l>0?'⏳ '+Math.ceil(l)+' s':'IR'}</button></div>`}).join('');
+  list.innerHTML=h}})(renderSheet);
+act=(function(prev){return function(a){if(a==='plan:of'){closeSheet();ofHub();return false}return prev(a)}})(act);
+// ---------- ajustes: clave de Gemini ----------
+openSet=(function(prev){return function(){prev();const c=$('#card');if(!c)return;const ref=[...c.querySelectorAll('p,.note')].find(e=>/Versión/.test(e.textContent));(ref||c.lastElementChild).insertAdjacentHTML(ref?'beforebegin':'afterend',`<b class="lkh">🤖 IA (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com). Se guarda solo en este móvil.'}</p><input id="gk7" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc7(S.gemKey||'')}"><button class="cb" data-m="gk7">GUARDAR CLAVE</button>`)}})(openSet);
+MA.gk7=()=>{S.gemKey=$('#gk7').value.trim();save();closeModal();toast(S.gemKey?'🤖 IA activada':'IA desactivada')};
+// ---------- zoom con dos dedos ----------
+let ZOOM=1.15;fitCam=function(){camBase.pitch=1.0;camBase.d=40;const a=camera.aspect||.6,hw=VIS_W/ZOOM/2,hh=hw/a;for(const c of [camera,tmpC]){c.left=-hw;c.right=hw;c.top=hh;c.bottom=-hh;c.near=.5;c.far=300;c.updateProjectionMatrix()}zMin=Wz(-20)+hh/Math.sin(camBase.pitch)*.9;zMax=Wz(VH+20)-hh/Math.sin(camBase.pitch)*.95;clampCam()};
+clampCam=function(){const xm=Math.max(0,11.5-VIS_W/ZOOM/2);camXT=Math.max(-xm,Math.min(xm,camXT));camZT=zMax<zMin?(zMin+zMax)/2:Math.max(zMin,Math.min(zMax,camZT))};
+const PT7=new Map();let pin7=null;const setZoom=z=>{ZOOM=cl(z,.8,2.4);fitCam()};
+cv.addEventListener('pointerdown',e=>{PT7.set(e.pointerId,{x:e.clientX,y:e.clientY});if(PT7.size===2){const [a,b]=[...PT7.values()];pin7={d:Math.hypot(a.x-b.x,a.y-b.y),z:ZOOM};drag3=null}},true);
+addEventListener('pointermove',e=>{if(!PT7.has(e.pointerId))return;PT7.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pin7&&PT7.size>=2){const [a,b]=[...PT7.values()];setZoom(pin7.z*Math.hypot(a.x-b.x,a.y-b.y)/Math.max(20,pin7.d));drag3=null}},true);
+const end7=e=>{PT7.delete(e.pointerId);if(PT7.size<2)pin7=null};addEventListener('pointerup',end7,true);addEventListener('pointercancel',end7,true);addEventListener('blur',()=>{PT7.clear();pin7=null});
+cv.addEventListener('wheel',e=>{e.preventDefault();setZoom(ZOOM*(e.deltaY<0?1.1:.9))},{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault());
+fitCam();
+// ---------- nombres en los botones de abajo ----------
+[['mejoras','Mejoras'],['equipo','Equipo'],['calle','Calle'],['precios','Precios']].forEach(([k,n])=>{const b=document.querySelector(`.dock [data-sheet="${k}"]`);if(b&&!b.querySelector('em'))b.insertAdjacentHTML('beforeend',`<em>${n}</em>`)});
+// ---------- IA: evento sorpresa de vez en cuando ----------
+setInterval(()=>{if(document.hidden||!aiOn())return;aiT-=5;if(aiT>0)return;aiT=240+rint(120);if($('#modal').hidden&&!sheetKind&&!dlgOn)aiEvent()},5000);
+
 </script>
-<script>
-if('serviceWorker' in navigator){let re=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(re)return;re=true;location.reload()});
-navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{const u=()=>r.update().catch(()=>{});u();document.addEventListener('visibilitychange',()=>{if(!document.hidden)u()})}).catch(()=>{})}
-</script>
-</body>
-</html>
