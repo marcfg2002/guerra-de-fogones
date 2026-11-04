@@ -13,6 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}body{margin:0}</style>
 <title>Guerra de Fogones</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@800;900&display=swap">
 <style>
@@ -241,10 +242,26 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .endst{display:flex;gap:6px}.endst div{flex:1;background:#fff;border-radius:12px;padding:8px 4px;text-align:center;font-family:var(--f-d);font-size:17px}.endst small{display:block;font-family:var(--f-b);font-weight:900;font-size:11px;color:#7a6a50}
 .rels{display:flex;justify-content:center;gap:10px;font-size:22px;flex-wrap:wrap}
 </style>
+<style>body:has(.modal:not([hidden])) .dlg{visibility:hidden}.vtabs{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.vtabs::-webkit-scrollbar{display:none}
+.vtabs button{flex:0 0 auto;padding:7px 10px;white-space:nowrap}
+.sheet.tall{max-height:80%}
+.sheet .list{flex:1 1 auto;touch-action:pan-y}
+.statc{display:grid;gap:8px;background:#fff;border-radius:16px;padding:10px 12px;box-shadow:0 2px 0 #f0e2c4}
+.statc>div{display:grid;grid-template-columns:30px 1fr auto;align-items:center;column-gap:6px}
+.statc span{font-size:24px;grid-row:span 3}.statc b{font-family:var(--f-d);font-weight:400;font-size:15px}.statc em{font-style:normal;font-family:var(--f-d);font-size:16px}
+.statc .hp,.statc .repbar,.statc small{grid-column:2/4}.statc small{font-weight:800;color:#7a6a50;font-size:11.5px}
+.it .btns{display:flex;flex-direction:column;gap:5px;flex-shrink:0}.it .btns .cb{font-size:13px;padding:7px 9px}
+.it.car small i{font-style:normal;color:#23262f}
+.spark{display:block;width:100%;max-width:150px;height:30px;margin-top:3px}
+.deltas{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.deltas span{font-weight:900;font-size:13px;padding:5px 10px;border-radius:99px;border:2.5px solid #23262f}
+.deltas .g{background:#c8f5cd;color:#1d6b2c}.deltas .r{background:#ffd0cb;color:#9b2318}
+.keep{display:flex;flex-direction:column;gap:4px;background:#fff;border-radius:14px;padding:10px 12px;text-align:left;font-weight:800;font-size:13px}
+.keep b{font-family:var(--f-d);font-weight:400;font-size:15px}
+</style>
 <style>body:has(.modal:not([hidden])) .dlg{visibility:hidden}</style>
 </head>
 <body>
-
 
 <div id="app">
   <header class="topbar">
@@ -380,8 +397,8 @@ function gumbel(){return-Math.log(-Math.log(Math.random()+1e-9)+1e-9)}
 
 const rivalCash0=(j,S)=>ZONES[j].cash*(1+S.fr*3);
 const rivalFixed=(j,S)=>rivalCash0(j,S)/ZONES[j].runway;
-function myUtil(S,R,d){const s=S.st[d];return qual(s.lvl)+0.005*S.fame+(S.life?S.life.rep*.003:0)+(R.ad>0?0.5:0)+0.07*(myDishes(S).length-1)-2.4*(s.r-1)}
-function rivalUtil(S,j){const z=S.zones[j];return ZONES[j].base+0.2*z.lvl+0.15*S.fr-2.4*(z.r-1)-((R0&&R0.sab&&R0.sab[j]>0)?4:0)}
+function myUtil(S,R,d){const s=S.st[d];return qual(s.lvl)+0.005*S.fame+(S.life?S.life.rep*.003:0)+(R.ad>0?0.5:0)+0.07*(myDishes(S).length-1)-2.4*((S.smod&&S.smod.ps)||1)*(s.r-1)+(S.life?(S.life.pop||0)*.004:0)}
+function rivalUtil(S,j){const z=S.zones[j];return ZONES[j].base+0.2*z.lvl+0.15*S.fr-2.4*((S.smod&&S.smod.ps)||1)*(z.r-1)+((S.smod&&S.smod.rv)||0)-((R0&&R0.sab&&R0.sab[j]>0)?4:0)}
 let R0=null;
 
 function freeSeat(S,R,j){if(!S.zones[j].own){const n=R.custs.filter(c=>c.target===j&&c.state!=='walk'&&c.state!=='up').length;return n<6?0:-1}const cap=seatCap(S,j);for(let k=0;k<cap;k++)if(!R.seats[j][k])return k;return-1}
@@ -414,7 +431,7 @@ function step(S,R,dt){
   R.t+=dt;R.tick++;buildGrid(S);
   if(R.turbo>0)R.turbo-=dt;if(R.bribe>0)R.bribe-=dt;for(const k in R.sab)if(R.sab[k]>0)R.sab[k]-=dt;if(R.rush>0)R.rush-=dt;if(R.ad>0)R.ad-=dt;
   // ritmo de llegada
-  const lam=(0.6+0.0015*S.fame+0.12*(ownedZones(S).length-1))*(R.rush>0?2.6:1)*((S.up&&S.up.gSpawn)||1);
+  const lam=(0.6+0.0015*S.fame+0.12*(ownedZones(S).length-1))*(R.rush>0?2.6:1)*((S.up&&S.up.gSpawn)||1)*((S.smod&&S.smod.sp)||1)*(1+((S.life&&S.life.pop)||0)/250);
   R.spawnAcc+=dt*lam;while(R.spawnAcc>=1){R.spawnAcc-=1;spawnCustomer(S,R)}
   // crítico ocasional
   R.critic-=dt;if(R.critic<=0){R.critic=90+Math.random()*90;if(S.served>15){const c=spawnCustomer(S,R,{vip:true});c.e='🧐';c.vip=true;if(R.onNews)R.onNews('🧐 ¡Ha llegado un crítico gastronómico a la calle!')}}
@@ -468,7 +485,7 @@ function leave(S,R,c){const j=c.target;c.path=null;if(j>=0&&R.seats[j][c.seat]==
   const o=R.orders.find(o=>o.c===c);if(o)o.state='x';c.state='out'}
 function serve(S,R,c){const d=c.dish,s=S.st[d],fair=fairOf(d,s.lvl),price=fair*s.r*(1+S.fr);
   const fast=c.wait<12;let tip=fast&&s.r<=1.05?0.15:0;
-  const amt=price*(1+tip)*(c.vip?3:1)*((S.up&&S.up['m_'+d])||1)*((S.up&&S.up.gProfit)||1)*((S.up&&S.up.gProfitTmp)||1);
+  const amt=price*(1+tip)*(c.vip?3:1)*((S.up&&S.up['m_'+d])||1)*((S.up&&S.up.gProfit)||1)*((S.up&&S.up.gProfitTmp)||1)*((S.smod&&S.smod.pm)||1);
   const g=GEO[c.target].seats[c.seat];earn(S,R,amt,g.x,g.y-14);
   S.served++;c.food=d;
   if(s.r>1.45){S.fame=Math.max(0,S.fame-0.6);c.mood='😒'}
@@ -759,7 +776,7 @@ function burst(x,y,n=30,emo){for(let i=0;i<n;i++){const a=Math.random()*7,v=2+Ma
   m.position.set(Wx(x),1,Wz(y));scene.add(m);fx.push({m,vx:Math.cos(a)*v,vz:Math.sin(a)*v*.6,vy:4+Math.random()*4,t:0,life:1.1+Math.random()*.5,rs:Math.random()*10})}}
 function stepFx(dt){for(const p of fx){p.t+=dt;p.vy-=14*dt;p.m.position.x+=p.vx*dt;p.m.position.y=Math.max(.05,p.m.position.y+p.vy*dt);p.m.position.z+=p.vz*dt;p.m.rotation.x+=p.rs*dt;p.m.rotation.z+=p.rs*dt*.7}
   for(let i=fx.length-1;i>=0;i--)if(fx[i].t>fx[i].life){scene.remove(fx[i].m);fx.splice(i,1)}
-  carT-=dt;if(carT<=0){carT=2.5+Math.random()*4;const r=Math.random()<.5,m=carMesh();m.rotation.y=r?0:Math.PI;m.position.set(r?-14:14,0,r?Wz(40):Wz(16));scene.add(m);cars.push({m,v:(r?1:-1)*(4+Math.random()*4)})}
+  carT-=dt;if(carT<=0){carT=2.5+Math.random()*4;const r=Math.random()<.5,m=carMesh();m.rotation.y=r?0:Math.PI;m.position.set(r?-14:14,0,r?Wz(275):Wz(245));scene.add(m);cars.push({m,v:(r?1:-1)*(4+Math.random()*4)})}
   for(const k of cars)k.m.position.x+=k.v*dt;for(let i=cars.length-1;i>=0;i--)if(Math.abs(cars[i].m.position.x)>15){scene.remove(cars[i].m);cars.splice(i,1)}}
 // ---- textos flotantes (DOM) ----
 const FL=new Map(),tmpV=new THREE.Vector3();
@@ -994,7 +1011,7 @@ function openSet(){openModal(`<h2>Ajustes</h2>
   <button class="tog ${S.music?'on':''}" data-m="tMusic"><span>🎵 Música</span><i></i></button>
   <button class="tog ${S.sound?'on':''}" data-m="tSound"><span>🔊 Sonido</span><i></i></button>
   <button class="cb b" data-m="help">CÓMO SE JUEGA</button>
-  <p style="font-size:12px;color:#8a6a40">Versión 8 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
+  <p style="font-size:12px;color:#8a6a40">Versión 9 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
   <button class="lnk" style="color:#d8352a" data-m="wipe">Borrar partida</button>
   <button class="cb" data-m="close">SEGUIR</button>`)}
 MA.tMusic=()=>{S.music=!S.music;music();openSet();save()};MA.tSound=()=>{S.sound=!S.sound;music();openSet();save()};
@@ -1162,8 +1179,365 @@ setInterval(()=>{if(document.hidden)return;storyTick();tauntTick(.5);eventTick(.
   if(S.flags.closed1&&!F().logc1){F().logc1=1;logL('🏚️','Mamma Mia ha cerrado.')}if(S.flags.closed2&&!F().logc2){F().logc2=1;logL('🏚️','Sushi Zen ha cerrado.')}if(S.flags.closed3&&!F().logc3){F().logc3=1;logL('🏚️','El Güey ha cerrado.')}},500);
 if(!LF().log.length)logL('👵','Heredas el puestito de refrescos de la Abuela Lola. Empieza tu historia.');
 
-</script>
+// ================= VIDA 2.0 (medio BitLife, medio Eatventure) =================
+const rint=n=>Math.floor(Math.random()*n),pk=a=>a[rint(a.length)];
+function wp(list){let t=list.reduce((a,x)=>a+x[0],0),r=Math.random()*t;for(const x of list){r-=x[0];if(r<0)return x[1]()}return list[0][1]()}
+const ECO=s=>Math.max(8*s,Math.round((S.incAvg||0)*s));
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+// ---- estado extra ----
+function L2(){const L=LF();if(L.pop==null)L.pop=0;if(L.hap==null)L.hap=65;if(L.age==null)L.age=23;L.car=L.car||{};L.inv=L.inv||{};L.mkt=L.mkt||{};L.ach=L.ach||{};L.f2=L.f2||{};if(L.pisos==null)L.pisos=0;if(L.rent==null)L.rent=0;if(L.foll==null)L.foll=0;if(L.surreal==null)L.surreal=0;return L}
+L2();
+function pop(v){const L=L2();L.pop=cl(L.pop+v,0,100)}
+function hap(v){const L=L2();L.hap=cl(L.hap+v,0,100)}
+function gain(v){v=Math.round(v);S.money+=v;S.earned+=Math.max(0,v);return v}
+function lose(v){v=Math.round(Math.min(S.money,v));S.money-=v;return v}
 
+// ---- resultado estilo BitLife (con cambios) ----
+function snap(){const L=L2();return{m:S.money,f:S.fame,p:L.pop,h:L.hap,r:L.rep}}
+function withRes(ic,t,fn){const a=snap();const txt=fn()||'';const b=snap();const ch=[];
+  const dm=b.m-a.m;if(Math.abs(dm)>=1)ch.push([dm>0?'g':'r',(dm>0?'+':'−')+fmtM(Math.abs(dm))+' €']);
+  const df=Math.round(b.f-a.f);if(df)ch.push([df>0?'g':'r','🔥 Fama '+(df>0?'+':'')+df]);
+  const dp=Math.round(b.p-a.p);if(dp)ch.push([dp>0?'g':'r','⭐ Popularidad '+(dp>0?'+':'')+dp]);
+  const dh=Math.round(b.h-a.h);if(dh)ch.push([dh>0?'g':'r','😊 Felicidad '+(dh>0?'+':'')+dh]);
+  const dr=Math.round(b.r-a.r);if(dr)ch.push([dr>0?'g':'r','😇 Reputación '+(dr>0?'+':'')+dr]);
+  sfx.unlock();openModal(`<div class="emo">${ic}</div><h2>${t}</h2><p>${txt}</p>${ch.length?`<div class="deltas">${ch.map(c=>`<span class="${c[0]}">${c[1]}</span>`).join('')}</div>`:''}<button class="cb" data-m="close">¡VALE!</button>`);save()}
+
+// ---- calles: cada franquicia es un barrio distinto ----
+const STREETS=[
+ {n:'Calle Fogones',e:'🏘️',d:'Tu barrio de siempre. Huele a fritanga y a cotilleo.',m:{}},
+ {n:'Barrio Pijo',e:'💎',d:'Pagan lo que sea, pero son pocos y exigentes.',m:{ps:.6,sp:.85,pm:1.3}},
+ {n:'Campus Universitario',e:'🎓',d:'Hordas de estudiantes con hambre y sin un duro.',m:{ps:1.6,sp:1.45,pm:.9}},
+ {n:'Paseo de los Guiris',e:'📸',d:'Turistas que pagan bien y nunca vuelven.',m:{ps:.8,sp:1.15,pm:1.1}},
+ {n:'Polígono Industrial',e:'🏭',d:'Currantes hambrientos a las 14:00 en punto.',m:{sp:1.3,ps:1.2}},
+ {n:'Isla Paradisíaca',e:'🏝️',d:'Todo más caro y los rivales van muy chulos.',m:{pm:1.35,rv:.3}},
+ {n:'Pueblo Encantado',e:'👻',d:'Clientes que atraviesan paredes. Nadie mira el precio.',m:{ps:.5,sp:.9}},
+ {n:'Colonia en Marte',e:'👽',d:'Gravedad baja, propinas altísimas, rivales de otro planeta.',m:{pm:1.6,sp:1.1,rv:.45}}];
+const RIV=[
+ [['Mamma Mia','🍕','Don Massimo','🧔🏻'],['Pizzería Il Capo','🍕','Luigi Calzone','🤵🏻'],['Pasta La Vista','🍝','Nonna Furia','👵🏼'],['Forno Diabolico','🔥','Giuseppe Mozzarella','👨🏻‍🦲'],['Pizza Cósmica','🛸','Capitán Pepperoni','🧑🏻‍🚀']],
+ [['Sushi Zen','🍣','Kenji','🧑🏻‍🍳'],['Ramen Rocket','🍜','Yuki','👩🏻‍🎤'],['Neko Sushi','🐱','Hiro y su gato','🧑🏻‍🦱'],['Wasabi Bang','💥','Sensei Tanaka','🥋'],['Tempura Ninja','🥷','La Sombra','🥷']],
+ [['El Güey','🌮','El Güey','🤠'],['Loco Pollo','🐔','La Chula','💃🏽'],['Tacos Galácticos','🌌','Comandante Burrito','👨🏽‍🚀'],['Nachos Furiosos','🤼','El Enmascarado','🦸🏽'],['La Catrina','💀','Doña Calavera','💀']]];
+const RK=['mas','ken','gue'];
+RIV.forEach((p,i)=>{const j=i+1,k=RK[i];p[0]=[ZONES[j].name,ZONES[j].e,CAST[k].n,CAST[k].e]});
+function pickStreet(fr){const used=new Set();const i=fr===0?0:1+((fr-1)%(STREETS.length-1));return{i,r:[0,1,2].map(x=>fr===0?0:1+rint(RIV[x].length-1))}}
+function applyStreet(){if(!S.street)S.street=pickStreet(S.fr);const st=STREETS[S.street.i]||STREETS[0];S.smod=st.m;
+  [0,1,2].forEach(x=>{const r=RIV[x][S.street.r[x]]||RIV[x][0];ZONES[x+1].name=r[0];ZONES[x+1].e=r[1];CAST[RK[x]].n=r[2];CAST[RK[x]].e=r[3]});dirtyBg=true}
+applyStreet();
+const curStreet=()=>STREETS[(S.street||{}).i||0];
+
+// franquicia: ya NO lo pierdes todo
+act=(function(prev){return function(a){const [k]=a.split(':');if(k!=='fran')return prev(a);
+  if(!S.nextStreet)S.nextStreet=pickStreet(S.fr+1);const ns=STREETS[S.nextStreet.i],keepF=Math.round(S.fame*.5);
+  const recs=Object.keys(S.st).filter(d=>S.st[d].lvl>=5).length;
+  openModal(`<div class="emo">${ns.e}</div><h2>Abrir franquicia en<br>${ns.n}</h2><p style="font-size:14px">${ns.d}</p>
+   <div class="keep"><b>Te llevas contigo:</b><span>🔥 ${keepF} de fama (la mitad)</span><span>📖 ${recs} recetas con el 20 % de su nivel</span><span>👤 Tu vida: carrera, pareja, inversiones y popularidad</span><span>💰 x${S.fr+2} por plato para siempre</span></div>
+   <button class="cb" data-m="franOk">¡FRANQUICIAR!</button><button class="lnk" data-m="close">Todavía no</button>`);return false}})(act);
+MA.franOk=()=>{if(S.money<franCost())return;const P=S,fr=P.fr+1,ns=newState(fr);
+  Object.assign(ns,{sound:P.sound,music:P.music,mis:P.mis,seen:1,flags:{tapped:1},life:P.life,story:P.story});
+  ns.legacy={streets:((P.legacy||{}).streets||0)+1,best:Math.max(P.fame,(P.legacy||{}).best||0)};ns.fame=Math.round(P.fame*.5);
+  for(const d in P.st){const lv=P.st[d].lvl;if(lv>=5)ns.st[d].lvl=Math.max(ns.st[d].lvl,Math.floor(lv*.2))}
+  ns.street=P.nextStreet||pickStreet(fr);S=ns;R=newRuntime(S);hook();applyStreet();
+  const L=L2();L.flags={};L.dayStart=0;Object.assign(L.rel,{mas:-10,ken:0,gue:-30});
+  closeModal();closeSheet();const st=curStreet();bigText(st.e+' '+st.n.toUpperCase(),'Franquicia '+(fr+1)+' · fama heredada: '+S.fame);sfx.big();
+  logL(st.e,'Abriste franquicia en '+st.n+'. Te sigue tu fama: '+S.fame+'.');
+  setTimeout(()=>say([['nar',`Bienvenido/a a ${st.n}. ${st.d}`],['mas','¿Tú eres la famosa de las croquetas? Aquí mando yo: '+ZONES[1].name+'.'],['ken','En '+ZONES[2].name+' no tenemos miedo a nadie.'],['gue','Y en '+ZONES[3].name+' menos, ¡órale!']]),1600);save()};
+
+// ---- personajes nuevos ----
+Object.assign(CAST,{nar:{e:'📰',n:'El barrio',c:'#8a6a40'},ali:{e:'👽',n:'Zorg, de Andrómeda',c:'#5fd068'},cab:{e:'🐐',n:'Una cabra',c:'#c9a26b'},ram:{e:'👨🏻‍🍳',n:'Chef Gritón Ramírez',c:'#e9574f'},fan:{e:'🤩',n:'Fan obsesivo',c:'#ff7ab8'},
+ via:{e:'🧙',n:'Viajero del tiempo',c:'#7c5cff'},pal:{e:'🐦',n:'Sindicato de Palomas',c:'#9aa0aa'},ins:{e:'🕵🏻',n:'Inspectora de Sanidad',c:'#3f86d6'},tv:{e:'📺',n:'Productora de TV',c:'#ff8a3d'},sec:{e:'🕯️',n:'Secta del Pan',c:'#6b4fa0'},
+ fut:{e:'⚽',n:'Futbolista famosísimo',c:'#3bb273'},pri:{e:'🧑🏻‍🦱',n:'Tu primo Jonatan',c:'#ffb23f'},gho:{e:'👻',n:'Fantasma del congelador',c:'#8fc8ff'},mil:{e:'🤴🏽',n:'Jeque millonario',c:'#e0b400'},gat:{e:'🐈‍⬛',n:'Un gato con sombrero',c:'#444'},
+ pap:{e:'📸',n:'Paparazzi',c:'#555'},lov:{e:'💘',n:'Tu pareja',c:'#ff5a8a'},ext:{e:'🛻',n:'Tu ex',c:'#a05a2c'},met:{e:'☄️',n:'El cielo',c:'#ff8a3d'}});
+
+// ---- CARRERAS ----
+const CAREERS={
+ actor:{ic:'🎬',n:'Actor / Actriz',perk:'Cada estreno dispara la fama de tu restaurante',cd:150,lv:['Sin carrera','Extra en un anuncio de yogur','Figurante en «Pasión de Fogones»','Secundario con una frase','Protagonista de peli indie','Estrella de Hollywood','Leyenda con Óscar'],
+  sc:[['El director quiere que llores de verdad.',[['🧅','Cortar cebolla a escondidas',.85],['💔','Pensar en tu ex',.65],['🕺','Improvisar un baile triste',.3]]],
+   ['Escena de acción: saltar de un coche en marcha.',[['🦸','Hacerlo tú',.5],['🧍','Pedir un doble',.9],['🍔','Negociar antes comida gratis',.7]]],
+   ['Tienes que besar a tu coprotagonista, que ha comido ajo.',[['😗','Profesionalidad ante todo',.7],['🍬','Ofrecerle un caramelo de menta',.85],['🤧','Fingir un estornudo',.35]]],
+   ['Se te olvida el guion en directo.',[['🎭','Monólogo improvisado sobre croquetas',.6],['😶','Mirada intensa y silencio',.45],['📜','Leer la chuleta de la mano',.75]]],
+   ['El papel exige engordar 10 kilos.',[['🍔','¡Al buffet de tu restaurante!',.9],['🎈','Traje inflable',.6],['🙅','Negarte en redondo',.25]]]],
+  ok:['El director llora de emoción. Dice que eres «la nueva Meryl de barrio».','Toma buena a la primera. Te aplauden hasta los de catering.','Un crítico de cine escribe: «Magnético. Y huele a fritura».'],
+  ko:['Repetís la escena 47 veces. El equipo te odia un poquito.','Te caes del decorado. Sale en el making-of y nadie lo olvida.','Confundes al director con el de catering y le pides un bocata.']},
+ infl:{ic:'📱',n:'Influencer',perk:'Seguidores = patrocinios diarios y más clientes',cd:110,lv:['0 seguidores','1.000 seguidores','10.000 seguidores','100.000 seguidores','1 millón','10 millones','Más famoso que la paella'],
+  sc:[['¿Qué vídeo subes hoy?',[['🍳','Receta en 15 segundos',.8],['💃','Baile viral con tu cocinero',.6],['🧨','Decir que la tortilla va SIN cebolla',.35]]],
+   ['Una marca de detergente quiere patrocinarte.',[['🧼','Anunciarlo con cara seria',.75],['🤑','Aceptar y fingir que lo amas',.65],['🙅','Rechazarla con un discurso épico',.45]]],
+   ['Un hater te deja 400 comentarios.',[['😂','Responder con memes',.7],['🫂','Invitarle a comer',.6],['🔥','Directo de 3 horas contra él',.3]]],
+   ['Reto viral: comerte un chile carolina reaper.',[['🌶️','Sin pestañear',.4],['🥛','Con leche escondida',.75],['🫑','Con un pimiento disfrazado',.55]]]],
+  ok:['El vídeo explota: medio país hace tu baile.','Te sale un fan club en Japón. No sabes por qué.','Te reenvían tu propio vídeo por WhatsApp. Eso es éxito.'],
+  ko:['Te cancelan durante 6 horas. Luego se olvidan.','El algoritmo te ignora. Solo te ve tu abuela (le das like).','Se te ve el desorden de casa de fondo. Memes infinitos.']},
+ sing:{ic:'🎤',n:'Cantante',perk:'Conciertos = dinero gordo y fans que vienen a comer',cd:170,lv:['Cantas en la ducha','Karaoke de los jueves','Bodas y bautizos','Fiestas del pueblo','Gira por España','Número 1 en las listas','Ganas Eurovisión'],
+  sc:[['Toca componer tu nuevo single.',[['🥘','«Reguetón de la Croqueta»',.7],['🎻','Balada triste sobre una patata',.55],['🤘','Heavy metal de cocina',.4]]],
+   ['En pleno concierto se va la luz.',[['🔦','Seguir a capela con linternas',.7],['🥁','Tocar las cacerolas',.6],['🏃','Huir con dignidad',.3]]],
+   ['Te ofrecen un dueto con un holograma.',[['🤖','Aceptar: es el futuro',.6],['👵','Proponer a tu abuela en su lugar',.75],['🙄','Rechazarlo',.5]]]],
+  ok:['El público corea el estribillo: «¡CRO-QUE-TA!».','Te lanzan ropa interior. Y un jamón entero.','Tu canción suena en todas las bodas del país.'],
+  ko:['Desafinas tanto que un perro se une al coro.','Te tiran un tomate. Lo usas para un gazpacho.','Se te rompe el pantalón en el agudo final.']},
+ pol:{ic:'🏛️',n:'Político local',perk:'Desde concejal: impuestos a tus rivales (pierden caja)',cd:200,lv:['Ciudadano/a','Delegado/a de escalera','Presidente/a de la comunidad','Concejal/a de Fiestas','Teniente de alcalde','Alcalde/sa','Presidente/a del Gobierno de las Croquetas'],
+  sc:[['Mitin en la plaza: ¿qué prometes?',[['🍤','Croquetas gratis los domingos',.7],['🚇','Un metro hasta tu restaurante',.55],['🐦','Expulsar a las palomas',.45]]],
+   ['Debate en la tele contra tu rival político.',[['📊','Datos y argumentos',.6],['🍰','Regalar tarta al público',.75],['🌀','Cambiar de tema cada 10 segundos',.4]]],
+   ['Te pillan comiendo en el restaurante de un rival.',[['🕵️','«Estaba espiando por el pueblo»',.65],['😳','Negarlo con la boca llena',.35],['🍝','«La pasta estaba horrible»',.6]]]],
+  ok:['Ganas votos hasta entre las palomas.','Sales en el telediario. Bien peinado/a, por una vez.','Tu eslogan «Más fritura, menos tontura» arrasa.'],
+  ko:['Te equivocas de pueblo en el discurso.','Te pillan durmiendo en el pleno. Ronquidos en directo.','Prometes algo imposible y te lo recuerdan en Twitter.']}};
+function car(id){const L=L2();return L.car[id]=L.car[id]||{lv:0,xp:0}}
+function carLeft(id){return Math.max(0,((L2().cd['car_'+id]||0)-Date.now())/1000)}
+let curCar=null;
+function workCareer(id){const C=CAREERS[id],c=car(id);if(carLeft(id)>0){toast('⏳ Aún no');return}if(c.lv>=C.lv.length-1){toast('¡Ya estás en lo más alto!');return}
+  const L=L2();L.cd['car_'+id]=Date.now()+C.cd*1000;closeSheet();const sc=pk(C.sc);curCar={id,sc};const low=L.hap<20;
+  openModal(`<div class="who" style="--pc:#ff8a3d"><span>${C.ic}</span><b>${C.lv[c.lv]||C.n}</b></div><p>${sc[0]}</p>${low?'<p class="note" style="color:#c0392b">😩 Estás quemado/a: menos probabilidades de éxito. Descansa.</p>':''}<div class="choice">${sc[1].map((o,i)=>`<button data-m="carPick" data-i="${i}"><span>${o[0]}</span><span style="font-size:15px">${o[1]}<small>${Math.round(o[2]*(low?.6:1)*100)} % de éxito</small></span></button>`).join('')}</div>`)}
+MA.carPick=b=>{if(!curCar)return;const {id,sc}=curCar,o=sc[1][+b.dataset.i],C=CAREERS[id],c=car(id),L=L2();curCar=null;closeModal();
+  const okk=Math.random()<o[2]*(L.hap<20?.6:1);
+  withRes(okk?C.ic:'💥',okk?'¡Éxito!':'Desastre…',()=>{hap(-6);let t;
+    if(okk){c.xp+=(c.lv?34:55)+rint(14);gain(ECO(4+c.lv*4));pop(2+c.lv);if(id==='infl')L.foll+=Math.round(Math.pow(10,c.lv)*(1+Math.random()));t=pk(C.ok)}
+    else{c.xp+=6;t=pk(C.ko);if(Math.random()<.4)pop(-2)}
+    if(c.xp>=100&&c.lv<C.lv.length-1){c.lv++;c.xp=0;const R2=ECO(15*c.lv);gain(R2);pop(6+c.lv*2);S.fame=Math.min(400,S.fame+(id==='actor'?12*c.lv:4*c.lv));
+      t+=`<br><br><b>⬆️ ¡SUBES DE NIVEL!</b><br>Ahora eres: <b>${C.lv[c.lv]}</b>`+(id==='actor'?'<br>🎞️ La peli se estrena y tu restaurante sale en los créditos. ¡Cola en la puerta!':'');
+      if(id==='actor'||id==='sing')R.rush=Math.max(R.rush||0,20);logL(C.ic,'Ascenso: ahora eres '+C.lv[c.lv]+'.');setTimeout(()=>burst(VW/2,VH*.4,30,'⭐'),300)}
+    else if(c.xp>=100)c.xp=100;
+    return t})};
+
+// ---- CURROS ABSURDOS ----
+const GIGS=[
+ {id:'of',ic:'🍑',n:'Abrir un OnlyFans',d:'Fotos muy sugerentes… de tus croquetas',cd:240,f:()=>{L2().f2.of=1;return wp([
+   [3,()=>withRes('🍑','¡Éxito picante!',()=>{const g=gain(ECO(18));pop(4);return`Un jeque paga ${fmtM(g)} € por ver tu croqueta de jamón sin rebozar.`})],
+   [2,()=>withRes('😳','Tu abuela se ha suscrito',()=>{hap(-10);rel('abu',-12);return'Y te ha dejado un comentario: «Le falta sal, cariño».'})],
+   [2,()=>withRes('🔥','¡VIRAL!',()=>{pop(10);S.fame+=8;gain(ECO(6));return'«El chef de las croquetas sensuales» es trending topic.'})],
+   [1,()=>withRes('🚫','Cuenta suspendida',()=>{hap(-5);return'Motivo: «contenido demasiado crujiente».'})]])}},
+ {id:'uber',ic:'🛵',n:'Repartir en patinete',d:'Llevas pedidos… de tus rivales',cd:120,f:()=>wp([
+   [3,()=>withRes('🛵','Propinazas',()=>{gain(ECO(6));rep(3);return'Una señora te da propina y una croqueta de las suyas. Está mejor que la tuya. Duele.'})],
+   [1,()=>withRes('🍕','¡Te comes el pedido!',()=>{gain(ECO(2));rep(-6);hap(8);return'Era una pizza de '+ZONES[1].name+'. Estaba buenísima. El cliente te pone 1 estrella.'})]])},
+ {id:'est',ic:'🗿',n:'Estatua humana',d:'Quedarte quieto/a 4 horas en la plaza',cd:150,f:()=>wp([
+   [2,()=>withRes('🗿','Arte puro',()=>{gain(ECO(5));return'Unos turistas te hacen 300 fotos. Uno te deja un billete y un chicle.'})],
+   [1,()=>withRes('🐦','Una paloma te elige',()=>{hap(-8);pop(3);return'Una paloma anida en tu cabeza. Te haces famoso/a como «la estatua con okupa».'})]])},
+ {id:'tar',ic:'🔮',n:'Tarotista por teléfono',d:'Predecir el futuro sin tener ni idea',cd:160,f:()=>wp([
+   [2,()=>withRes('🔮','Aciertas por casualidad',()=>{gain(ECO(9));rep(-4);return'Le dices a un señor que «algo cambiará» y le toca la lotería. Te llama gurú.'})],
+   [1,()=>withRes('📞','Llama tu madre',()=>{hap(-4);return'Reconoce tu voz al instante. 40 minutos de bronca.'})]])},
+ {id:'nft',ic:'🖼️',n:'Vender el NFT de una tortilla',d:'Una foto de tu tortilla… en la blockchain',cd:220,cost:()=>ECO(8),f:()=>wp([
+   [1,()=>withRes('🤯','¡UN LOCO LO COMPRA!',()=>{gain(ECO(70));pop(6);return'Un coleccionista paga una barbaridad por «Tortilla_Sin_Cebolla_#001».'})],
+   [4,()=>withRes('📉','Nadie la quiere',()=>{hap(-3);return'Tu NFT vale menos que la tortilla de verdad. Al menos te comes la tortilla.'})]])},
+ {id:'dog',ic:'🐕',n:'Pasear perros',d:'Cinco perros, una correa enredada',cd:130,f:()=>wp([
+   [2,()=>withRes('🐕','Paseo glorioso',()=>{gain(ECO(4));hap(10);return'Los perros te adoran. Uno te trae un zapato de regalo (no es tuyo).'})],
+   [1,()=>withRes('💘','¡Flechazo canino!',()=>{hap(12);L2().f2.dogMeet=1;return'Tu perro y el de alguien muy guapo se enamoran. Os intercambiáis teléfonos «por los perros».'})]])},
+ {id:'lot',ic:'🎰',n:'Comprar lotería',d:'1 entre muchísimos… pero ¿y si?',cd:90,cost:()=>ECO(3),f:()=>{const r=Math.random();
+   if(r<.03){withRes('🤑','¡¡¡TE HA TOCADO!!!',()=>{gain(ECO(250));hap(30);L2().f2.lot=1;return'¡El GORDO! Tu abuela se desmaya. Tu primo Jonatan ya te está pidiendo dinero.'});return}
+   if(r<.25){withRes('🎟️','Te toca la pedrea',()=>{gain(ECO(5));return'Recuperas lo invertido y un poco más. Lo celebras como si fuera el Gordo.'});return}
+   withRes('🗑️','Nada',()=>{hap(-2);return'Ni el reintegro. El lotero te mira con pena.'})}},
+ {id:'lab',ic:'🧪',n:'Ensayo clínico de un yogur',d:'Te pagan bien… efectos secundarios: ¿?',cd:260,f:()=>{const e=pk(['hablas en verso durante un día entero','ves a todo el mundo con bigote','solo puedes andar hacia atrás','tu piel brilla un poco en la oscuridad','entiendes lo que dicen las palomas']);
+   withRes('🧪','Ensayo terminado',()=>{gain(ECO(16));hap(-5);pop(2);return'Efecto secundario: '+e+'. Te sale un reportaje en la tele local.'})}},
+ {id:'rea',ic:'🏝️',n:'Concursar en un reality',d:'«Supervivientes en la Freidora»',cd:420,f:()=>wp([
+   [2,()=>withRes('🏆','¡GANAS EL REALITY!',()=>{gain(ECO(40));pop(20);hap(10);S.fame+=20;return'Comes cangrejos crudos, lloras en el confesionario y ganas. España te adora.'})],
+   [2,()=>withRes('📺','Expulsado/a en la gala 3',()=>{pop(10);hap(-10);return'Por cocinar una paella con agua de mar. Pero sales en todos los memes.'})],
+   [1,()=>withRes('💔','Lío en la isla',()=>{pop(15);rep(-10);return'Te enrollas con otro concursante delante de las cámaras. Audiencia récord.'})]])}];
+function gigLeft(g){return Math.max(0,((L2().cd['g_'+g.id]||0)-Date.now())/1000)}
+function doGig(id){const g=GIGS.find(x=>x.id===id);if(!g)return;if(gigLeft(g)>0){toast('⏳ Aún no');return}const c=g.cost?g.cost():0;if(S.money<c){toast('Te faltan '+fmtM(c-S.money)+' €');return}
+  S.money-=c;L2().cd['g_'+id]=Date.now()+g.cd*1000;closeSheet();g.f()}
+
+// ---- INVERSIONES ----
+const ASSETS=[{id:'pat',ic:'🥔',n:'Patatas S.A.',d:'Aburrida pero segura',vol:.025,dr:.002},{id:'cro',ic:'🪙',n:'CroquetaCoin',d:'Puede multiplicarse… o desaparecer',vol:.14,dr:.004},{id:'mar',ic:'🚀',n:'Marte Inmobiliaria',d:'Pisos en Marte. ¿Qué podría salir mal?',vol:.06,dr:.004}];
+function mk(a){const L=L2();return L.mkt[a.id]=L.mkt[a.id]||{p:100,h:[100]}}
+function mktTick(){for(const a of ASSETS){const m=mk(a);const g=(Math.random()+Math.random()+Math.random()-1.5)*1.4;let p=m.p*Math.exp(a.dr+a.vol*g);
+  if(a.id==='cro'){if(Math.random()<.01){p*=.25;if(L2().inv.cro)R.onNews&&R.onNews('🪙📉 ¡CroquetaCoin se desploma! Un influencer dice que es «de Mercadona».')}if(Math.random()<.008){p*=3;R.onNews&&R.onNews('🪙🚀 ¡CroquetaCoin a la luna! Un perro famoso la ha tuiteado.')}}
+  m.p=cl(p,1,1e7);m.h.push(m.p);if(m.h.length>40)m.h.shift()}}
+function spark(h){const mn=Math.min(...h),mx=Math.max(...h),w=90,ht=28;const pts=h.map((v,i)=>`${(i/(h.length-1||1)*w).toFixed(1)},${(ht-(v-mn)/((mx-mn)||1)*ht).toFixed(1)}`).join(' ');const up=h[h.length-1]>=h[0];
+  return`<svg class="spark" viewBox="-1 -1 ${w+2} ${ht+2}"><polyline points="${pts}" fill="none" stroke="${up?'#3bb273':'#e9574f'}" stroke-width="2.2" stroke-linejoin="round"/></svg>`}
+const pisoCost=()=>ECO(150)*Math.pow(1.6,L2().pisos);
+function invAct(k,id){const L=L2();
+  if(k==='buy'){const a=ASSETS.find(x=>x.id===id),m=mk(a),amt=Math.floor(S.money*.25);if(amt<10){toast('Necesitas algo de dinero');return}S.money-=amt;const iv=L.inv[id]=L.inv[id]||{sh:0,cost:0};iv.sh+=amt/m.p;iv.cost+=amt;sfx.coin&&sfx.coin();toast(`${a.ic} Inviertes ${fmtM(amt)} €`)}
+  if(k==='sell'){const a=ASSETS.find(x=>x.id===id),m=mk(a),iv=L.inv[id];if(!iv||!iv.sh)return;const v=iv.sh*m.p,pr=v/iv.cost;S.money+=v;delete L.inv[id];if(pr>=5)L.f2.x5=1;
+    withRes(pr>=1?'📈':'📉',pr>=1?'¡Vendido con beneficio!':'Vendido con pérdidas',()=>{hap(pr>=1?6:-6);return`Recuperas ${fmtM(v)} € (${pr>=1?'+':''}${Math.round((pr-1)*100)} %).`+(pr>=3?' Tu asesor financiero (tu primo) dice que fue idea suya.':'')})}
+  if(k==='piso'){const c=pisoCost();if(S.money<c){toast('Te faltan '+fmtM(c-S.money)+' €');return}S.money-=c;L.pisos++;L.rent+=c*.05;
+    withRes('🏠','¡Piso comprado!',()=>{hap(8);return`Tu piso nº ${L.pisos}. El inquilino es ${pk(['un mago retirado','una banda de jazz','un señor que colecciona cucharas','una influencer de plantas','un vampiro muy educado (paga de noche)'])}. Te dará ${fmtM(c*.05)} € cada día.`})}
+  if(k==='stup'){if(L.stup){toast('Ya tienes una startup en marcha');return}const c=ECO(60);if(S.money<c){toast('Te faltan '+fmtM(c-S.money)+' €');return}S.money-=c;L.stup={amt:c,day:L.day+3,n:pk(['Uber de paellas','Tinder para perros','Gafas con limpiaparabrisas','Croquetas por suscripción','Red social solo para abuelas'])};
+    withRes('💡','Inviertes en la startup de tu primo',()=>`«${L.stup.n}». Jonatan jura que en 3 días seréis millonarios.`)}
+  save()}
+
+// ---- AMOR ----
+const LOVERS=[['Rocío','👩🏽','domadora de calamares'],['Iker','🧔🏻','campeón regional de petanca'],['Vera','👩🏻‍🦰','dice que habla con las plantas (y le contestan)'],['Dani','🧑🏽','tiene 14 gatos y un pódcast'],['Nuria','👩🏼','abogada de famosos y de palomas'],['Hugo','👨🏻','DJ de bodas, solo pone pasodobles'],['Alba','👱🏻‍♀️','astronauta en paro'],['Leo','👨🏾','escribe poesía sobre la mayonesa'],['Sofía','👩🏻','cree que la Tierra es una croqueta'],['Marcos','🧑🏻','influencer de calcetines'],['Carla','👩🏾','bombera y repostera'],['Álex','🧑🏼','imitador profesional de pájaros']];
+const LOVE_LV=['','Os estáis conociendo','Pareja','Prometidos','Casados'];
+let matches=[];
+function loveAct(k){const L=L2();
+  if(k==='find'){if(L.cd.love>Date.now()){toast('⏳ La app dice que esperes un poco');return}L.cd.love=Date.now()+60000;matches=[...LOVERS].sort(()=>Math.random()-.5).slice(0,3);closeSheet();
+    openModal(`<div class="emo">💘</div><h2>Fogón Match</h2><p style="font-size:14px">La app de citas de los cocineros. ¿Con quién quedas?</p><div class="choice">${matches.map((m,i)=>`<button data-m="lovePick" data-i="${i}"><span>${m[1]}</span><span style="font-size:15px">${m[0]}<small>${m[2]}</small></span></button>`).join('')}</div><button class="lnk" data-m="close">Paso del amor</button>`)}
+  if(k==='date'){if(!L.love)return;if((L.cd.date||0)>Date.now()){toast('⏳ Dale espacio, hombre');return}L.cd.date=Date.now()+180000;closeSheet();const lv=L.love;
+    const place=pk(['en tu propio restaurante','en el de '+ZONES[1].name+' (traición)','en una bolera','en un karaoke','haciendo puenting','en una cata de quesos']);
+    if(Math.random()<.72){withRes('💞','¡Cita perfecta!',()=>{hap(12);if(lv.lv<2){lv.lv=2;logL('💘','Empiezas a salir con '+lv.n+'.');return`Cita ${place}. ${lv.n} te dice «¿somos novios?». ¡Sois pareja!`}lv.xp=(lv.xp||0)+1;return`Cita ${place}. ${lv.n} se ríe de todos tus chistes, incluso del de la croqueta.`})}
+    else if(lv.lv>=2&&Math.random()<.25){withRes('💔','Te han dejado',()=>{hap(-25);const n=lv.n;L.love=null;logL('💔',n+' te ha dejado.');return`Cita ${place}. ${n} te deja por ${pk(['el repartidor de Glovo','su profesor de zumba','un influencer de calcetines','tu rival '+CAST.mas.n])}.`})}
+    else withRes('😬','Cita rara',()=>{hap(-5);return`Cita ${place}. Se te cae la sopa encima de ${lv.n}. Silencio incómodo.`})}
+  if(k==='ring'){const c=ECO(40);if(!L.love||L.love.lv!==2)return;if(S.money<c){toast('El anillo cuesta '+fmtM(c)+' €');return}S.money-=c;closeSheet();
+    if(Math.random()<.8)withRes('💍','¡¡HA DICHO QUE SÍ!!',()=>{L.love.lv=3;hap(20);logL('💍','Te prometes con '+L.love.n+'.');return`Se lo pides con el anillo dentro de una croqueta. ${L.love.n} casi se lo traga, pero dice que SÍ.`});
+    else withRes('🙈','Ha dicho que no… de momento',()=>{hap(-15);return'Dice que es muy pronto. El anillo te lo quedas (consuelo caro).'})}
+  if(k==='wed'){const c=ECO(60);if(!L.love||L.love.lv!==3)return;if(S.money<c){toast('La boda cuesta '+fmtM(c)+' €');return}S.money-=c;closeSheet();
+    withRes('💒','¡BODA!',()=>{L.love.lv=4;hap(35);pop(10);for(const k2 in L.rel)L.rel[k2]=cl(L.rel[k2]+10,-100,100);R.rush=40;logL('💒','Te casas con '+L.love.n+'. Banquete en tu restaurante.');setTimeout(()=>burst(VW/2,VH*.4,40,'💖'),300);
+      return`Banquete en tu restaurante. La abuela baila reguetón, ${CAST.mas.n} llora en una esquina y ${CAST.gue.n} se lleva el centro de mesa.`})}
+  save()}
+MA.lovePick=b=>{const m=matches[+b.dataset.i];closeModal();if(!m)return;const L=L2();
+  if(Math.random()<(L.f2.dogMeet?.9:.65)){L.love={n:m[0],e:m[1],bio:m[2],lv:1};withRes(m[1],'¡Match con '+m[0]+'!',()=>{hap(10);return`Primera conversación: os pasáis 3 horas hablando de ${m[2].split(' ').slice(-2).join(' ')}. Hay química.`})}
+  else withRes('👻','Te ha hecho ghosting',()=>{hap(-6);return m[0]+' ha visto tu mensaje y no contesta. Ver «en línea» duele.'})};
+
+// ---- LOGROS ----
+const tops=()=>Math.max(0,...Object.values(L2().car).map(c=>c.lv||0));
+const ACH=[
+ ['🍽️','Primer cliente','Sirve tu primer plato',()=>S.served>=1],['👥','Con clientela','Sirve 200 platos',()=>S.served>=200],['🏟️','Multitudes','Sirve 2.000 platos',()=>S.served>=2000],
+ ['💶','Mileurista','Ten 1.000 €',()=>S.money>=1e3],['💰','Millonario/a','Ten 1 millón',()=>S.money>=1e6],['🏦','Tío Gilito','Ten 1.000 millones',()=>S.money>=1e9],
+ ['🏚️','Primera víctima','Haz cerrar a un rival',()=>[1,2,3].some(j=>S.flags['closed'+j])],['🏙️','Dueño/a de la calle','Compra los 3 locales rivales',()=>[1,2,3].every(j=>S.zones[j].own)],
+ ['🔥','Famoso/a en el barrio','Llega a 100 de fama',()=>S.fame>=100],['🌋','Leyenda','Llega a 300 de fama',()=>S.fame>=300],
+ ['🏢','Franquicia','Abre tu primera franquicia',()=>S.fr>=1],['🌍','Imperio','Abre 3 franquicias',()=>S.fr>=3],['👽','Interplanetario/a','Llega a Marte',()=>(S.street||{}).i===7],
+ ['⭐','Te reconocen','Popularidad 30',()=>L2().pop>=30],['🌟','Celebrity','Popularidad 70',()=>L2().pop>=70],
+ ['🎬','En la gran pantalla','Actor nivel 3',()=>car('actor').lv>=3],['🏆','Óscar a la mejor croqueta','Actor nivel máximo',()=>car('actor').lv>=6],
+ ['📱','Influencer','Llega a 100K seguidores',()=>car('infl').lv>=3],['🎤','Eurovisión','Gana Eurovisión',()=>car('sing').lv>=6],['🏛️','Señor/a alcalde/sa','Llega a alcalde',()=>car('pol').lv>=5],
+ ['🍑','Emprendedor/a picante','Abre un OnlyFans',()=>L2().f2.of],['🎰','Suerte loca','Gana la lotería',()=>L2().f2.lot],['🚀','A la luna','Vende una inversión x5',()=>L2().f2.x5],['🏠','Casero/a','Ten 3 pisos',()=>L2().pisos>=3],
+ ['💘','Amor','Consigue pareja',()=>(L2().love||{}).lv>=2],['💒','Vivan los novios','Cásate',()=>(L2().love||{}).lv>=4],
+ ['😇','Santo/a','Reputación +60',()=>L2().rep>=60],['🦈','Tiburón','Reputación −60',()=>L2().rep<=-60],['👵','Nieto/a favorito/a','Abuela al 100',()=>(L2().rel.abu||0)>=100],
+ ['🌀','Imán de locuras','Vive 10 situaciones surrealistas',()=>L2().surreal>=10],['📅','Un mes','Llega al día 30',()=>L2().day>=30],['🎂','Treintañero/a','Cumple 30 años',()=>L2().age>=30]];
+function achTick(){const L=L2();ACH.forEach((a,i)=>{if(L.ach[i]||!a[3]())return;L.ach[i]=1;const r=gain(ECO(12));pop(2);sfx.unlock();toast(`🏆 <b>Logro: ${a[1]}</b> · +${fmtM(r)} €`,3200);logL('🏆','Logro desbloqueado: '+a[1]+'.')})}
+
+// ---- EVENTOS SURREALISTAS ----
+const SE=(id,who,w,ok,t,o)=>EVENTS.push({id,who,w,ok,t:typeof t==='function'?t:()=>t,o:o.map(x=>[x[0],x[1],typeof x[2]==='function'?x[2]:()=>x[2],()=>{L2().surreal++;withRes(x[0],x[3],x[4])}])});
+SE('alien','ali',2,()=>S.served>30,'Hola, terrícola. Quiero 400 hamburguesas para mi nave. Pago en zorgs, una moneda que todavía no existe.',[
+ ['🛸','Aceptar los zorgs','¿Riesgo cósmico?','Tratos intergalácticos',()=>Math.random()<.5?(gain(ECO(45)),'¡Los zorgs eran oro de Andrómeda! Los cambias en una casa de empeños muy confundida.'):(lose(ECO(10)),'Los zorgs se evaporan al tocar la atmósfera. Te quedas sin hamburguesas y sin zorgs.')],
+ ['💶','Que pague en euros','Dinero seguro','Negociación terrestre',()=>{gain(ECO(15));return'Zorg suspira, saca una tarjeta de crédito de Andrómeda y paga. Funciona. No preguntes.'}],
+ ['🌀','Pedir que te abduzca','Experiencia única','Abducción',()=>{pop(15);hap(10);return'Vuelves tres días después con un tatuaje de un pez y la receta de una salsa que no es de este mundo.'}]]);
+SE('goat','cab',2,()=>true,'*Una cabra se ha colado en la cocina y se está comiendo las servilletas. Te mira fijamente. Mastica.*',[
+ ['🐐','Adoptarla como mascota','+popularidad','Nueva mascota',()=>{pop(8);L2().f2.goat=1;return'La llamas «Croqueta». Los clientes se hacen fotos con ella. Ya tiene más seguidores que tú.'}],
+ ['🧽','Contratarla de friegaplatos','¿Productividad?','Empleada del mes',()=>{R.turbo=Math.max(R.turbo||0,40);return'Se come las sobras tan rápido que la cocina vuela. ¡Turbo 40 s!'}],
+ ['🚪','Echarla','Nada','Adiós, cabra',()=>{hap(-4);return'Se va ofendida. A la hora vuelve con tres amigas y un macho cabrío con cara de abogado.'}]]);
+SE('ramirez','ram',2,()=>S.served>40,'¡¿ESTO ES UNA COCINA?! Soy el Chef Gritón Ramírez y quiero grabar «Pesadilla en tu Cocina» aquí. ¡YA!',[
+ ['🎥','Aceptar el programa','Fama… o humillación','Pesadilla en tu Cocina',()=>Math.random()<.6?(S.fame+=40,pop(15),'Llora al probar tu hamburguesa. Dice que es «la mejor desde 1987». Audiencia récord.'):(pop(10),hap(-20),'Te grita 47 veces. Encuentra un calcetín en la freidora. Al menos sales en la tele.')],
+ ['🙅','Rechazarlo','Paz y tranquilidad','Sin cámaras',()=>{hap(5);return'Se va gritando a una farola. La farola tampoco le hace caso.'}],
+ ['📢','Gritarle tú más fuerte','Duelo de gritos','Duelo de gritos',()=>{pop(22);return Math.random()<.5?'Se queda mudo. Luego te abraza: «Por fin alguien con carácter». Sois amigos.':'Rompe a llorar en directo. Se hace viral: «el día que hicieron llorar a Ramírez».'}]]);
+SE('time','via',1,()=>S.served>60,'Vengo del año 2077. Allí tu hamburguesa es Patrimonio de la Humanidad. Necesito la receta original.',[
+ ['📜','Dársela','Ayudar al futuro','Paradoja temporal',()=>{gain(ECO(25));rep(8);return'Te paga con monedas de 2077. Valen una fortuna como antigüedades. Bueno, como «futurigüedades».'}],
+ ['🎟️','Pedir los números de la lotería','Avaricia','Números del futuro',()=>Math.random()<.5?(gain(ECO(60)),'¡Aciertas cinco! El sexto no lo recordaba bien.'):(hap(-6),'Te da los números de la lotería… de 2077. Aquí no sirven.')],
+ ['💍','Preguntar con quién acabas','Spoiler vital','Spoiler de tu vida',()=>{hap(8);return L2().love?`Te mira y sonríe: «Con ${L2().love.n}, claro. Y tenéis una cabra».`:'«Con alguien que conocerás paseando perros». Se desvanece. Qué misterioso.'}]]);
+SE('pigeons','pal',2,()=>true,'El Sindicato de Palomas exige migas de pan para todas. Si no, HUELGA DE CACAS en tu terraza.',[
+ ['🍞','Pagar en migas','Barato','Paz con las palomas',()=>{lose(ECO(3));rep(4);return'Las palomas firman el convenio con una pata. Ahora te protegen de las gaviotas.'}],
+ ['🦜','Contratar a un loro abogado','50 % de ganar','Juicio aviar',()=>Math.random()<.5?(gain(ECO(8)),'¡El loro gana! Las palomas te pagan las costas en tapones de botella… y algún euro.'):(S.fame=Math.max(0,S.fame-10),'El loro se pasa al bando de las palomas. Traidor.')],
+ ['😤','Ignorarlas','Arriesgado','Huelga de cacas',()=>{S.fame=Math.max(0,S.fame-15);hap(-6);return'Cumplen su amenaza. Con precisión militar. Tu terraza parece un cuadro de Pollock.'}]]);
+SE('inspec','ins',2,()=>S.served>25,'Inspección de Sanidad. *Levanta la vista de la carpeta.* …Vaya. Hola. Cuánto tiempo.',[
+ ['😅','Saludarla con cariño','Es tu ex…','Inspección con pasado',()=>Math.random()<.5?(S.fame+=10,'Os reís recordando viejos tiempos. Te pone un 10 y te deja su teléfono.'):(lose(ECO(10)),'Recuerda por qué lo dejasteis. Multa por «la croqueta caducada de 2019».')],
+ ['🤫','Sobornarla con croquetas','Reputación ↓','Soborno crujiente',()=>{rep(-10);return'Acepta. Se lleva 40 croquetas en un táper. Inspección superada.'}],
+ ['🧊','Esconderte en el congelador','¿Qué podría pasar?','Escondite helado',()=>{L2().f2.freezer=1;hap(-5);return'Pasas 2 horas entre guisantes congelados. Algo te susurra desde el fondo: «¿Hay postre?».'}]]);
+SE('ghost','gho',3,()=>L2().f2.freezer&&!L2().f2.ghostMet,'Uuuuh… Llevo 80 años en este congelador. Nadie me ha ofrecido nunca un postre. ¿Tú sí?',[
+ ['🍮','Darle un flan','Bondad','Fantasma feliz',()=>{L2().f2.ghostMet=1;R.turbo=Math.max(R.turbo||0,60);hap(10);return'Llora lágrimas de escarcha. Te bendice la cocina: ¡turbo 60 s!'}],
+ ['🍽️','Contratarlo de camarero','Original','Camarero fantasma',()=>{L2().f2.ghostMet=1;pop(15);return'Los clientes alucinan con los platos que flotan solos. Sales en Cuarto Milenio.'}],
+ ['🎟️','Hacer tours de fantasmas','Negocio','Tour paranormal',()=>{L2().f2.ghostMet=1;gain(ECO(20));rep(-5);return'Cobras entrada por ver el congelador encantado. El fantasma pide comisión.'}]]);
+SE('footb','fut',2,()=>S.served>50,'¡Hola! Soy futbolista, ya sabes quién. Quiero el local entero para mí y mis 40 amigos durante dos horas.',[
+ ['🔒','Cerrar para él','Mucho dinero','Fiesta privada',()=>{gain(ECO(35));S.fame=Math.max(0,S.fame-5);return'Pagan en efectivo y con propina. Los vecinos se enfadan por quedarse fuera.'}],
+ ['🧍','Que haga cola como todos','Reputación ↑','Igualdad ante la croqueta',()=>{rep(10);pop(6);if(Math.random()<.4)R.rush=30;return'Hace cola. Lo sube a redes: «Aquí no hay VIPs, solo croquetas». ¡Viral!'}],
+ ['✍️','Que firme la carta','Fama','Carta firmada',()=>{S.fame+=15;return'Firma la carta. Ahora la gente viene solo a ver la firma… y de paso come.'}]]);
+SE('cult','sec',1,()=>S.served>40,'Somos la Secta del Pan. Necesitamos catering para el ritual de luna llena. Solo comemos cosas redondas.',[
+ ['🌕','Aceptar el catering','Dinero raro','Ritual con croquetas',()=>{gain(ECO(22));rep(-4);return Math.random()<.3?(pop(10),'Te nombran Sumo Sacerdote del Rebozado. Tienes una túnica y todo.'):'Bailan alrededor de una hogaza gigante. Pagan bien. Preguntas pocas.'}],
+ ['🙅','Rechazarlo','Maldición','La maldición del pan',()=>{hap(-6);return'Te echan una maldición: durante un día, todo lo que comes sabe a pan Bimbo.'}],
+ ['🕵️','Infiltrarte','Aventura','Infiltración',()=>{hap(10);pop(5);return'Descubres que el líder es tu profesor de Educación Física del instituto. Os tomáis un café.'}]]);
+SE('cousin','pri',2,()=>true,'¡Primooo! Necesito curro. Sé hacer malabares con huevos. Bueno, casi.',[
+ ['🥚','Contratarlo','Lotería familiar','Primo en plantilla',()=>Math.random()<.5?(R.turbo=Math.max(R.turbo||0,30),'¡Es un crack! Los clientes aplauden y la cocina se acelera. Turbo 30 s.'):(lose(ECO(6)),'Rompe 240 huevos. La cocina parece una tortilla gigante.')],
+ ['💸','Prestarle dinero','Familia es familia','Préstamo familiar',()=>{lose(ECO(10));hap(6);return'Te jura que te lo devolverá. Ambos sabéis que no.'}],
+ ['🚫','Decirle que no','Drama familiar','Drama en la familia',()=>{hap(-6);rel('abu',-5);return'Se lo cuenta a la abuela. La abuela te llama. Ay.'}]]);
+SE('sheik','mil',1,()=>S.served>80,'Quiero comprar tu receta secreta. Pongo cifra. Y un camello.',[
+ ['💰','Vender la receta','Fortuna','Venta histórica',()=>{gain(ECO(80));S.fame=Math.max(0,S.fame-25);return'Te pagan una barbaridad. Pero ahora tu hamburguesa la venden en 4.000 gasolineras.'}],
+ ['✋','Rechazar','Orgullo','Receta a salvo',()=>{rep(10);S.fame+=10;return'«Mi receta no se vende». Lo cuenta la prensa. Te admiran.'}],
+ ['🐪','Pedir solo el camello','Absurdo','Tienes un camello',()=>{pop(12);hap(15);L2().f2.camel=1;return'Ahora tienes un camello llamado Paco. Aparca en la acera. Los niños lo adoran.'}]]);
+SE('cat','gat',2,()=>true,'*Un gato con sombrero de copa entra, se sienta en la mesa VIP y te mira como si fueras su mayordomo.*',[
+ ['🍣','Servirle sushi','Buena suerte','Gato agradecido',()=>{const g=gain(ECO(4+rint(20)));return`Se lo come y deja ${fmtM(g)} € bajo el plato. Nadie sabe de dónde los ha sacado.`}],
+ ['📸','Hacerle fotos','Popularidad','Gato influencer',()=>{pop(8);return'La foto del gato con sombrero da la vuelta al mundo. Te escriben de Japón.'}],
+ ['🚪','Echarlo','Mala suerte','Mal fario',()=>{hap(-8);return'Se va despacio, mirándote. Esa noche sueñas con sombreros.'}]]);
+SE('grannies','abu',1,()=>S.served>30,'¡Nieto/a! Mis amigas del club de moteras queremos hacer nuestra quedada en tu restaurante. Somos 60.',[
+ ['🏍️','Menú especial abuelas','Dinero + ruido','Invasión motera',()=>{gain(ECO(18));R.rush=Math.max(R.rush||0,25);rel('abu',10);return'Llegan 60 abuelas en Harley. Piden 400 croquetas y bailan sobre las mesas.'}],
+ ['🤘','Unirte a la banda','Felicidad','Motero/a honorario/a',()=>{hap(20);rel('abu',15);pop(4);return'Te dan una chupa de cuero que pone «Las Yayas Salvajes». Tu abuela es la jefa. Lo sabías.'}]]);
+SE('tiktok','nar',2,()=>S.served>20,'Alguien ha dicho en TikTok que tus patatas fritas curan el resfriado. La gente hace cola con mocos.',[
+ ['📈','Subir el precio','Avaricia','Patatas milagrosas',()=>{gain(ECO(25));rep(-10);return'Vendes patatas a precio de medicina. El Ministerio de Sanidad te manda una carta.'}],
+ ['🙅','Desmentirlo','Honradez','La verdad por delante',()=>{rep(10);S.fame+=5;return'Lo desmientes. La gente compra igual «por si acaso».'}]]);
+SE('fan','fan',1,()=>L2().pop>=20,'¡¡ERES TÚ!! ¡Me he tatuado tu cara en la espalda! ¿Me firmas el tatuaje?',[
+ ['✍️','Firmarle el tatuaje','Fama','Fan número 1',()=>{pop(8);return'Le firmas con rotulador. Se lo tatúa también. Ahora sois «familia».'}],
+ ['🍔','Invitarle a comer para siempre','Bondad','Cliente vitalicio',()=>{rep(6);pop(4);return'Viene todos los días a las 13:00. Te trae flores. Un poco intenso, pero majo.'}],
+ ['📞','Llamar a su madre','Responsable','Llamada maternal',()=>{hap(4);return'Su madre llega en 5 minutos y se lo lleva de la oreja. Antes os pide una foto.'}]]);
+SE('heat','nar',2,()=>true,'Ola de calor: 46 °C. El asfalto se derrite y un huevo se fríe solo en la acera.',[
+ ['🍦','Regalar helados','Reputación','Héroe del verano',()=>{lose(ECO(5));rep(8);S.fame+=8;return'Te convierten en «el/la del barrio que regaló helados». Te hacen un mural.'}],
+ ['🥵','Subir el precio del agua','Dinero','Oasis de pago',()=>{gain(ECO(15));rep(-8);return'Cobras el agua a precio de champán. Te hacen un mural también, pero menos bonito.'}],
+ ['🏖️','Cerrar e ir a la playa','Felicidad','Vacaciones exprés',()=>{hap(20);return'Te tumbas en la arena. Tus cocineros siguen trabajando. No se lo digas.'}]]);
+SE('meteor','met',1,()=>S.served>50,'¡Un meteorito del tamaño de un melón ha caído en tu terraza! Está calentito.',[
+ ['💎','Venderlo','Fortuna','Meteorito vendido',()=>{gain(ECO(50));return'Un museo lo compra. Tu terraza sale en los libros de ciencia.'}],
+ ['🖼️','Ponerlo de decoración','Fama','Atracción turística',()=>{S.fame+=25;return'La gente viene a hacerse fotos con «la piedra del espacio». Y piden croquetas.'}],
+ ['👅','Lamerlo','¿Superpoderes?','Superpoderes',()=>{R.turbo=Math.max(R.turbo||0,60);hap(10);return'Te brilla la lengua y cocinas a velocidad de la luz durante 60 s. No lo repitas.'}]]);
+SE('paparazzi','pap',3,()=>L2().pop>=35,'¡FLASH! Te han pillado sacando la basura en pijama de unicornio.',[
+ ['💅','Posar como una estrella','Popularidad','Portada de revista',()=>{pop(10);return'Portada del «¡Hola, Croqueta!». El pijama se agota en todas las tiendas.'}],
+ ['🏃','Huir tirando la basura','Ridículo','Persecución',()=>{hap(-8);pop(4);return'Tropiezas con la bolsa. La foto se convierte en meme nacional.'}]]);
+SE('inlaw','lov',3,()=>(L2().love||{}).lv>=2,()=>`Mi madre viene a comer a tu restaurante hoy. Quiere «conocerte». Está muy nerviosa. Bueno, tú más.`,[
+ ['🦞','Menú de lujo','Caro','Conquista a la suegra',()=>{lose(ECO(12));hap(10);return'Tu suegra prueba todo. Pide la receta del postre. Te ha aceptado oficialmente.'}],
+ ['🍔','Comida normal, con naturalidad','Arriesgado','Suegra exigente',()=>Math.random()<.5?(hap(12),'Le encanta tu sencillez. Dice que eres «de los de antes».'):(hap(-12),'Encuentra un pelo en la sopa. Era suyo, pero da igual.')]]);
+SE('exfood','ext',1,()=>S.served>40,'Hola… ¿Te acuerdas de mí? He abierto un food truck justo enfrente de tu local. Sin rencor, ¿eh?',[
+ ['🤝','Ir a saludar','Madurez','Cierre emocional',()=>{hap(10);rep(5);return'Os tomáis algo. Su comida es fatal. Te sientes en paz con el universo.'}],
+ ['⚔️','Guerra de precios','Fama','Guerra de food truck',()=>{S.fame+=10;lose(ECO(4));return'Le hundes con una oferta 3x1. A la semana se va a otro barrio. Un poco cruel.'}],
+ ['🚚','Comprarle el food truck','Inversión','Food truck propio',()=>{lose(ECO(20));pop(6);L2().f2.truck=1;return'Ahora es tuyo. Lo pintas con tu logo y lo aparcas delante del rival.'}]]);
+SE('mayorpol','nar',2,()=>car('pol').lv>=3,()=>`La oposición dice que tu restaurante tiene cucarachas. Hay cámaras en la puerta.`,[
+ ['🎤','Rueda de prensa con croquetas','Popularidad','Contraataque',()=>{pop(8);rep(3);return'Invitas a toda la prensa a comer. Los titulares cambian a «La croqueta de la discordia».'}],
+ ['🐜','Decir que son mascotas','Absurdo','Las cucarachas Pepa y Lola',()=>{pop(12);rep(-8);return'Les pones nombre y un collar. Medio país te adora, el otro medio vomita.'}]]);
+
+// ---- tiempo, rentas y efectos ----
+let lastDay=L2().day;
+const _dayTick=dayTick;dayTick=function(dt){_dayTick(dt);const L=L2();if(L.day===lastDay)return;lastDay=L.day;const lines=[];
+  if(L.rent>0){const r=gain(L.rent);lines.push('🏠 Alquileres: +'+fmtM(r)+' €')}
+  const ic=car('infl').lv;if(ic>0){const r=gain(ECO(2)*ic*ic);lines.push('📱 Patrocinios: +'+fmtM(r)+' €')}
+  if(L.love&&L.love.lv>=2)hap(4);hap(-3);if(L.pop>8)pop(-1.5);
+  if(L.day%6===0){L.age++;lines.push('🎂 ¡Cumples '+L.age+' años!');logL('🎂','Cumples '+L.age+' años.')}
+  if(L.stup&&L.day>=L.stup.day){const s=L.stup;L.stup=null;const r=Math.random();
+    if(r<.2)setTimeout(()=>withRes('🦄','¡LA STARTUP TRIUNFA!',()=>{gain(s.amt*12);hap(20);return`«${s.n}» la compra una multinacional. Tu primo Jonatan se compra un yate. Tú, otro.`}),800);
+    else if(r<.5)setTimeout(()=>withRes('📊','La startup sobrevive',()=>{gain(s.amt*1.5);return`«${s.n}» da beneficios. Pocos, pero da.`}),800);
+    else setTimeout(()=>withRes('💸','La startup quiebra',()=>{hap(-10);return`«${s.n}» cierra. Jonatan dice que «el mercado no estaba preparado».`}),800)}
+  if(lines.length)toast(lines.join(' · '),3600)};
+// felicidad en acciones de barrio
+for(const a of ACTS){const f=a.f;if(a.id==='abu')a.f=()=>{hap(10);f()};if(a.id==='party')a.f=()=>{hap(15);pop(2);f()};if(a.id==='donate')a.f=()=>{hap(6);f()}}
+ACTS.push({id:'vac',ic:'🏖️',n:'Irte de vacaciones',d:'Felicidad a tope · tu equipo se queda currando',cd:600,ok:()=>S.served>20,cost:()=>ECO(25),f:()=>withRes('🏖️','¡Vacaciones!',()=>{hap(40);return pk(['Una semana en Benidorm. Vuelves moreno/a y con 12 amigos nuevos jubilados.','Te vas a Tailandia. Aprendes a hacer pad thai y te tatúas una croqueta.','Te vas a un retiro de silencio. Aguantas 4 horas.'])})});
+// eventos más frecuentes
+eventTick=function(dt){if(R.prem>0){R.prem-=dt;if(R.prem<=0)S.up.gProfitTmp=1}
+  evT-=dt;if(evT>0||dlgOn||!$('#modal').hidden||!S.story.intro||sheetKind)return;evT=55+Math.random()*55;
+  const pool=EVENTS.filter(e=>{try{return e.ok()}catch(_){return false}});if(!pool.length)return;let tot=pool.reduce((a,e)=>a+e.w,0),r=Math.random()*tot,ev=pool[0];for(const e of pool){r-=e.w;if(r<0){ev=e;break}}showEvent(ev)};
+// impuestos del político
+function polTax(dt){const pl=car('pol').lv;if(pl<3)return;for(const j of [1,2,3]){const z=S.zones[j];if(z.open&&!z.own)z.cash-=rivalFixed(j,S)*.12*(pl-2)*dt}}
+
+// ---- panel Vida ----
+const VT=[['vida','👤 Vida'],['car','🎬 Carrera'],['gig','💸 Curros'],['inv','📈 Inversión'],['acc','⚡ Barrio'],['ach','🏆 Logros'],['diario','📔 Diario'],['hist','📜 Historia']];
+const bar=(v,c)=>`<div class="hp"><i style="width:${cl(v,0,100)}%;background:${c}"></i></div>`;
+const _rs3=renderSheet;renderSheet=function(force){$('#sheet').classList.toggle('tall',sheetKind==='vida');
+  if(sheetKind!=='vida'||['acc','diario','hist'].includes(vtab)){if(sheetKind==='vida'){_rs3(force);const v=$('#sheet .vtabs');if(v)v.outerHTML=tabsH()}else _rs3(force);return}
+  if(pressing&&!force)return;const L=L2(),st=curStreet();let h=hdr('👤','Tu vida',`${L.age} años · Día ${L.day} · ${st.e} ${st.n}`)+tabsH()+'<div class="list">';
+  if(vtab==='vida'){const lv=L.love;
+    h+=`<div class="statc"><div><span>⭐</span><b>Popularidad</b><em>${Math.round(L.pop)}</em>${bar(L.pop,'#ffb23f')}<small>+${Math.round(L.pop/2.5)} % clientes en tu restaurante</small></div>
+     <div><span>😊</span><b>Felicidad</b><em>${Math.round(L.hap)}</em>${bar(L.hap,L.hap<20?'#ff5a4e':'#5fd068')}<small>${L.hap<20?'¡Quemado/a! Descansa o vete de vacaciones':'Baja al trabajar; sube con amor, fiestas y vacaciones'}</small></div>
+     <div><span>${L.rep>=0?'😇':'😈'}</span><b>${repName(L.rep)}</b><em>${L.rep>0?'+':''}${Math.round(L.rep)}</em><div class="repbar"><i style="left:${(L.rep+100)/2}%"></i></div><small>Cambia los eventos y el final</small></div></div>`;
+    h+=`<div class="it love"><span class="ic">${lv?lv.e:'💘'}</span><span class="tx"><b>${lv?lv.n+' · '+LOVE_LV[lv.lv]:'Sin pareja'}</b><small>${lv?lv.bio:'El amor sube la felicidad cada día'}</small></span>${
+      !lv?`<button class="cb o" data-a="love:find">BUSCAR<small>Fogón Match</small></button>`:lv.lv===2?`<span class="btns"><button class="cb o" data-a="love:date">CITA</button><button class="cb" data-a="love:ring">💍<small>${fmtM(ECO(40))} €</small></button></span>`:lv.lv===3?`<span class="btns"><button class="cb o" data-a="love:date">CITA</button><button class="cb" data-a="love:wed">💒 BODA<small>${fmtM(ECO(60))} €</small></button></span>`:`<button class="cb o" data-a="love:date">CITA</button>`}</div>`;
+    h+=Object.keys(L.rel).map(k=>{const v=L.rel[k],c=CAST[k];return`<div class="it"><span class="ic">${c.e}</span><span class="tx"><b>${c.n} ${relFace(v)}</b>${bar((v+100)/2,v>=25?'#5fd068':v>-25?'#ffb23f':'#ff5a4e')}</span><span style="font-family:var(--f-d);font-size:15px">${v>0?'+':''}${v}</span></div>`}).join('');
+    const lg=S.legacy||{streets:0,best:0};h+=`<div class="it"><span class="ic">🏛️</span><span class="tx"><b>Tu legado</b><small>${lg.streets} calles conquistadas · récord de fama ${Math.round(Math.max(lg.best,S.fame))} · ${Object.keys(L.ach).length}/${ACH.length} logros</small></span></div>`}
+  if(vtab==='car')h+=`<p class="note">Cada éxito te da dinero y ⭐ popularidad, y la popularidad llena tu restaurante.</p>`+Object.entries(CAREERS).map(([id,C])=>{const c=car(id),left=carLeft(id),mx=c.lv>=C.lv.length-1;
+    return`<div class="it car"><span class="ic">${C.ic}</span><span class="tx"><b>${C.n} · Nv ${c.lv}</b><small><i>${C.lv[c.lv]}</i>${mx?' 👑':' → '+C.lv[c.lv+1]}</small>${bar(mx?100:c.xp,'#7c5cff')}<small>${C.perk}</small></span><button class="cb ${left>0||mx?'no':'o'}" data-a="car:${id}">${mx?'👑':left>0?'⏳ '+Math.ceil(left)+' s':c.lv?'CURRAR':'EMPEZAR'}</button></div>`}).join('');
+  if(vtab==='gig')h+=`<p class="note">Trabajos absurdos para sacar pasta rápida. Nunca sabes cómo acabarán.</p>`+GIGS.map(g=>{const left=gigLeft(g),c=g.cost?g.cost():0;return`<div class="it"><span class="ic">${g.ic}</span><span class="tx"><b>${g.n}</b><small>${g.d}</small></span><button class="cb ${left<=0&&S.money>=c?'o':'no'}" data-a="gig:${g.id}">${left>0?'⏳ '+Math.ceil(left)+' s':'HACER'}<small>${c?fmtM(c)+' €':'gratis'}</small></button></div>`}).join('');
+  if(vtab==='inv'){h+=`<p class="note">Comprar invierte el 25 % de tu dinero. Los precios cambian cada pocos segundos.</p>`+ASSETS.map(a=>{const m=mk(a),iv=L.inv[a.id],val=iv?iv.sh*m.p:0,pr=iv?val/iv.cost-1:0;
+     return`<div class="it inv"><span class="ic">${a.ic}</span><span class="tx"><b>${a.n}</b><small>${iv?`Tienes ${fmtM(val)} € <span style="color:${pr>=0?'#2e9e48':'#d0392b'}">(${pr>=0?'+':''}${Math.round(pr*100)} %)</span>`:a.d}</small>${spark(m.h)}</span><span class="btns"><button class="cb o" data-a="inv:buy:${a.id}">COMPRAR</button>${iv?`<button class="cb" data-a="inv:sell:${a.id}">VENDER</button>`:''}</span></div>`}).join('')+
+     `<div class="it"><span class="ic">🏠</span><span class="tx"><b>Pisos en alquiler · tienes ${L.pisos}</b><small>Renta fija cada día: ${fmtM(L.rent)} €</small></span><button class="cb o" data-a="inv:piso">COMPRAR<small>${fmtM(pisoCost())} €</small></button></div>`+
+     `<div class="it"><span class="ic">💡</span><span class="tx"><b>Startup de tu primo</b><small>${L.stup?`«${L.stup.n}»: se decide el día ${L.stup.day}`:'20 % x12 · 30 % x1,5 · 50 % lo pierdes todo'}</small></span><button class="cb ${L.stup?'no':'o'}" data-a="inv:stup">${L.stup?'⏳':'INVERTIR'}<small>${L.stup?'':fmtM(ECO(60))+' €'}</small></button></div>`}
+  if(vtab==='ach')h+=`<p class="note">${Object.keys(L.ach).length} de ${ACH.length} desbloqueados · cada logro da dinero y popularidad</p>`+ACH.map((a,i)=>`<div class="story-it ${L.ach[i]?'':'lock'}"><span>${L.ach[i]?a[0]:'🔒'}</span><span><b>${a[1]}</b><small>${a[2]}</small></span></div>`).join('');
+  $('#sheet').innerHTML=h+'</div>'};
+function tabsH(){return`<div class="vtabs">${VT.map(([k,n])=>`<button data-a="vtab:${k}" class="${vtab===k?'on':''}">${n}</button>`).join('')}</div>`}
+act=(function(prev){return function(a){const p=a.split(':');
+  if(p[0]==='car'){workCareer(p[1]);return false}if(p[0]==='gig'){doGig(p[1]);return false}
+  if(p[0]==='inv'){invAct(p[1],p[2]);return true}if(p[0]==='love'){loveAct(p[1]);return false}
+  return prev(a)}})(act);
+
+// ---- SCROLL: no volver arriba al refrescar ----
+let lastScrollT=0,lastKey='';
+$('#sheet').addEventListener('scroll',()=>{lastScrollT=performance.now()},true);
+$('#sheet').addEventListener('touchmove',()=>{lastScrollT=performance.now()},{passive:true});
+const _rs4=renderSheet;renderSheet=function(force){if(!sheetKind)return _rs4(force);
+  if(!force&&performance.now()-lastScrollT<900)return;
+  const el=$('#sheet'),l=el.querySelector('.list'),vt=el.querySelector('.vtabs'),top=l?l.scrollTop:0,left=vt?vt.scrollLeft:0,key=sheetKind+'|'+sheetArg+'|'+(sheetKind==='vida'?vtab:'');
+  _rs4(force);const l2=el.querySelector('.list'),vt2=el.querySelector('.vtabs');if(key===lastKey){if(l2)l2.scrollTop=top;if(vt2)vt2.scrollLeft=left}lastKey=key};
+endPd=function(cancel){pressing=false;if(pd){clearTimeout(pd.timer);const a=pd.a,f=pd.fired;pd=null;if(!f&&!cancel)act(a)}if(!cancel)renderSheet(true)};
+
+// ---- tics ----
+let mT=0;setInterval(()=>{if(document.hidden)return;mT++;if(mT%6===0)mktTick();polTax(.5);achTick();
+  const L=L2(),ready=Object.keys(CAREERS).some(id=>carLeft(id)<=0&&car(id).lv<CAREERS[id].lv.length-1)||GIGS.some(g=>gigLeft(g)<=0);
+  const vb=document.querySelector('[data-sheet="vida"]');if(vb){let b=vb.querySelector('.badge');if(ready&&!b){b=document.createElement('i');b.className='badge';b.textContent='!';vb.appendChild(b)}else if(!ready&&b)b.remove()}},500);
+for(let i=0;i<30;i++)mktTick();
+
+</script>
 <script>
 if('serviceWorker' in navigator){let re=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(re)return;re=true;location.reload()});
 navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{const u=()=>r.update().catch(()=>{});u();document.addEventListener('visibilitychange',()=>{if(!document.hidden)u()})}).catch(()=>{})}
