@@ -361,6 +361,11 @@ body.isnight .dock,body.isnight .pbar,body.isnight .clock,body.isnight .side{vis
 .review{background:#fff;border-radius:14px;padding:10px 12px;font-family:var(--f-d);font-size:15px;line-height:1.25;text-align:center}.review small{display:block;font-family:var(--f-b);font-size:11px;color:#8a6a40;font-weight:800}
 .illw{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.illb{background:#7cd36b;color:#14361a;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:900}.illb.pand{background:#ff8a7a;color:#4a120c}
 .illc{background:#e8ffe0;border:2.5px dashed #5fd068;border-radius:14px;padding:9px 11px;font-weight:800;font-size:13.5px;line-height:1.3}
+.needs{display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;background:rgba(255,255,255,.08);border-radius:14px;padding:8px 10px}
+.needs span{display:grid;grid-template-columns:20px 1fr;align-items:center;column-gap:5px;font-size:11px;font-weight:900}.needs i{font-style:normal;font-size:16px;grid-row:span 2}.needs em{display:block;height:7px;border-radius:9px;background:#ffffff22;overflow:hidden}.needs u{display:block;height:100%;background:#7cd36b;text-decoration:none}
+.needs .low u{background:#ff5a4e}.needs .low b{color:#ffb0a8;animation:pulse 1s infinite}
+.stepn{text-align:center;font-family:var(--f-d);font-size:13px;color:#8a6a40}
+.bugs{position:absolute;inset:0;z-index:4;pointer-events:none}.bug{position:absolute;left:0;top:0;font-size:28px;background:none;border:0;padding:6px;pointer-events:auto;filter:drop-shadow(0 2px 1px rgba(0,0,0,.3));transition:filter .1s}.bug.hit{filter:brightness(2) drop-shadow(0 0 6px #fff)}
 </style>
 </head>
 <body>
@@ -441,7 +446,7 @@ const rivalBuy=j=>Math.ceil((j===0?600:4000)*mult());
 const perk=k=>(SV.perks[k]||0);
 // ---- modificadores del día (vienen de la noche) ----
 let MODS=[];
-const mod=k=>MODS.filter(m=>m.k===k).reduce((a,m)=>a*m.v,1);
+const mod=k=>MODS.filter(m=>m.k===k).reduce((a,m)=>a*m.v,1)*(window.modHook?window.modHook(k):1);
 // ---- layout dinámico del local ----
 let LAY=null;
 function buildLayout(){const st=ST(),xL=RUN.xL,xR=RUN.xR,D=st.D,W=xR-xL;const L={xL,xR,D,stations:[],seats:[],tables:[],obst:[],door:0,pass:null};
@@ -951,7 +956,7 @@ MA.aiPick=b=>{const o=window._aio[+b.dataset.i];closeModal();const c=NCARDS.find
 $('#setBtn').onclick=()=>{openModal(`<h2>Ajustes</h2><button class="cb b" data-m="snd">${SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO'}</button>
   <b class="lkh">🤖 IA para el iPhone (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com → Get API key). Se guarda solo en este móvil. Necesita internet.'}</p>
   <input id="gk" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc(SV.gemKey||'')}"><button class="cb" data-m="gkOk">GUARDAR CLAVE</button>
-  <p class="note">Guerra de Fogones 2 · Versión 21 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
+  <p class="note">Guerra de Fogones 2 · Versión 22 · ${SV.streets} calles conquistadas · ${SV.stars} ⭐</p><button class="lnk" data-m="wipe">Borrar partida</button><button class="lnk" data-m="close">Cerrar</button>`)};
 MA.snd=b=>{SV.sound=SV.sound?0:1;b.textContent=SV.sound?'🔊 Sonido: SÍ':'🔇 Sonido: NO';save()};
 MA.gkOk=()=>{SV.gemKey=$('#gk').value.trim();save();closeModal();toast(SV.gemKey?'🤖 IA activada: inventará eventos cada noche':'IA desactivada')};
 MA.wipe=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='¿Seguro? Toca otra vez';return}localStorage.removeItem(KEY);location.reload()};
@@ -1091,6 +1096,122 @@ CARDS.push(
 const _rn=renderNight;renderNight=function(){_rn();const L=IL(),s=document.querySelector('.nst small');if(!s)return;let t='';if(L.ill){const I=ILLS[L.ill.k];t+=`<span class="illb">${I.e} ${I.n} · ${L.ill.d} noche${L.ill.d>1?'s':''}</span>`}if(L.pand){const P=PANDS[L.pand.i];t+=`<span class="illb pand">${P[0]} Pandemia: ${P[1]} · ${L.pand.d} días</span>`}if(t)s.insertAdjacentHTML('afterend',`<div class="illw">${t}</div>`)};
 // las cartas de cura/pandemia salen siempre que toque
 const _dc=drawCards;drawCards=function(){_dc();const L=IL();const add=id=>{const c=CARDS.find(c=>c.id===id);if(c&&(!c.ok||c.ok(L))&&!NCARDS.includes(c))NCARDS.splice(AIEV?1:0,0,c)};if(L.ill){add('doc');add('abuR')}if(L.pand){add('deliv');pk([()=>add('mask'),()=>add('vacc')])()}};
+
+// ================= SIMS: necesidades · historias de varios pasos · OnlyFans · plagas =================
+function SM(){const L=LF();L.nd=L.nd||{ham:70,hig:70,div:60,soc:60};return L}
+const NEEDS={ham:['🍔','Hambre'],hig:['🛁','Higiene'],div:['🎮','Diversión'],soc:['🫂','Social']};
+function need(k,v){const n=SM().nd;n[k]=cl(n[k]+v,0,100)}
+// ---- motor de historias (varios pasos con elecciones) ----
+let STY=null;
+function story(title,steps,finish){STY={title,steps,finish,i:0,pick:[]};paintStory()}
+function paintStory(){const s=STY,st=s.steps[s.i];const o=typeof st.o==='function'?st.o(s.pick):st.o;s.cur=o;
+  openModal(`<div class="stepn">${s.title} · paso ${s.i+1}/${s.steps.length}</div><div class="emo">${st.e||'❓'}</div><h2>${gtxt(typeof st.t==='function'?st.t(s.pick):st.t)}</h2><div class="choice">${o.map((x,i)=>`<button data-m="stPick" data-i="${i}"><span>${x[0]}</span><span style="font-size:15px">${gtxt(x[1])}${x[2]?`<small>${gtxt(x[2])}</small>`:''}</span></button>`).join('')}</div>`)}
+MA.stPick=b=>{const s=STY;s.pick.push(s.cur[+b.dataset.i]);s.i++;sfx.tap();if(s.i<s.steps.length)return paintStory();closeModal();STY=null;s.finish(s.pick)};
+// ================= NECESIDADES =================
+CARDS.push(
+ {id:'eat',cat:'fun',ic:'🍝',n:'Cenar como Dios manda',d:'🍔 Hambre ++',e:1,f:()=>res('🍝','Cena de verdad',()=>{need('ham',50);hp(3);return pk(['Te haces un plato de pasta que da para tres. Te lo comes entero de pie en la cocina.','Pides comida a domicilio… a tu propio restaurante. Te cobras el envío.'])})},
+ {id:'shower',cat:'fun',ic:'🛁',n:'Ducha de 45 minutos',d:'🛁 Higiene ++ · concierto incluido',e:1,f:()=>res('🛁','Ducha épica',()=>{need('hig',60);hap(4);return pk(['Das un concierto entero en la ducha. Los vecinos aplauden por la ventana.','Usas tanto champú que el baño parece una fiesta de espuma.'])})},
+ {id:'games',cat:'fun',ic:'🎮',n:'Vicio a la consola',d:'🎮 Diversión ++ · salud −',e:1,f:()=>res('🎮','Noche de vicio',()=>{need('div',50);hp(-3);return pk(['Juegas hasta las 4 a. m. Pierdes contra un niño de 12 años que te insulta en inglés.','Construyes un restaurante en un videojuego. Te va mejor que el de verdad.'])})},
+ {id:'friends',cat:'soc',ic:'🫂',n:'Quedar con tu grupo de amigos',d:'🫂 Social ++ · 🎮 Diversión +',e:1,f:()=>res('🫂','Noche con el grupo',()=>{need('soc',50);need('div',20);return pk(['Acabáis en un karaoke cantando a gritos. Pierdes la voz y un zapato.','Jugáis al Trivial. Discutís 2 horas por una pregunta de geografía.'])})});
+// otras cartas también llenan necesidades
+const wrapN=(id,fx)=>{const c=CARDS.find(c=>c.id===id);if(!c)return;const f=c.f;c.f=(...a)=>{fx();return f(...a)}};
+wrapN('party',()=>{need('soc',35);need('div',35);need('hig',-20)});wrapN('abu',()=>{need('ham',40);need('soc',20)});wrapN('date',()=>need('soc',25));wrapN('kids',()=>{need('soc',20);need('div',15)});wrapN('gym',()=>need('hig',-25));wrapN('sleep',()=>{need('hig',10)});
+// ================= FIESTA EN CASA (historia de 3 pasos) =================
+CARDS.push({id:'house_party',cat:'soc',ic:'🏠',n:'Montar una fiesta en casa',d:'Tú decides invitados, temática y comida',e:2,f:()=>story('🏠 Fiesta en casa',[
+  {e:'📨',t:'¿A quién invitas?',o:[['🧑‍🍳','A tus cocineros','Saben cocinar, beben como esponjas'],['😈','A tus rivales',`${ST().riv[0][2]} y ${ST().riv[1][2]} en tu salón…`],['📱','A gente random de Fogón Match','¿Qué podría salir mal?'],['🏘️','Al barrio entero','Caos asegurado']]},
+  {e:'🎭',t:'¿Temática?',o:[['🥕','Disfraces de verdura','Tú vas de berenjena'],['🫧','Fiesta de la espuma','En un piso de 40 m²'],['🎤','Karaoke hasta el amanecer','Con micro de 300 W'],['🍷','Cena elegante','Con velas y pajarita']]},
+  {e:'🍕',t:'¿Y de comer?',o:[['🍤','Lo de tu restaurante','Publicidad gratis'],['🍕',`Pizza de ${ST().riv[0][0]}`,'Traición deliciosa'],['👵','Que cocine la abuela','Habrá comida para 300'],['🥨','Una bolsa de gusanitos','Austeridad']]}],
+  p=>{const [inv,tem,com]=p.map(x=>x[1]);const caos=(inv.includes('barrio')||inv.includes('random')?2:0)+(tem.includes('espuma')||tem.includes('Karaoke')?2:0);
+   res('🎉','¡Fiestón!',()=>{need('soc',60);need('div',50);need('hig',-25);hap(15);let t=`Invitas ${inv.toLowerCase()} a una fiesta de ${tem.toLowerCase()} con ${com.toLowerCase()}. `;
+    if(inv.includes('rivales')){relv('r0',15);relv('r1',15);t+=`${ST().riv[0][2]} acaba llorando abrazado/a a ${ST().riv[1][2]} en tu bañera. Sois casi amigos. `}
+    if(com.includes('restaurante')){tom('spawn',1.3,'🎉 Tus invitados se vuelven clientes: +30 %');t+='Todos quieren ir mañana a tu restaurante. '}
+    if(com.includes('abuela'))relv('abu',10);
+    if(caos>=3&&Math.random()<.6){lose(ECO(10));t+='🚨 A las 4 a. m. viene la policía por el ruido. Te ponen una multa… y se quedan a cantar una de Camela.'}
+    else if(tem.includes('verdura'))t+='La foto de grupo vestidos de verdura se hace viral.';else t+='Nadie olvidará esta noche. Sobre todo tus vecinos.';
+    if(tem.includes('verdura'))pop(5);return t})})});
+// ================= ONLYFANS (de verdad, sin ser explícito) =================
+function OF(){return SM().of}
+const OFCREA=[['🔥','Brenda Fuego','34 años · reina del contenido atrevido',1.6],['💪','Toni Músculos','29 años · solo sube fotos haciendo pesas sin camiseta',1.3],['🌶️','Lady Chorizo','41 años · leyenda de la plataforma',2],['🔧','El Fontanero Misterioso','38 años · nadie le ha visto la cara',1.4],['💅','Divina Croissant','31 años · drag queen y empresaria',1.7]];
+const ofCard=CARDS.find(c=>c.id==='of');
+ofCard.n=L=>L.nd&&L.of?`📸 Tu OnlyFans · ${fmtM(L.of.subs)} subs`:'Abrir un OnlyFans';ofCard.d=L=>L.of?'Subir contenido, collabs, directos…':'Contenido atrevido (pero con clase)';ofCard.ok=L=>L.age>=18;ofCard.cat='gig';
+ofCard.f=()=>{const L=SM();if(!L.of)return story('📸 Tu OnlyFans',[
+  {e:'🤳',t:'Vas a abrirte un OnlyFans. ¿Qué nombre artístico eliges?',o:[['🍑',`${(L.name||'Chef')}Picante`],['🔥','ElFogónPrivado'],['🌙','ChefDeMedianoche'],['🧈','MantequillaDeVerdad']]},
+  {e:'💶',t:'¿Cuánto cobras al mes?',o:[['🪙','5 € · para todos los públicos (adultos)','Más subs, menos dinero'],['💶','15 € · lo normal'],['💎','50 € · exclusividad total','Pocos subs, pero generosos']]},
+  {e:'🤫',t:'¿Se lo cuentas a alguien?',o:[['🤐','A nadie. Es un secreto','Más drama si te pillan'],['👵','A la abuela, por si acaso','Valiente'],['📢','Lo anuncias en el restaurante','Marketing agresivo']]}],
+  p=>{const pr={'5':.6,'15':1,'50':2.2}[p[1][1].match(/\d+/)[0]];L.of={nick:p[0][1],pr,subs:Math.round(40/pr),secret:p[2][1].includes('nadie'),n:0};
+   res('📸','¡Cuenta abierta!',()=>{hap(5);if(p[2][1].includes('abuela')){relv('abu',-5);return`Abres «${L.of.nick}». La abuela te mira por encima de las gafas: «Mientras pagues la luz, cariño…». Ya tienes ${L.of.subs} suscriptores.`}
+    if(p[2][1].includes('anuncias')){tom('fan',2,'📸 Curiosos de tu OnlyFans');pop(6);return`Cuelgas un cartel en el restaurante con el QR de «${L.of.nick}». Mañana vendrá MUCHA gente «a comer».`}
+    return`Abres «${L.of.nick}» en secreto. Empiezas con ${L.of.subs} suscriptores. Nadie lo sabe… de momento.`})});
+  openModal(`<div class="emo">📸</div><h2>${esc(L.of.nick)}</h2><div class="sum"><span>👥<b>${fmtM(L.of.subs)}</b>subs</span><span>💶<b>${fmtM(ofIncome())}</b>al día</span><span>🎬<b>${L.of.n}</b>posts</span><span>${L.of.secret?'🤫':'📢'}<b>${L.of.secret?'Secreto':'Público'}</b>estado</span></div>
+   <div class="choice"><button data-m="ofDo" data-v="post"><span>📷</span><span style="font-size:15px">Subir contenido nuevo<small>Elige la temática</small></span></button>
+   <button data-m="ofDo" data-v="collab"><span>🤝</span><span style="font-size:15px">Hacer un collab<small>Con otro creador de la plataforma</small></span></button>
+   <button data-m="ofDo" data-v="live"><span>🔴</span><span style="font-size:15px">Directo en vivo<small>El chat manda… y paga</small></span></button>
+   <button data-m="ofDo" data-v="close"><span>🗑️</span><span style="font-size:15px">Cerrar la cuenta<small>Se acabó esta etapa</small></span></button></div>`)};
+const ofIncome=()=>{const o=OF();return o?Math.round(ECO(o.subs*o.pr/900)):0};
+function ofGrow(m){const o=OF();const add=Math.round((30+rint(80))*m*(1+o.n*.05)/o.pr);o.subs+=add;o.n++;return add}
+MA.ofDo=b=>{const v=b.dataset.v,L=SM(),o=L.of;closeModal();
+  if(v==='close'){L.of=null;return res('🗑️','Cuenta cerrada',()=>{hap(3);return'Borras la cuenta. Tus 3 suscriptores más fieles te mandan flores de despedida.'})}
+  if(v==='post')return story('📷 Contenido nuevo',[{e:'📷',t:'¿Qué subes hoy?',o:[['🩲','Fotos en ropa interior','Clásico que nunca falla'],['🫧','Sesión en la bañera','Con espuma muy estratégica'],['🧑‍🍳','Solo con el delantal','En la cocina del restaurante, de noche'],['🦶','Fotos de pies','Hay un mercado. Un mercado ENORME.']]},
+    {e:'💡',t:'¿Qué toque le das?',o:[['🕯️','Velas y música romántica'],['😂','Haciendo el payaso','Humor, que eso también vende'],['🌹','Pétalos de rosa por todas partes','Cuestan una fortuna']]}],
+    p=>{const ok=Math.random()<.78;res(ok?'🔥':'😬',ok?'¡Lo petas!':'Fallo técnico',()=>{need('hig',-10);if(!ok){hap(-6);return pk(['La foto sale con tu abuela de fondo, saludando. Borras todo.','Se te olvida quitar la ubicación. Te escribe tu casero.','El gato salta justo en el momento. El gato se hace famoso, tú no.'])}
+      const add=ofGrow(p[0][1].includes('pies')?1.4:p[0][1].includes('delantal')?1.3:1);hap(4);
+      return`Subes «${p[0][1].toLowerCase()}» con ${p[1][1].toLowerCase()}. +${fmtM(add)} suscriptores. ${pk(['Un señor de Albacete te deja una propina enorme y un «gracias por existir».','Te llegan 40 mensajes. 38 son de gente pidiendo la receta de las croquetas.','Tu foto llega a la página principal. Tu móvil vibra hasta apagarse.'])}`})});
+  if(v==='collab'){const cs=[...OFCREA].sort(()=>Math.random()-.5).slice(0,3);return story('🤝 Collab',[
+    {e:'🤝',t:'¿Con quién haces el collab?',o:cs.map(c=>[c[0],c[1],c[2]])},
+    {e:'🎬',t:p=>`${p[0][1]} acepta. ¿Qué grabáis?`,o:[['📸','Sesión de fotos juntos','Lo justo y necesario'],['🎭','Un sketch picante con guion','Con argumento, como las de antes'],['🍳','«Cocinando en pareja»… con poca ropa','Tu especialidad'],['🛁','Un jacuzzi y mucha espuma','La espuma lo tapa todo']]},
+    {e:'🎬',t:'En mitad de la grabación…',o:[['🚪','Llaman a la puerta: ¿abres?'],['🤣','Os entra la risa floja','Repetís 20 tomas'],['🤫','Seguís como profesionales']]}],
+    p=>{const c=OFCREA.find(x=>x[1]===p[0][1]);const ok=Math.random()<.75;res(ok?'💥':'😳',ok?'¡Collab viral!':'Collab accidentado',()=>{let t=`Collab con ${c[1]} (${c[2]}): «${p[1][1].toLowerCase()}». `;
+      if(p[2][1].includes('puerta')){t+=pk(['Era el repartidor de Glovo. Ahora también tiene OnlyFans.','Era tu abuela con un táper de croquetas. Se queda a mirar «por si necesitáis algo».','Era el inspector de sanidad. Dice que vuelve otro día, rojo como un tomate.'])+' '}
+      if(!ok){hap(-5);return t+'El vídeo se corta justo en lo mejor por falta de batería. Fundido a negro… literalmente.'}
+      const add=ofGrow(c[3]*1.5);pop(4);if(SM().love){hap(-4);t+=`${SM().love.n} lo ve y se pone celoso/a. `}return t+`+${fmtM(add)} suscriptores. Lo que pasó después de que se apagara la cámara… eso no lo sabrá nadie.`})})}
+  if(v==='live')return story('🔴 Directo',[
+    {e:'💬',t:'El chat pide: «¡Baila!»',o:[['💃','Bailas reguetón con poca ropa'],['🕺','Bailas la Macarena muy seriamente'],['🙅','«Hoy no, que tengo agujetas»']]},
+    {e:'💬',t:'Un usuario llamado «PacoElDelQuinto» manda una propina enorme y pide un saludo.',o:[['👋','Le saludas con mucho cariño'],['😏','Le guiñas un ojo y le dices algo atrevido'],['🤨','Esperas… ¿Paco, tu vecino del quinto?']]},
+    {e:'💬',t:'El chat se pone intenso. ¿Cómo cierras el directo?',o:[['🫦','Con una despedida muy sugerente'],['🍤','Recomendando tu restaurante','Publicidad'],['🛑','Se te va el wifi justo en ese momento']]}],
+    p=>{const tip=p.filter(x=>/reguetón|atrevido|sugerente/.test(x[1])).length;res('🔴','Directo terminado',()=>{const g=gain(ECO(4+tip*6));const add=ofGrow(.6+tip*.3);let t=`Ganas ${fmtM(g)} € en propinas y +${fmtM(add)} subs.`;
+      if(p[1][1].includes('quinto'))t+=' Sí, era Paco, tu vecino del quinto. Mañana os cruzáis en el ascensor. Silencio absoluto.';if(p[2][1].includes('restaurante')){tom('fan',2.2,'🔴 Tus seguidores vienen al restaurante');t+=' Mañana medio chat vendrá a comer.'}return t})})};
+// ingresos y drama cada noche
+const _sl2=sleep;sleep=function(){const L=SM(),n=L.nd;for(const k in n)n[k]=cl(n[k]-(15+rint(10)),0,100);
+  if(n.hig<25)tom('spawn',.8,'🦨 Hueles fatal: −20 % clientes');if(n.ham<25)hp(-6);if(n.soc<25)hap(-6);if(n.div<25)hap(-4);
+  let ofx='';if(L.of){const g=gain(ofIncome());ofx=`📸 OnlyFans: +${fmtM(g)} €.`;if(Math.random()<.18){const d=pk([()=>{relv('abu',-8);return'👵 La abuela se ha suscrito «sin querer». Te ha dejado 5 estrellas y un comentario: «Abrígate».'},()=>{rep(-6);pop(6);L.of.secret=false;return`😈 ${ST().riv[0][2]} ha descubierto tu OnlyFans y lo ha colgado en su escaparate. Ahora lo sabe todo el barrio.`},
+      ()=>{tom('fan',1.8,'📸 Te reconocen y vienen a verte');return'👀 Un cliente te reconoce mientras le sirves. Se pone rojo. Deja una propina enorme.'},()=>{if(!L.love)return'💌 Un suscriptor te manda una carta de amor de 12 páginas. Con dibujos.';hap(-8);return`💔 ${L.love.n} ha encontrado tu OnlyFans. Discusión épica… que termina con «¿y por qué no salgo yo?».`}]);ofx+=' '+d()}}
+  _sl2();const c=document.querySelector('#card .headline');if(c){const low=Object.entries(n).filter(([k,v])=>v<25).map(([k])=>NEEDS[k][0]+' '+NEEDS[k][1]);if(ofx)c.insertAdjacentHTML('afterend',`<div class="illc" style="background:#ffe6f0;border-color:#ff7ab8">${gtxt(ofx)}</div>`);if(low.length)c.insertAdjacentHTML('afterend',`<div class="illc" style="background:#fff0e0;border-color:#ffb23f">⚠️ Necesidades bajas: ${low.join(', ')}. ¡Cuídate esta noche!</div>`)}};
+// barras de necesidades en la noche
+const _rn2=renderNight;renderNight=function(){_rn2();const n=SM().nd,h=document.querySelector('.nhead');if(!h)return;h.insertAdjacentHTML('afterend',`<div class="needs">${Object.entries(NEEDS).map(([k,[e,nm]])=>`<span class="${n[k]<25?'low':''}"><i>${e}</i><b>${nm}</b><em><u style="width:${n[k]}%"></u></em></span>`).join('')}</div>`)};
+// cartas de necesidades aparecen cuando hacen falta
+const _dc2=drawCards;drawCards=function(){_dc2();const n=SM().nd,map={ham:'eat',hig:'shower',div:'games',soc:'friends'};for(const k in n)if(n[k]<40){const c=CARDS.find(c=>c.id===map[k]);if(c&&!NCARDS.includes(c))NCARDS.push(c)}};
+// ================= PLAGAS Y DESASTRES EN EL RESTAURANTE =================
+const PESTS=[['🪳','Cucarachas',1],['🐀','Ratas',2],['🐦','Palomas',1],['🦝','Mapache okupa',3],['🐜','Hormigas',1],['🦗','Grillos cantores',1]];
+function PSL(){const L=SM();if(L.pest==null)L.pest=0;return L}
+let bugs=[],bugT=0;const bugLayer=document.createElement('div');bugLayer.className='bugs';stageEl.appendChild(bugLayer);
+function spawnBug(){const P=pk(PESTS.slice(0,PSL().pest>3?6:4)),x=LAY.xL+.6+Math.random()*(LAY.xR-LAY.xL-1.2),z=-LAY.D+2.6+Math.random()*(LAY.D-3.2);const el=document.createElement('button');el.className='bug';el.textContent=P[0];
+  const b={P,x,z,vx:(Math.random()-.5)*1.4,vz:(Math.random()-.5)*1.4,el,hp:P[2]};el.addEventListener('pointerdown',e=>{e.stopPropagation();b.hp--;tone(200+rint(200),.06,'square',.04);el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),120);if(b.hp<=0){b.dead=1;el.remove();const g=Math.max(1,Math.round(ECO(.3)));RUN.money+=g;R.floats.push({x:b.x,z:b.z,t:0,txt:'💥 +'+g,col:'#7cd36b'});PSL().pest=Math.max(0,PSL().pest-.25)}});bugLayer.appendChild(el);bugs.push(b)}
+function bugTick(dt){if(inNight||!$('#modal').hidden){bugLayer.style.display='none';return}bugLayer.style.display='';const L=PSL();
+  bugT-=dt;if(bugT<=0){bugT=6+Math.random()*8;if(Math.random()<Math.min(.85,.12+L.pest*.12)&&bugs.length<10){const n=1+rint(Math.min(4,1+Math.ceil(L.pest)));for(let i=0;i<n;i++)spawnBug();if(!L.f.bugSeen){L.f.bugSeen=1;toast('🪳 ¡BICHOS EN EL LOCAL! Tócalos para aplastarlos antes de que espanten a los clientes',4500)}}}
+  for(const b of bugs){if(b.dead)continue;b.x+=b.vx*dt;b.z+=b.vz*dt;if(b.x<LAY.xL+.4||b.x>LAY.xR-.4)b.vx*=-1;if(b.z<-LAY.D+2.4||b.z>-.4)b.vz*=-1;if(Math.random()<.02){b.vx=(Math.random()-.5)*1.6;b.vz=(Math.random()-.5)*1.6}
+    const p=proj(b.x,.1,b.z);b.el.style.transform=`translate(${p.x}px,${p.y}px) translate(-50%,-50%) scaleX(${b.vx<0?-1:1})`}
+  bugs=bugs.filter(b=>!b.dead);L.pest=cl(L.pest+bugs.length*dt*.004,0,10)}
+// los bichos espantan clientes
+window.modHook=k=>k==='spawn'&&bugs.length?Math.max(.45,1-bugs.length*.08):1;
+setInterval(()=>bugTick(.1),100);
+// al cerrar: si hay plaga, inspección
+const _ed2=endDay;endDay=function(){const n=bugs.length;bugs.forEach(b=>b.el.remove());bugs=[];_ed2();const L=PSL();if(n>=4||L.pest>=5){const f=lose(ECO(8+n*2));RUN.fame=Math.max(0,RUN.fame-6);const p=document.querySelector('#card .stars');if(p)p.insertAdjacentHTML('afterend',`<div class="illc" style="background:#ffe3df;border-color:#ff5a4e">🕵️ Inspección sorpresa: ${n} bichos a la vista. Multa de ${fmtM(f)} € y −6 de fama. ¡Fumiga esta noche!</div>`)}};
+// cartas: fumigar y desastres
+CARDS.push(
+ {id:'fumi',cat:'rest',ok:()=>PSL().pest>=1.5,ic:'🧪',n:'Fumigar el restaurante',d:L=>`Plaga nivel ${Math.round(PSL().pest)} · ${fmtM(ECO(8))} €`,e:1,f:()=>story('🧪 Fumigación',[{e:'🧪',t:'¿Cómo fumigas?',o:[['👨‍🔬','Contratar a un fumigador profesional',`${fmtM(ECO(8))} € · seguro`],['🧴','Hacerlo tú con un spray del chino','Barato… y arriesgado'],['🐈','Adoptar 6 gatos','Solución natural'],['🧄','Remedio de la abuela: ajo por todas partes','El local olerá a ajo una semana']]}],
+   p=>{const v=p[0][1],L=PSL();res('🧪','Resultado',()=>{if(v.includes('profesional')){lose(ECO(8));L.pest=0;return'Llega un señor con traje de astronauta. En 20 minutos no queda ni un bicho. Ni un cliente con alergias tampoco.'}
+     if(v.includes('chino')){if(Math.random()<.55){L.pest=0;return'¡Funciona! Aunque el local huele a lavanda química y te pica la nariz.'}hp(-8);L.pest*=.6;return'El spray mata a la mitad de los bichos y te deja a ti un poco mareado/a. Ves colores.'}
+     if(v.includes('gatos')){L.pest=0;pop(5);tom('spawn',1.2,'🐈 Los clientes vienen a ver a los gatos: +20 %');return'Los 6 gatos acaban con todo. Ahora tu restaurante es «el de los gatos». Les pones nombres de platos.'}
+     L.pest*=.4;tom('money',.9,'🧄 Todo huele a ajo: −10 % ganancias');relv('abu',5);return'Los bichos huyen. Los clientes también, un poco. La abuela está orgullosísima.'})})},
+ {id:'mapache',cat:'rest',ok:()=>PSL().pest>=4,ic:'🦝',n:'Negociar con el mapache okupa',d:'Vive en tu cámara frigorífica',e:1,f:()=>story('🦝 El mapache',[{e:'🦝',t:'Un mapache se ha instalado en tu cámara frigorífica. Tiene una mantita y todo.',o:[['📄','Contratarlo de friegaplatos','Tiene manos'],['🚔','Llamar a la protectora'],['🍤','Sobornarle con croquetas para que se vaya']]}],
+   p=>res('🦝','Asunto mapache',()=>{const v=p[0][1];if(v.includes('friegaplatos')){tom('cook',1.2,'🦝 Pedro el mapache friega: cocina +20 %');pop(6);return'Se llama Pedro. Friega mejor que nadie. Exige un plato de sobras al día y vacaciones en agosto.'}
+     if(v.includes('protectora')){PSL().pest=Math.max(0,PSL().pest-2);return'Se lo llevan. Te deja una nota de despedida dibujada con kétchup.'}PSL().pest=Math.max(0,PSL().pest-1);lose(ECO(3));return'Acepta 40 croquetas. Vuelve la semana que viene a por más. Tienes un mapache extorsionador.'}))});
+// desastres random al empezar el día
+const _sd2=startDay;startDay=function(){_sd2();if(RUN.day<3||Math.random()>.18)return;const D=pk([['🧊','¡Se ha roto la nevera!','Hoy cocinas más lento hasta que venga el técnico.',()=>{MODS.push({k:'cook',v:.75,label:'🧊 Nevera rota'})}],
+  ['💡','¡Apagón en la calle!','Los rivales también están a oscuras. Velas para todos.',()=>{RUN.riv.forEach(r=>r.shut=25)}],['🌊','¡Inundación en el baño!','Un cliente salió nadando.',()=>{MODS.push({k:'spawn',v:.85,label:'🌊 Baño inundado'})}],
+  ['🐦','¡Una paloma se ha colado en el local!','Aletea por encima de las mesas. Tócala para echarla.',()=>{for(let i=0;i<2;i++){spawnBug();bugs[bugs.length-1].el.textContent='🐦'}}],
+  ['🎺','¡Una banda de música para delante de tu puerta!','La gente se para a escuchar… y entra a comer.',()=>{R.rush=30}]]);
+  setTimeout(()=>{D[3]();bigText(D[0]+' '+D[1],D[2]);sfx.bad()},1200)};
 
 </script>
 <script>
