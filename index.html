@@ -329,11 +329,37 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .needs7 span{background:#fff;border:2px solid #e3d1ad;border-radius:12px;padding:6px 8px;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:2px 6px;font:800 13px var(--f-b)}
 .needs7 span i{grid-row:span 2;font-style:normal;font-size:20px}.needs7 span.low{border-color:#ff5a4e;animation:pulse7 1s infinite}
 @keyframes pulse7{50%{background:#ffe3df}}
-.bugs{position:absolute;inset:0;pointer-events:none;z-index:6;overflow:hidden}
+.bugs{position:absolute;inset:0;pointer-events:none;z-index:3;overflow:hidden}
 .bug{position:absolute;left:0;top:0;pointer-events:auto;background:none;border:0;font-size:26px;width:46px;height:46px;padding:0;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35));transition:filter .1s}
 .bug.hit{filter:brightness(2) drop-shadow(0 0 6px #fff)}
 .dock .db{position:relative}.dock .db em{display:block;font:900 10px var(--f-b);font-style:normal;color:#fff;margin-top:1px;text-shadow:0 1px 0 #000}
 .dock .db span{line-height:1}
+/*v29*/
+.slot7{position:absolute;left:0;top:0;pointer-events:auto;width:92px;height:64px;border:3px dashed rgba(90,60,30,.55);border-radius:14px;background:rgba(255,248,232,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;font:900 12px var(--f-b);color:#5a3c1e;gap:0;padding:0}
+.slot7 i{font-style:normal;font-size:18px;line-height:1}.slot7 small{font-size:11px;color:#8a6a40}
+.slot7.can{border-color:#3aa35a;background:rgba(220,255,225,.8)}.slot7.can small{color:#2b7a3f}
+.mission{min-height:38px!important;padding:3px 6px!important}.mission b,.mission .mt{font-size:13px}
+.goalc{top:52px!important;font-size:11px!important;padding:3px 8px!important}
+/*v29b*/
+.at8{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:6px 0}
+.at8 span{background:#fff;border:2px solid #e3d1ad;border-radius:12px;padding:5px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font:800 11px var(--f-b)}
+.at8 span i{font-style:normal;font-size:18px}.at8 em{font-style:normal;color:#9a7b4f}.at8 .hp{width:100%}
+.chips8{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0}.chips8 span{background:#fff4dc;border:2px solid #f0d49a;border-radius:99px;padding:3px 9px;font:800 12px var(--f-b)}
+.frl8{display:flex;gap:6px;margin:4px 0 6px}.frl8 span{flex:1;background:#fff;border:2px solid #e3d1ad;border-radius:12px;padding:4px 6px;display:flex;flex-direction:column;align-items:center;font-size:20px}.frl8 b{font:800 11px var(--f-b)}.frl8 .hp{width:100%}
+.cat8{display:flex;justify-content:space-between;align-items:center;width:100%;margin:8px 0 4px;padding:10px 12px;border-radius:14px;border:3px solid #23262f;background:#ffe2a8;font:900 16px var(--f-b);color:#23262f;box-shadow:0 3px 0 #23262f}
+.cat8.on{background:#ffd27a}.cat8 small{font:800 12px var(--f-b);color:#7a5a2a}
+/*v29c ui*/
+@keyframes pop8{0%{transform:scale(.86);opacity:0}70%{transform:scale(1.02);opacity:1}100%{transform:scale(1)}}
+.modal:not([hidden]) .card{animation:pop8 .24s ease-out}
+.modal{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.choice button,.cb,.db,.cat8,.seg3 button,.slot7{transition:transform .08s}
+.choice button:active,.cb:active,.db:active,.cat8:active,.seg3 button:active,.slot7:active{transform:scale(.95) translateY(2px)}
+.choice button{box-shadow:0 3px 0 #23262f}
+.sheet{background:linear-gradient(#fff8e6,#fff1d2)!important}
+.sheet .it{border-radius:16px}
+.stepn{display:inline-block;background:#ffe2a8;border-radius:99px;padding:3px 10px}
+.vtabs button.on{box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.toast{box-shadow:0 6px 18px rgba(0,0,0,.25)!important}
 </style>
 
 <div id="app">
@@ -898,7 +924,7 @@ function tapAt(e){const r=cv.getBoundingClientRect();ndc.set((e.clientX-r.left)/
 let drag3=null;
 cv.addEventListener('pointerdown',e=>{drag3={x:e.clientX,y:e.clientY,cx:camXT,cz:camZT,moved:false,id:e.pointerId};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
 cv.addEventListener('pointermove',e=>{if(!drag3||e.pointerId!==drag3.id)return;const dx=e.clientX-drag3.x,dy=e.clientY-drag3.y;if(!drag3.moved&&Math.hypot(dx,dy)<9)return;drag3.moved=true;
-  const k=VIS_W/cv.getBoundingClientRect().width;camXT=drag3.cx-dx*k;camZT=drag3.cz-dy*k*1.25;clampCam();camX=camXT;camZ=camZT});
+  const k=VIS_W/(typeof ZOOM!=='undefined'?ZOOM:1)/cv.getBoundingClientRect().width;camXT=drag3.cx-dx*k;camZT=drag3.cz-dy*k*1.25;clampCam();camX=camXT;camZ=camZT});
 cv.addEventListener('pointerup',e=>{if(!drag3)return;const d=drag3;drag3=null;if(!d.moved)tapAt(e)});
 cv.addEventListener('pointercancel',()=>{drag3=null});
 
@@ -1087,7 +1113,7 @@ function openSet(){openModal(`<h2>Ajustes</h2>
   <button class="tog ${S.music?'on':''}" data-m="tMusic"><span>🎵 Música</span><i></i></button>
   <button class="tog ${S.sound?'on':''}" data-m="tSound"><span>🔊 Sonido</span><i></i></button>
   <button class="cb b" data-m="help">CÓMO SE JUEGA</button>
-  <p style="font-size:12px;color:#8a6a40">Versión 28 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
+  <p style="font-size:12px;color:#8a6a40">Versión 29 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
   <button class="lnk" style="color:#d8352a" data-m="wipe">Borrar partida</button>
   <button class="cb" data-m="close">SEGUIR</button>`)}
 MA.tMusic=()=>{S.music=!S.music;music();openSet();save()};MA.tSound=()=>{S.sound=!S.sound;music();openSet();save()};
@@ -2204,14 +2230,14 @@ function doPlan(id){const p=PLANS.find(x=>x.id===id);if(!p||(p.ok&&!p.ok()))retu
 // ---------- pestaña nueva en Vida: "🌟 Mi día" ----------
 VT.splice(1,0,['dia','🌟 Mi día']);
 const bar7=(v,c)=>`<div class="hp"><i style="width:${cl(v,0,100)}%;background:${c}"></i></div>`;
-renderSheet=(function(prev){return function(force){prev(force);if(sheetKind!=='vida'||vtab!=='dia')return;const list=$('#sheet .list');if(!list||list.dataset.d7)return;const L=V7(),now=Date.now();list.dataset.d7=1;
+let sc7=0;renderSheet=(function(prev){return function(force){const ol=$('#sheet .list');if(ol&&ol.dataset.d7)sc7=ol.scrollTop;prev(force);if(sheetKind!=='vida'||vtab!=='dia')return;const list=$('#sheet .list');if(!list||list.dataset.d7)return;const L=V7(),now=Date.now();list.dataset.d7=1;
   let h=`<div class="it"><span class="ic">${L.look.av}</span><span class="tx"><b>${esc7(L.look.name||'Sin nombre')} · ${GEN[L.id.g].n}</b><small>${ORI[L.id.o]} · pronombres: ${GEN[L.id.g].pr}</small></span><button class="cb b" data-a="me:edit">✏️</button></div>`;
-  h+=`<div class="needs7">${Object.entries(NEEDS).map(([k,[e,n]])=>`<span class="${L.nd[k]<25?'low':''}"><i>${e}</i><b>${n}</b>${bar7(L.nd[k],L.nd[k]<25?'#ff5a4e':'#7cd36b')}</span>`).join('')}</div>`;
+  if(typeof stats8==='function')h+=stats8();h+=`<div class="needs7">${Object.entries(NEEDS).map(([k,[e,n]])=>`<span class="${L.nd[k]<25?'low':''}"><i>${e}</i><b>${n}</b>${bar7(L.nd[k],L.nd[k]<25?'#ff5a4e':'#7cd36b')}</span>`).join('')}</div>`;
   if(L.ill){const I=ILLS[L.ill.k];h+=`<div class="illc">🤒 <b>${I[1]}</b> · ${L.ill.d} días · ${gtxt(I[2])}</div>`}if(L.pand){const P=PANDS[L.pand.i];h+=`<div class="illc pand">${P[0]} <b>Pandemia: ${P[1]}</b> · ${L.pand.d} días</div>`}
   const bf=L.buf.filter(b=>b.until>now);if(bf.length)h+=`<div class="tomc"><b>☀️ Ahora en tu restaurante:</b>${bf.map(b=>`<span>${b.label} · ${Math.ceil((b.until-now)/60000)} min</span>`).join('')}</div>`;
   if(L.of)h+=`<div class="it" data-a="plan:of"><span class="ic">📸</span><span class="tx"><b>${esc7(L.of.nick)} · ${fmtM(L.of.subs)} subs</b><small>Tu OnlyFans · ${fmtM(ofIncome())} € al día</small></span><span class="arrow">›</span></div>`;
-  h+='<p class="note">Planes: cada uno es una pequeña historia con decisiones. Lo que haces se nota en el restaurante.</p>'+PLANS.filter(p=>!p.ok||p.ok()).map(p=>{const l=planLeft(p);return`<div class="it"><span class="ic">${p.ic}</span><span class="tx"><b>${p.n}</b><small>${p.d} · ${p.steps.length} paso${p.steps.length>1?'s':''}</small></span><button class="cb ${l>0?'no':'o'}" data-a="plan:${p.id}">${l>0?'⏳ '+Math.ceil(l)+' s':'IR'}</button></div>`}).join('');
-  list.innerHTML=h}})(renderSheet);
+  h+='<p class="note">Planes: cada uno es una pequeña historia con decisiones. Lo que haces se nota en el restaurante.</p>'+(typeof plansHtml8==='function'?plansHtml8():'');
+  if(list._h7!==h){list.innerHTML=h;list._h7=h}list.scrollTop=sc7}})(renderSheet);
 act=(function(prev){return function(a){if(a==='plan:of'){closeSheet();ofHub();return false}return prev(a)}})(act);
 // ---------- ajustes: clave de Gemini ----------
 openSet=(function(prev){return function(){prev();const c=$('#card');if(!c)return;const ref=[...c.querySelectorAll('p,.note')].find(e=>/Versión/.test(e.textContent));(ref||c.lastElementChild).insertAdjacentHTML(ref?'beforebegin':'afterend',`<b class="lkh">🤖 IA (opcional)</b><p class="note">${window.claude?'Aquí, dentro de Claude, la IA ya funciona sola.':'Pega tu clave GRATIS de Google Gemini (aistudio.google.com). Se guarda solo en este móvil.'}</p><input id="gk7" class="lkin" placeholder="Clave de Gemini (AIza…)" value="${esc7(S.gemKey||'')}"><button class="cb" data-m="gk7">GUARDAR CLAVE</button>`)}})(openSet);
@@ -2242,6 +2268,107 @@ openSet=(function(prev){return function(){prev();const c=$('#card');if(!c)return
   ref.insertAdjacentHTML('beforebegin',`<b class="lkh">⏱️ Ritmo de la vida</b><div class="seg3">${Object.entries(PACE).map(([k,v])=>`<button data-m="pace7" data-v="${k}" class="${(S.pace||'calm')===k?'on':''}">${v.n}</button>`).join('')}</div><p class="note">Tranquilo: días más largos, menos sustos, menos bichos y menos ventanas. El restaurante va igual.</p>`)}})(openSet);
 MA.pace7=b=>{S.pace=b.dataset.v;save();c7=$('#card');c7.querySelectorAll('[data-m="pace7"]').forEach(x=>x.classList.toggle('on',x===b));toast(PACE[S.pace].n)};
 let c7;
+
+// ================= v29: más Eatventure =================
+// decorado: suelo de madera, farolas, bancos, papeleras y flores
+const WOOD7=ctex(128,128,(c)=>{const P=['#d9a46a','#cf9a5f','#e0ad74','#d29d63'];for(let i=0;i<8;i++){c.fillStyle=P[i%4];c.fillRect(0,i*16,128,16)}c.strokeStyle='rgba(120,70,30,.35)';c.lineWidth=2;for(let i=0;i<8;i++){c.beginPath();c.moveTo(0,i*16);c.lineTo(128,i*16);c.stroke();const x=(i*47)%128;c.beginPath();c.moveTo(x,i*16);c.lineTo(x,i*16+16);c.stroke();c.beginPath();c.moveTo((x+64)%128,i*16);c.lineTo((x+64)%128,i*16+16);c.stroke()}});
+function lamp7(A,x,z){A(mesh(G.cyl,'#5b5048',x,.06,z,.32,.12,.32));A(mesh(G.cyl,'#6e625a',x,1.1,z,.08,2.2,.08));const h=mesh(G.sph,'#fff3c4',x,2.3,z,.32,.26,.32);h.castShadow=false;A(h);A(mesh(G.cyl,'#5b5048',x,2.46,z,.36,.08,.36))}
+function bench7(A,x,z){A(mesh(G.box,'#a8743c',x,.36,z,1.2,.08,.36));A(mesh(G.box,'#a8743c',x,.62,z-.16,1.2,.3,.06));[-.5,.5].forEach(o=>A(mesh(G.box,'#4a4a52',x+o,.18,z,.08,.36,.3)))}
+function bin7(A,x,z){A(mesh(G.cyl,'#3f7d3a',x,.32,z,.3,.64,.3));A(mesh(G.cyl,'#2f5f2c',x,.66,z,.33,.06,.33))}
+function flowers7(A,x,z){A(mesh(G.box,'#a0623a',x,.2,z,.9,.4,.4));['#ff6f91','#ffd84d','#ffffff','#b07cff'].forEach((c,i)=>{const f=mesh(G.sph,c,x-.3+i*.2,.48,z+((i%2)-.5)*.12,.16,.14,.16);f.castShadow=false;A(f)})}
+buildStatic=(function(prev){return function(){prev();const A=o=>{staticG.add(o);return o};
+  for(const j of ownedZones(S)){const g=GEO[j];const y0=g.dir>0?Math.min(g.y0,g.counterY):Math.min(g.counterY,g.y1),y1=g.dir>0?Math.max(g.y0,g.counterY):Math.max(g.counterY,g.y1);
+    const f=floorPlane(WOOD7,g.x0,g.x1,Math.min(g.y0,g.front,g.counterY),Math.max(g.dir>0?g.front:g.y1,g.counterY),40);f.position.y=.043;f.userData={zone:j};A(f)}
+  for(const j of ownedZones(S)){const g=GEO[j];if(RECTS[j].dir!==1)continue;const x0=Wx(g.x0),x1=Wx(g.x1),w=x1-x0,cx=(x0+x1)/2,fz=Wz(g.front);
+    const aw=new THREE.Mesh(G.plane,new THREE.MeshLambertMaterial({map:awnTex('#2fb37a'),side:THREE.DoubleSide}));aw.scale.set(w-.2,.8,1);aw.rotation.x=-1.0;aw.position.set(cx,1.62,fz-.32);A(aw);
+    if(j===0){const nm=(V7().look.name||'').trim();const sg=new THREE.Mesh(G.plane,new THREE.MeshBasicMaterial({map:labelTex('🍳 '+(nm?'CASA '+nm.toUpperCase():'TU LOCAL'),'#fff3d6','#2a1405',384,96,40),transparent:true}));sg.scale.set(Math.min(w-.4,4.4),1.1,1);sg.rotation.x=-Math.PI/2+.5;sg.position.set(cx,2.25,fz-.1);A(sg)}}
+  const okL=x=>Math.abs(x)>1.8&&GEO.every(g=>Math.abs(Wx(g.door.x)-x)>1.3);for(let x=-28;x<=28;x+=5.5){if(okL(x))lamp7(A,x,Wz(293));if(okL(x+2.75))lamp7(A,x+2.75,Wz(222))}
+  [[-6.5,Wz(222)],[5,Wz(222)],[-12,Wz(222)]].forEach(([x,z])=>bench7(A,x,z-.05));
+  [[-4.2,Wz(296)],[4.2,Wz(296)],[9.5,Wz(296)],[-9.5,Wz(296)]].forEach(([x,z])=>bin7(A,x,z));
+  [[-1.6,Wz(212)],[1.6,Wz(212)],[8,Wz(212)],[-8.5,Wz(212)]].forEach(([x,z])=>flowers7(A,x,z));
+}})(buildStatic);
+dirtyBg=true;
+// hueco para la próxima mesa: se compra tocándolo en el mapa
+const slotL=document.createElement('div');slotL.className='bugs';stageEl.appendChild(slotL);const sv7=new THREE.Vector3();let slots7=[];
+function paintSlots(){slotL.innerHTML='';slots7=[];if(S.seats>=6)return;const c=seatCost(S.seats);for(const j of ownedZones(S)){const g=GEO[j],ti=Math.ceil(S.seats/2);const T=g.tables&&g.tables[ti];if(!T||ti<S.seats/2&&ti<Math.floor(S.seats/2))continue;
+  const b=document.createElement('button');b.className='slot7';b.innerHTML=`<i>🪑</i><b>+ MESA</b><small>${fmtM(c)} €</small>`;b.addEventListener('pointerdown',e=>{e.stopPropagation();if(act('seats')){toast('🪑 ¡Mesa nueva!');save()}else toast('💶 Te faltan '+fmtM(seatCost(S.seats)-S.money)+' €')});slotL.appendChild(b);slots7.push({el:b,x:T.x,y:T.y})}}
+let slotKey='';setInterval(()=>{const k=S.seats+'|'+ownedZones(S).join(',')+'|'+(S.money>=seatCost(S.seats)?1:0);if(k!==slotKey){slotKey=k;paintSlots()}if(!slots7.length)return;const r=cv.getBoundingClientRect(),st=stageEl.getBoundingClientRect();
+  for(const s of slots7){sv7.set(Wx(s.x),.4,Wz(s.y)).project(camera);s.el.style.transform=`translate(${(sv7.x+1)/2*r.width+r.left-st.left}px,${(1-sv7.y)/2*r.height+r.top-st.top}px) translate(-50%,-50%)`;s.el.classList.toggle('can',S.money>=seatCost(S.seats))}},60);
+
+// ================= VIDA 8: upgrade BitLife — atributos, mascotas, amigos, viajes, coches, gimnasio, estudios =================
+function V8(){const L=V7();L.at=L.at||{int:50,look:50,fit:50};L.fr8=L.fr8||[];L.cars=L.cars||[];if(L.trips==null)L.trips=0;return L}
+V8();
+const at8=(k,v)=>{const a=V8().at;a[k]=cl(a[k]+v,0,100)};
+const AT8={int:['🧠','Inteligencia','#6aa8ff'],look:['✨','Apariencia','#ff7ab6'],fit:['💪','Forma física','#ffb23f']};
+function stats8(){const L=V8();let h=`<div class="at8">${Object.entries(AT8).map(([k,[e,n,c]])=>`<span><i>${e}</i><b>${n} <em>${Math.round(L.at[k])}</em></b>${bar7(L.at[k],c)}</span>`).join('')}</div>`;
+  const chips=[];if(L.pet)chips.push(`${L.pet.e} ${esc7(L.pet.n)}`);if(L.cars.length)chips.push(CARS8.find(c=>c[0]===L.cars[L.cars.length-1])[1]+' '+CARS8.find(c=>c[0]===L.cars[L.cars.length-1])[2]);if(L.fr8.length)chips.push('🫂 '+L.fr8.length+' amigos');if(L.trips)chips.push('✈️ '+L.trips+' viajes');
+  if(chips.length)h+=`<div class="chips8">${chips.map(c=>`<span>${c}</span>`).join('')}</div>`;
+  if(L.fr8.length)h+=`<div class="frl8">${L.fr8.map(f=>`<span title="${esc7(f.n)}">${f.e}<b>${esc7(f.n)}</b>${bar7(f.rel,f.rel<30?'#ff5a4e':'#7cd36b')}</span>`).join('')}</div>`;return h}
+// los atributos se notan en el restaurante y en tu vida
+applyItems=(function(prev){return function(){prev();const a=V8().at;S.it.ck*=1+(a.int-50)/500;S.it.pm*=1+(a.look-50)/600;S.it.sp*=1+(a.fit-50)/800;if(V8().cars.includes('truck'))S.it.sp*=1.06;if(V8().pet&&V8().pet.shop)S.it.sp*=1.04}})(applyItems);
+ofGrow=(function(prev){return function(m){return prev(m*(.7+V8().at.look/100*.6))}})(ofGrow);
+MA.lovePick=(function(prev){return function(b){const L=V8(),had=L.f2.dogMeet;if(Math.random()<L.at.look/160)L.f2.dogMeet=1;prev(b);if(!had)L.f2.dogMeet=had}})(MA.lovePick);
+dayTick=(function(prev){return function(dt){const L=V8(),d0=L.day;prev(dt);if(L.day===d0)return;at8('fit',-2);at8('look',-1);if(L.pet){L.pet.mood=cl(L.pet.mood-8,0,100);if(L.pet.mood<20)hap(-3)}for(const f of L.fr8)f.rel=cl(f.rel-3,0,100);
+  if(L.fr8.length&&Math.random()<.18*PC().dis)setTimeout(friendEvent,9000)}})(dayTick);
+// ---------- amigos ----------
+const FRN8=[['Lucas','🧑🏻','el que siempre llega tarde'],['Marta','👩🏽','sabe todos los cotilleos'],['Javi','🧔🏽','quiere montar una startup de croquetas'],['Sara','👩🏻‍🦱','te defiende a muerte'],['Toni','👨🏼','cuenta chistes malísimos'],['Paula','👩🏼‍🦰','vive de fiesta'],['Raúl','👨🏾','pide dinero prestado'],['Elena','👩🏻','te da los mejores consejos'],['Iván','🧑🏽‍🦱','gamer profesional (dice)'],['Nerea','👱🏻‍♀️','influencer de 300 seguidores']];
+function ensureFriends(){const L=V8();if(L.fr8.length)return;const ps=[...FRN8].sort(()=>Math.random()-.5).slice(0,3);L.fr8=ps.map(p=>({n:p[0],e:p[1],bio:p[2],rel:60+rint(20)}))}
+function friendEvent(){const L=V8();if(!L.fr8.length||!$('#modal').hidden||sheetKind)return;const f=pk(L.fr8);
+  const E=pk([[`${f.n} te pide 50 € «hasta el viernes»`,[['💶','Se los prestas',()=>{lose(ECO(3));f.rel+=12;return Math.random()<.4?`Te los devuelve… en croquetas.`:`Han pasado tres viernes. Ni rastro.`}],['🙅','Le dices que no',()=>{f.rel-=10;return'Te deja en visto dos días.'}]]],
+   [`${f.n} te cuenta que ha roto con su pareja`,[['🫂','Le consuelas toda la noche',()=>{f.rel+=15;need('soc',20);return'Acabáis llorando con una tarrina de helado.'}],['🍻','Os vais de cañas',()=>{f.rel+=10;hp7(-3);return'A las 3 a. m. ya ha vuelto con su ex.'}]]],
+   [`${f.n} quiere montar un negocio contigo`,[['🤝','¡Va, a medias!',()=>{if(Math.random()<.5){gain(ECO(20));f.rel+=10;return'¡Croquetas a domicilio en patinete! Ganáis una pasta.'}lose(ECO(10));f.rel-=5;return'Era un NFT de una croqueta. Perdéis todo.'}],['🧐','Mejor no',()=>{f.rel-=4;return'Al mes es millonario/a. O eso dice en Instagram.'}]]],
+   [`${f.n} ha hablado mal de ti a tus espaldas`,[['😤','Se lo echas en cara',()=>{f.rel-=15;return'Discusión épica en el grupo de WhatsApp.'}],['😇','Lo dejas pasar',()=>{hap(-3);return'Eres mejor persona. Y lo sabes.'}],['🍰','Le mandas una tarta',()=>{f.rel+=8;return'Se siente fatal y te pide perdón llorando.'}]]]]);
+  window._fe8=E[1];openModal(`<div class="emo">${f.e}</div><h2>${gtxt(E[0])}</h2><div class="choice">${E[1].map((o,i)=>`<button data-m="fe8" data-i="${i}"><span>${o[0]}</span><span style="font-size:15px">${o[1]}</span></button>`).join('')}</div>`)}
+MA.fe8=b=>{const o=window._fe8[+b.dataset.i];closeModal();withRes(o[0],o[1],()=>{const t=o[2]();V8().fr8.forEach(f=>f.rel=cl(f.rel,0,100));return t})};
+// ---------- coches ----------
+const CARS8=[['bici','🚲','Bici de segunda mano',2,1],['panda','🚗','Seat Panda del 92',12,3],['truck','🚚','Food truck con tu logo',40,4],['sport','🏎️','Deportivo rojo',120,8],['limo','🚘','Limusina con jacuzzi',400,15]];
+// ---------- mascotas ----------
+const PETS8=[['perro','🐶','Perro'],['gato','🐱','Gato'],['loro','🦜','Loro que dice palabrotas'],['cerdo','🐷','Cerdito vietnamita'],['capi','🦫','Capibara'],['pato','🦆','Pato con mala leche']];
+const PETN8=['Croqueta','Bocadillo','Señor Patatas','Lola','Thor','Churro','Paquito','Michi','Kiwi','Chorizo'];
+// ---------- nuevos planes ----------
+PLANS.push(
+ {id:'gym',ic:'🏋️',n:'Ir al gimnasio',d:'💪 Forma física · ✨ Apariencia',cd:150,steps:[{e:'🏋️',t:'¿Qué haces hoy?',o:[['🏋️','Pesas como un animal'],['🧘','Yoga con velas'],['💃','Zumba con las señoras del barrio'],['🚴','Spinning a oscuras']]},{e:'🔥',t:'¿A qué intensidad?',o:[['🐢','Tranquilito, sin sudar'],['💪','Normal'],['🔥','Hasta vomitar']]}],
+  end:v=>['💪','¡Entreno hecho!',()=>{const k=v[1].includes('vomitar')?2:v[1].includes('Normal')?1.2:.5;at8('fit',8*k);at8('look',3*k);need('hig',-20);need('div',10);let t='';
+   if(k===2&&Math.random()<.3){hp7(-10);t='Te haces un tirón y sales cojeando. ';}else hp7(3*k);
+   if(v[0].includes('Zumba')){need('soc',25);t+='Las señoras te adoptan y te pasan cotilleos del barrio.'}else if(v[0].includes('Yoga')){hap(6);t+='Paz interior. Casi te duermes.'}else if(v[0].includes('Pesas')){t+=pk(['Un señor te corrige la postura sin que se lo pidas.','Te haces un selfi en el espejo. Lo petas.'])}else t+='Pedaleas tanto que casi llegas a Albacete.';
+   if(!V8().love&&Math.random()<.15)t+=' Alguien te sonríe en las máquinas… 👀';return t}]},
+ {id:'beauty',ic:'💇',n:'Cambio de look',d:'✨ Apariencia · cuesta dinero',cd:240,steps:[{e:'💇',t:'¿Qué te haces?',o:()=>[['💇','Peluquería de moda',fmtM(ECO(4))+' €'],['🖋️','Un tatuaje',fmtM(ECO(6))+' €'],['💉','Cirugía estética',fmtM(ECO(25))+' € · arriesgado'],['🛍️','Ropa nueva',fmtM(ECO(5))+' €']]},{e:'🪞',t:'¿Qué estilo?',o:[['😎','Elegante'],['🤘','Rockero'],['🌈','Atrevido'],['👵','Como la abuela']]}],
+  end:v=>{const c=ECO(v[0].includes('Cirugía')?25:v[0].includes('tatuaje')?6:v[0].includes('Ropa')?5:4);if(S.money<c)return['💸','No llegas',()=>'Te miras al espejo y decides que estás perfecto/a así. Y es verdad.'];lose(c);
+   if(v[0].includes('Cirugía')){if(Math.random()<.7)return['✨','¡Espectacular!',()=>{at8('look',22);pop(6);return'Sales irreconocible. Tu madre te pide el DNI.'}];return['😬','Ha salido regular',()=>{at8('look',-8);hap(-8);return'Te han dejado la cara de Paquirrín. Dicen que se baja en un mes.'}]}
+   if(v[0].includes('tatuaje'))return['🖋️','Tatuaje nuevo',()=>{at8('look',8);return v[1].includes('abuela')?'Te tatúas «LOLA» en un corazón. La abuela llora de emoción.':pk(['Querías un dragón. Parece una croqueta con alas. Te encanta.','Una sartén en llamas en el brazo. Muy tú.'])}];
+   return['💇','¡Te ves genial!',()=>{at8('look',v[0].includes('Ropa')?7:9);hap(6);return v[1].includes('abuela')?'Look abuela: cardado y rebeca. Eres tendencia en TikTok.':'Por la calle se giran a mirarte.'}]}},
+ {id:'study',ic:'📖',n:'Estudiar',d:'🧠 Inteligencia · cocinas más rápido',cd:200,steps:[{e:'📖',t:'¿Qué estudias?',o:()=>[['📚','Ir a la biblioteca','Gratis'],['💻','Curso online','Barato'],['🎓','Un máster carísimo',fmtM(ECO(20))+' €'],['🧪','Química de la cocina']]},{e:'🤓',t:'¿Cómo vas?',o:[['☕','Con 4 cafés'],['📱','Mirando el móvil cada 2 minutos'],['🦉','Toda la noche sin dormir']]}],
+  end:v=>{if(v[0].includes('máster')){if(S.money<ECO(20))return['💸','No llegas',()=>'El máster cuesta más que tu riñón.'];lose(ECO(20))}const k=(v[0].includes('máster')?2.2:v[0].includes('Química')?1.4:1)*(v[1].includes('móvil')?.4:1);
+   return['🎓','¡Más listo/a!',()=>{at8('int',8*k);if(v[1].includes('noche')){hp7(-8);need('hig',-15)}if(v[0].includes('Química'))buff('cook',1.15,180,'🧪 Cocina científica: +15 %');return v[1].includes('móvil')?'Te has aprendido 40 memes y medio tema.':v[0].includes('máster')?'Te dan un diploma enorme. Lo cuelgas en el restaurante.':'Ahora sabes por qué la croqueta cruje. Ciencia.'}]}},
+ {id:'trip',ic:'✈️',n:'Irte de vacaciones',d:'Destino, compañía y aventura',cd:600,steps:[{e:'🗺️',t:'¿A dónde vas?',o:()=>[['🏖️','Benidorm',fmtM(ECO(8))+' €'],['🗾','Japón',fmtM(ECO(40))+' €'],['🌋','Islandia',fmtM(ECO(30))+' €'],['🐓','Al pueblo de la abuela','Gratis']]},{e:'🧳',t:'¿Con quién?',o:()=>{const L=V8(),o=[['🧍','Solo/a','A descubrirte']];if(L.love)o.push(['💑','Con '+L.love.n]);if(L.fr8.length)o.push(['🫂','Con tus amigos']);o.push(['👵','Con la abuela Lola','Peligro']);return o}},{e:'🌍',t:'En mitad del viaje…',o:[['📸','Haces mil fotos para Instagram'],['🍽️','Pruebas toda la comida local'],['🗺️','Te pierdes a propósito'],['😴','No sales del hotel']]}],
+  end:v=>{const c=ECO(v[0].includes('Japón')?40:v[0].includes('Islandia')?30:v[0].includes('Benidorm')?8:0);if(S.money<c)return['💸','No llegas',()=>'Te vas de vacaciones… a tu sofá. Con un póster de la playa.'];lose(c);const L=V8();L.trips++;logL('✈️','Viaje: '+v[0]+'.');
+   return['✈️','¡Vuelta de vacaciones!',()=>{hap(25);need('div',60);need('soc',30);hp7(8);let t='';
+    if(v[2].includes('comida')){buff('money',1.3,240,'🍣 Recetas del viaje: +30 % por plato');t+='Vuelves con recetas nuevas para el restaurante. '}if(v[2].includes('fotos')){pop(8);t+='Tus fotos lo petan. '}if(v[2].includes('pierdes'))t+=pk(['Acabas en una boda de desconocidos y bailas con el novio. ','Un pastor te enseña a hacer queso. ']);if(v[2].includes('hotel')){need('hig',30);t+='El buffet libre no volverá a ser el mismo. '}
+    if(v[1].includes('abuela')){rel('abu',15);t+='La abuela liga con un señor del hotel.'}else if(v[1].includes('amigos')){L.fr8.forEach(f=>f.rel=cl(f.rel+15,0,100));t+='Volvéis más unidos que nunca (y con una foto vergonzosa).'}else if(v[1].includes('Con ')&&L.love){hap(8);t+=`${L.love.n} y tú volvéis enamoradísimos.`}else t+='Te encuentras a ti mismo/a. Estaba en el minibar.';return t}]}},
+ {id:'pet8',ic:'🐾',n:'Tu mascota',d:'Adoptar, pasear, jugar',cd:120,steps:[{e:'🐾',t:()=>V8().pet?`¿Qué haces con ${V8().pet.n}?`:'¿Qué mascota adoptas?',o:()=>V8().pet?[['🦮','Salir a pasear'],['🎾','Jugar en casa'],['🍽️','Llevarla al restaurante','Mascota del local'],['🛁','Bañarla']]:PETS8.map(p=>[p[1],p[2]])},
+   {e:'📛',t:()=>V8().pet?'¿Y luego?':'¿Cómo se va a llamar?',o:()=>V8().pet?[['🍖','Le das un premio'],['📸','Le haces fotos'],['😴','Siesta juntos']]:[...PETN8].sort(()=>Math.random()-.5).slice(0,4).map(n=>['🏷️',n])}],
+  end:v=>{const L=V8();if(!L.pet){const P=PETS8.find(p=>p[2]===v[0]);L.pet={k:P[0],e:P[1],n:v[1],mood:80,shop:0};logL(P[1],'Adoptas a '+v[1]+'.');return[P[1],'¡Bienvenido/a, '+v[1]+'!',()=>{hap(20);need('soc',20);return P[0]==='loro'?`${v[1]} ya ha aprendido a decir «¡QUE SE QUEMA LA CROQUETA!».`:`${v[1]} se duerme encima de tus pies el primer día.`}]}
+   const p=L.pet;return[p.e,`Tiempo con ${p.n}`,()=>{p.mood=cl(p.mood+35,0,100);hap(8);need('div',20);let t='';if(v[0].includes('pasear')){at8('fit',4);t=Math.random()<.25&&!L.love?`${p.n} se escapa y te lleva hasta alguien guapísimo. 👀 `:`${p.n} saluda a todos los perros del barrio. `}
+    if(v[0].includes('restaurante')){p.shop=1;buff('spawn',1.25,240,`${p.e} ${p.n} atrae clientes: +25 %`);t+=`${p.n} se convierte en la estrella del local. `}if(v[0].includes('Bañarla')){need('hig',-10);t+='Acabas más mojado/a que tu mascota. '}if(v[1].includes('fotos')){pop(4);t+='Las fotos tienen más likes que tú.'}else if(v[1].includes('Siesta'))hp7(5);return t||'Un día perfecto.'}]}},
+ {id:'friend8',ic:'🫂',n:'Quedar con un amigo',d:'Tus amigos, uno a uno',cd:120,steps:[{e:'🫂',t:'¿Con quién quedas?',o:()=>{ensureFriends();return V8().fr8.map(f=>[f.e,f.n,f.bio+' · '+Math.round(f.rel)+' %'])}},{e:'💬',t:'¿Qué hacéis?',o:[['🍻','Unas cañas'],['🤫','Le cuentas un secreto'],['💶','Le pides dinero'],['😂','Le gastas una broma']]}],
+  end:v=>{const L=V8(),f=L.fr8.find(x=>x.n===v[0]);return[f.e,'Tarde con '+f.n,()=>{need('soc',35);let t='';
+   if(v[1].includes('cañas')){f.rel+=12;hp7(-2);t=pk([`${f.n} te cuenta su vida entera. Pagas tú.`,`Acabáis cantando en la terraza. El camarero os invita al chupito.`])}
+   else if(v[1].includes('secreto')){f.rel+=8;if(f.bio.includes('cotilleos')&&Math.random()<.6){rep(-4);t=`Mañana lo sabe todo el barrio. Era ${f.n}, claro.`}else t=`${f.n} lo guarda como un tesoro.`}
+   else if(v[1].includes('dinero')){if(f.rel>50&&Math.random()<.7){gain(ECO(10));f.rel-=8;t=`${f.n} te deja dinero «sin prisa». Se nota que te quiere.`}else{f.rel-=12;t=`${f.n} se ríe tanto que se le cae la caña.`}}
+   else{if(Math.random()<.6){f.rel+=6;hap(8);t=`Le escondes el móvil en una croqueta gigante. Se ríe durante 10 minutos.`}else{f.rel-=15;t=`No le ha hecho gracia. Nada de gracia.`}}f.rel=cl(f.rel,0,100);return t}]}},
+ {id:'car8',ic:'🚗',n:'Comprarte un coche',d:'Del Panda a la limusina',cd:60,ok:()=>V8().cars.length<CARS8.length,steps:[{e:'🚗',t:'¿Qué te compras?',o:()=>CARS8.filter(c=>!V8().cars.includes(c[0])).map(c=>[c[1],c[2],fmtM(ECO(c[3]))+' €'+(c[0]==='truck'?' · +6 % clientes':'')])}],
+  end:v=>{const C=CARS8.find(c=>c[2]===v[0]);if(S.money<ECO(C[3]))return['💸','No llegas',()=>'El vendedor te mira de arriba abajo y te enseña los patinetes.'];lose(ECO(C[3]));V8().cars.push(C[0]);applyItems();logL(C[1],'Te compras: '+C[2]+'.');
+   return[C[1],'¡Coche nuevo!',()=>{pop(C[4]);hap(10+C[4]);return C[0]==='bici'?'Le falta un pedal, pero es tuya.':C[0]==='panda'?'Huele a pino y a 1992. Perfecto.':C[0]==='truck'?'Tu food truck reparte flyers solo. Viene más gente al local.':C[0]==='sport'?'Das tres vueltas a la manzana para que te vea todo el mundo.':'Tiene jacuzzi. Lo usas para guardar croquetas.'}]}}
+);
+// ---------- planes ordenados por categorías ----------
+const CAT8=[['🧍','Cuidarte',['eat','shower','gym','beauty','study','doc']],['🫂','Gente',['friend8','friends','party','hparty','abu','pet8']],['🎈','Ocio',['games','trip','car8','pride']],['🍳','Tu negocio',['flyer','course','social','market','spy','sab','fumi','pand']],['🦋','Tú',['idg','out']]];
+let open8=(()=>{try{return JSON.parse(localStorage.getItem('gf-cat8'))||{'Cuidarte':1}}catch(e){return{'Cuidarte':1}}})();
+function plansHtml8(){const vis=PLANS.filter(p=>!p.ok||p.ok()),used=new Set();let h='<p class="note">Planes: pequeñas historias con decisiones. Lo que haces se nota en el restaurante.</p>';
+  const row=p=>{const l=planLeft(p);return`<div class="it"><span class="ic">${p.ic}</span><span class="tx"><b>${p.n}</b><small>${p.d}</small></span><button class="cb ${l>0?'no':'o'}" data-a="plan:${p.id}">${l>0?'⏳ '+Math.ceil(l)+' s':'IR'}</button></div>`};
+  const cats=CAT8.map(([e,n,ids])=>[e,n,vis.filter(p=>ids.includes(p.id))]);const rest=vis.filter(p=>!CAT8.some(c=>c[2].includes(p.id)));if(rest.length)cats.push(['✨','Otros',rest]);
+  for(const [e,n,ps] of cats){if(!ps.length)continue;const o=open8[n];const ready=ps.filter(p=>planLeft(p)<=0).length;h+=`<button class="cat8 ${o?'on':''}" data-a="cat8:${n}"><span>${e} ${n}</span><small>${ready}/${ps.length} listos ${o?'▾':'▸'}</small></button>`;if(o)h+=ps.map(row).join('')}
+  return h}
+act=(function(prev){return function(a){if(a.startsWith('cat8:')){const n=a.slice(5);open8[n]=open8[n]?0:1;try{localStorage.setItem('gf-cat8',JSON.stringify(open8))}catch(e){}const l=$('#sheet .list');if(l)delete l.dataset.d7;renderSheet(1);return false}return prev(a)}})(act);
 
 </script>
 <script>
