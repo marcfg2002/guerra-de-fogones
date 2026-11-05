@@ -391,10 +391,10 @@ const ZONES=[
 const MILES=[10,25,50,75,100,150,200,300];
 const milesOf=L=>MILES.filter(m=>L>=m).length;
 const qual=L=>0.62*Math.log2(1+L);
-const fairOf=(d,L)=>DISH[d].p*(1+0.11*(L-1))*Math.pow(1.8,milesOf(L));
+const fairOf=(d,L)=>DISH[d].p*(1+0.11*(L-1))*Math.pow(1.6,milesOf(L));
 const lifeCook=S0=>{const L=S0&&S0.life;if(!L)return 1;return(1.15-((L.hap??65)/100)*.3)/((L.cb||0)>Date.now()?1.25:1)};
 const cookOf=(d,L,S0)=>DISH[d].t/(1+0.45*milesOf(L))/(((S0||{}).up||{})['c_'+d]||1)*lifeCook(S0)/((S0&&S0.it&&S0.it.ck)||1);
-const upCost=(d,L)=>Math.ceil(DISH[d].p*1.3*Math.pow(1.115,L-1)*(1+0.15*milesOf(L)));
+const upCost=(d,L)=>Math.ceil(DISH[d].p*1.3*Math.pow(1.125,L-1)*(1+0.15*milesOf(L)));
 const chefCost=n=>Math.ceil(60*Math.pow(3.2,n-1));
 const seatCost=n=>Math.ceil(400*Math.pow(6,n-4));
 const speedCost=n=>Math.ceil(150*Math.pow(2.6,n));
@@ -478,7 +478,7 @@ let R0=null;
 function freeSeat(S,R,j){if(!S.zones[j].own){const n=R.custs.filter(c=>c.target===j&&c.state!=='walk'&&c.state!=='up').length;return n<6?0:-1}const cap=seatCap(S,j);for(let k=0;k<cap;k++)if(!R.seats[j][k])return k;return-1}
 function spawnCustomer(S,R,opts={}){
   const side=Math.random()<.5,x=side?-12:VW+12;
-  const c={x,y:SIDE_Y+(Math.random()*10-5),dir:side?1:-1,e:CUST[Math.floor(Math.random()*CUST.length)],state:'walk',target:-1,seat:-1,dish:null,wait:0,mood:'',vip:!!opts.vip,speed:78+Math.random()*20};
+  const c={x,y:SIDE_Y+(Math.random()*10-5),dir:side?1:-1,e:CUST[Math.floor(Math.random()*CUST.length)],state:'walk',target:-1,seat:-1,dish:null,wait:0,mood:'',vip:!!opts.vip,speed:(78+Math.random()*20)*.68};
   // decidir
   let best=0+gumbel(),pick=null;
   const mySeatZ=ownedZones(S).map(j=>[j,freeSeat(S,R,j)]).filter(a=>a[1]>=0);
@@ -494,6 +494,7 @@ function spawnCustomer(S,R,opts={}){
   }else if(pick){const j=pick.j;c.target=j;c.seat=-1;c.state='toDoor';
     c.dish=ZONES[j].dishes[Math.floor(Math.random()*3)]}
   else{if(md.length&&md.some(d=>S.st[d].r>1.35))c.mood='💸';}
+  if(c.target<0&&!c.vip&&Math.random()<.8)return c;
   R.custs.push(c);return c}
 const CUST=['🧑','👩','👨','🧔','👵','👴','👧','👦','🧑‍🦱','👩‍🦰','👨‍🦳','🧕','👱‍♀️','🧑‍🦰','👲'];
 
@@ -529,7 +530,7 @@ function step(S,R,dt){
   }
   R.custs=R.custs.filter(c=>!c.dead);
   // cocineros
-  const sp=(95+13*S.speed)*(R.turbo>0?1.8:1)*((S.up&&S.up.gSpeed)||1);
+  const sp=(95+13*S.speed)*.78*(R.turbo>0?1.8:1)*((S.up&&S.up.gSpeed)||1);
   for(const ch of R.chefs){
     switch(ch.state){
       case 'idle':{if(ch.b==null)ch.b=0;const o=R.orders.find(o=>o.state==='new'&&bld(stationPos(o.d).j)===ch.b);
@@ -1086,7 +1087,7 @@ function openSet(){openModal(`<h2>Ajustes</h2>
   <button class="tog ${S.music?'on':''}" data-m="tMusic"><span>🎵 Música</span><i></i></button>
   <button class="tog ${S.sound?'on':''}" data-m="tSound"><span>🔊 Sonido</span><i></i></button>
   <button class="cb b" data-m="help">CÓMO SE JUEGA</button>
-  <p style="font-size:12px;color:#8a6a40">Versión 27.5 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
+  <p style="font-size:12px;color:#8a6a40">Versión 28 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
   <button class="lnk" style="color:#d8352a" data-m="wipe">Borrar partida</button>
   <button class="cb" data-m="close">SEGUIR</button>`)}
 MA.tMusic=()=>{S.music=!S.music;music();openSet();save()};MA.tSound=()=>{S.sound=!S.sound;music();openSet();save()};
@@ -2020,6 +2021,8 @@ setTimeout(()=>{fitApp();resize()},600);setTimeout(()=>{fitApp();resize()},2000)
 
 // ================= VIDA 7: todo lo nuevo de la vida, sobre el restaurante de siempre =================
 // ---------- utilidades ----------
+const PACE={calm:{n:'😌 Tranquilo',k:.55,ev:2.2,tt:2.5,bug:.35,maxb:3,dis:.35,ill:.5,ai:2.2,nd:.6},norm:{n:'🙂 Normal',k:1,ev:1,tt:1,bug:1,maxb:6,dis:1,ill:1,ai:1,nd:1},chaos:{n:'🤪 Caótico',k:1.25,ev:.6,tt:.7,bug:1.6,maxb:9,dis:1.8,ill:1.5,ai:.6,nd:1.2}};
+const PC=()=>PACE[S.pace]||PACE.calm;
 function V7(){const L=V5();L.id=L.id||{g:'n',o:'bi',made:0};if(L.id.o==='pan')L.id.o='bi';L.nd=L.nd||{ham:70,hig:70,div:60,soc:60};L.cd7=L.cd7||{};L.buf=L.buf||[];if(L.pest==null)L.pest=0;return L}
 V7();
 const hp7=v=>{const L=V7();L.hp=cl((L.hp??100)+v,0,100)};
@@ -2089,26 +2092,26 @@ const ILLS={croq:['🍤','Croquetitis aguda','Solo puedes decir «croqueta».','
 const PANDS=[['🐦','Gripe Palomar','Las palomas estornudan purpurina.','spawn',.7],['🥱','Bostezo Contagioso','Todo el país bosteza a la vez.','cook',.8],['💃','Fiebre del Baile','Nadie puede parar de bailar… entran a comer bailando.','spawn',1.25],['🧀','Peste del Queso','Todo huele a queso. TODO.','money',.85],['🐌','Lentitis Galopante','Todo va a cámara lenta.','cook',.85]];
 let risk7=0;
 const _dt7=dayTick;dayTick=function(dt){const L=V7(),d0=L.day;_dt7(dt);if(L.day===d0)return;const lines=[];
-  for(const k in L.nd)L.nd[k]=cl(L.nd[k]-(12+rint(8)),0,100);if(L.nd.hig<25)buff('spawn',.8,150,'🦨 Hueles fatal: −20 % clientes');if(L.nd.ham<25)hp7(-6);if(L.nd.soc<25)hap(-6);if(L.nd.div<25)hap(-4);
-  if(L.pand){const P=PANDS[L.pand.i];buff(P[3],P[4],150,`${P[0]} Pandemia ${P[1]}`);if(--L.pand.d<=0){lines.push(`🎉 Se acabó la ${P[1]}`);L.pand=null}}else if(L.day>3&&Math.random()<.07){const i=rint(PANDS.length),P=PANDS[i];L.pand={i,d:3+rint(3)};lines.push(`🦠 ¡PANDEMIA! ${P[0]} ${P[1]}: ${P[2]}`);logL(P[0],'Empieza la pandemia de '+P[1]+'.');buff(P[3],P[4],150,`${P[0]} ${P[1]}`)}
+  for(const k in L.nd)L.nd[k]=cl(L.nd[k]-(12+rint(8))*PC().nd,0,100);if(L.nd.hig<25)buff('spawn',.8,150,'🦨 Hueles fatal: −20 % clientes');if(L.nd.ham<25)hp7(-6);if(L.nd.soc<25)hap(-6);if(L.nd.div<25)hap(-4);
+  if(L.pand){const P=PANDS[L.pand.i];buff(P[3],P[4],150,`${P[0]} Pandemia ${P[1]}`);if(--L.pand.d<=0){lines.push(`🎉 Se acabó la ${P[1]}`);L.pand=null}}else if(L.day>3&&Math.random()<.07*PC().ill){const i=rint(PANDS.length),P=PANDS[i];L.pand={i,d:3+rint(3)};lines.push(`🦠 ¡PANDEMIA! ${P[0]} ${P[1]}: ${P[2]}`);logL(P[0],'Empieza la pandemia de '+P[1]+'.');buff(P[3],P[4],150,`${P[0]} ${P[1]}`)}
   if(L.ill){const I=ILLS[L.ill.k];if(I[3]!=='none')buff(I[3],I[4],150,`${I[0]} ${I[1]}`);if(--L.ill.d<=0){lines.push(`💪 Te has curado de ${I[1].toLowerCase()}`);L.ill=null}}
-  else if(Math.random()<.05+risk7*.12+(L.pand?.2:0)+(L.hp<40?.1:0)){const k=pk(Object.keys(ILLS)),I=ILLS[k];L.ill={k,d:2+rint(3)};lines.push(gtxt(`🤒 ¡Te has contagiado de ${I[1]}! ${I[2]}`));logL(I[0],'Contagio: '+I[1]+'.')}
+  else if(Math.random()<(.05+risk7*.12+(L.pand?.2:0)+(L.hp<40?.1:0))*PC().ill){const k=pk(Object.keys(ILLS)),I=ILLS[k];L.ill={k,d:2+rint(3)};lines.push(gtxt(`🤒 ¡Te has contagiado de ${I[1]}! ${I[2]}`));logL(I[0],'Contagio: '+I[1]+'.')}
   risk7=0;
   if(bugs7.length>=4||L.pest>=5){const f=lose(ECO(8+bugs7.length*2));S.fame=Math.max(0,S.fame-6);lines.push(`🕵️ Inspección sorpresa: multa de ${fmtM(f)} € por los bichos`)}
-  if(Math.random()<.16)setTimeout(disaster,4000);
-  if(L.of){const g=gain(ofIncome());lines.push(`📸 OnlyFans: +${fmtM(g)} €`);if(Math.random()<.16)setTimeout(ofDrama,6000)}
+  if(Math.random()<.16*PC().dis)setTimeout(disaster,4000);
+  if(L.of){const g=gain(ofIncome());lines.push(`📸 OnlyFans: +${fmtM(g)} €`);if(Math.random()<.16*PC().dis)setTimeout(ofDrama,6000)}
   if(aiOn())aiText('Escribe el titular del periódico del barrio de hoy, gracioso, sobre la vida del protagonista o su calle.',120).then(t=>{if(t)toast('📰 «'+t+'»',6000)});
-  if(lines.length)setTimeout(()=>{if(!$('#modal').hidden){lines.forEach((l,i)=>setTimeout(()=>toast(l,3500),i*3600));return}openModal(`<div class="emo">📰</div><h2>Nuevo día en ${curStreet().n}</h2>${lines.map(l=>`<div class="illc">${l}</div>`).join('')}<button class="cb" data-m="close">VALE</button>`)},1200)};
+  if(lines.length)setTimeout(()=>{if(S.pace!=='chaos'||!$('#modal').hidden){lines.forEach((l,i)=>setTimeout(()=>toast(l,3500),i*3600));return}openModal(`<div class="emo">📰</div><h2>Nuevo día en ${curStreet().n}</h2>${lines.map(l=>`<div class="illc">${l}</div>`).join('')}<button class="cb" data-m="close">VALE</button>`)},1200)};
 // ---------- plagas en el local ----------
 const PESTS=[['🪳',1],['🐀',2],['🐦',1],['🦝',3],['🐜',1],['🦗',1]];
 const bugL=document.createElement('div');bugL.className='bugs';stageEl.appendChild(bugL);const tv7=new THREE.Vector3();
 function spawnBug(e){const g=GEO[0],P=e?[e,1]:pk(PESTS.slice(0,V7().pest>3?6:4));const b={x:g.x0+12+Math.random()*(g.x1-g.x0-24),y:g.y0+25+Math.random()*Math.max(30,Math.abs(g.counterY-g.y0)-50),vx:(Math.random()-.5)*30,vy:(Math.random()-.5)*30,hp:P[1]};
   const el=document.createElement('button');el.className='bug';el.textContent=P[0];b.el=el;el.addEventListener('pointerdown',ev=>{ev.stopPropagation();b.hp--;tone(200+rint(200),.06,'square',.04);el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),120);if(b.hp<=0){b.dead=1;el.remove();const m=Math.max(1,Math.round(ECO(.3)));S.money+=m;toast('💥 ¡Aplastado! +'+fmtM(m)+' €',900);V7().pest=Math.max(0,V7().pest-.25);applyItems()}});bugL.appendChild(el);bugs7.push(b);applyItems()}
 let bugT=8;setInterval(()=>{const dt=.1;if(!$('#modal').hidden||document.hidden){bugL.style.display='none';return}bugL.style.display='';const L=V7(),g=GEO[0];bugT-=dt;
-  if(bugT<=0){bugT=7+Math.random()*9;if(Math.random()<Math.min(.8,.1+L.pest*.12)&&bugs7.length<9){const n=1+rint(Math.min(4,1+Math.ceil(L.pest)));for(let i=0;i<n;i++)spawnBug();if(!L.f2.bugSeen){L.f2.bugSeen=1;toast('🪳 ¡BICHOS EN EL LOCAL! Tócalos para aplastarlos',4000)}}}
+  if(bugT<=0){bugT=7+Math.random()*9;if(Math.random()<Math.min(.8,.1+L.pest*.12)*PC().bug&&bugs7.length<PC().maxb){const n=1+rint(Math.min(4,1+Math.ceil(L.pest)));for(let i=0;i<n;i++)spawnBug();if(!L.f2.bugSeen){L.f2.bugSeen=1;toast('🪳 ¡BICHOS EN EL LOCAL! Tócalos para aplastarlos',4000)}}}
   const r=cv.getBoundingClientRect(),s=stageEl.getBoundingClientRect();for(const b of bugs7){if(b.dead)continue;b.x+=b.vx*dt;b.y+=b.vy*dt;if(b.x<g.x0+10||b.x>g.x1-10)b.vx*=-1;const yl=Math.min(g.y0,g.counterY)+20,yh=Math.max(g.y0,g.counterY)-20;if(b.y<yl||b.y>yh)b.vy*=-1;if(Math.random()<.02){b.vx=(Math.random()-.5)*34;b.vy=(Math.random()-.5)*34}
    tv7.set(Wx(b.x),.1,Wz(b.y)).project(camera);b.el.style.transform=`translate(${(tv7.x+1)/2*r.width+r.left-s.left}px,${(1-tv7.y)/2*r.height+r.top-s.top}px) translate(-50%,-50%) scaleX(${b.vx<0?-1:1})`}
-  const n0=bugs7.length;bugs7=bugs7.filter(b=>!b.dead);if(n0!==bugs7.length)applyItems();L.pest=cl(L.pest+bugs7.length*dt*.004,0,10)},100);
+  const n0=bugs7.length;bugs7=bugs7.filter(b=>!b.dead);if(n0!==bugs7.length)applyItems();L.pest=cl(L.pest+bugs7.length*dt*.004*PC().bug,0,10)},100);
 function disaster(){if(!$('#modal').hidden)return;const D=pk([['🧊','¡Se ha roto la nevera!','Hoy cocinas más lento hasta que venga el técnico.',()=>buff('cook',.75,120,'🧊 Nevera rota: cocina −25 %')],['💡','¡Apagón en la calle!','Los rivales también se quedan a oscuras.',()=>openRiv().forEach(j=>R.sab[j]=25)],
   ['🌊','¡Inundación en el baño!','Un cliente sale nadando.',()=>buff('spawn',.85,120,'🌊 Baño inundado: −15 % clientes')],['🐦','¡Una paloma se cuela en el local!','Tócala para echarla.',()=>{spawnBug('🐦');spawnBug('🐦')}],['🎺','¡Una banda de música para delante de tu puerta!','Se forma una cola enorme.',()=>{R.rush=Math.max(R.rush||0,30)}]]);D[3]();bigText(D[0]+' '+D[1],D[2]);sfx.bad()}
 // ---------- OnlyFans de verdad (sugerente, nunca explícito) ----------
@@ -2215,9 +2218,11 @@ openSet=(function(prev){return function(){prev();const c=$('#card');if(!c)return
 openSet=(function(prev){return function(){prev();const c=$('#card');if(c)c.insertAdjacentHTML('beforeend',`<p class="note" style="font-size:11px;opacity:.6">${window._fitInfo||''}</p>`)}})(openSet);
 MA.gk7=()=>{S.gemKey=$('#gk7').value.trim();save();closeModal();toast(S.gemKey?'🤖 IA activada':'IA desactivada')};
 // ---------- zoom con dos dedos ----------
-let ZOOM=1.15;fitCam=function(){camBase.pitch=1.0;camBase.d=40;const a=camera.aspect||.6,hw=VIS_W/ZOOM/2,hh=hw/a;for(const c of [camera,tmpC]){c.left=-hw;c.right=hw;c.top=hh;c.bottom=-hh;c.near=.5;c.far=300;c.updateProjectionMatrix()}zMin=Wz(-20)+hh/Math.sin(camBase.pitch)*.9;zMax=Wz(VH+20)-hh/Math.sin(camBase.pitch)*.95;clampCam()};
-clampCam=function(){const xm=Math.max(0,11.5-VIS_W/ZOOM/2);camXT=Math.max(-xm,Math.min(xm,camXT));camZT=zMax<zMin?(zMin+zMax)/2:Math.max(zMin,Math.min(zMax,camZT))};
-const PT7=new Map();let pin7=null;const setZoom=z=>{ZOOM=cl(z,.8,2.4);fitCam()};
+let ZOOM=1;fitCam=function(){camBase.pitch=1.0;camBase.d=40;const a=camera.aspect||.6,hw=VIS_W/ZOOM/2,hh=hw/a;for(const c of [camera,tmpC]){c.left=-hw;c.right=hw;c.top=hh;c.bottom=-hh;c.near=.5;c.far=300;c.updateProjectionMatrix()}zMin=Wz(-20)+hh/Math.sin(camBase.pitch)*.9;zMax=Wz(VH+20)-hh/Math.sin(camBase.pitch)*.95;clampCam()};
+function ownX7(){const js=ownedZones(S).filter(j=>RECTS[j].dir===1);let a=1e9,b=-1e9;for(const j of js){a=Math.min(a,RECTS[j].x0);b=Math.max(b,RECTS[j].x1)}if(a>b){a=150;b=270}return[Wx(a-4),Wx(b+4)]}
+function autoZoom7(){const [a,b]=ownX7();ZOOM=cl(VIS_W/Math.max(4,b-a),1,2.4)}
+clampCam=function(){const [a,b]=ownX7(),hw=VIS_W/ZOOM/2;camXT=(b-a)<=hw*2+.05?(a+b)/2:Math.max(a+hw,Math.min(b-hw,camXT));camZT=zMax<zMin?(zMin+zMax)/2:Math.max(zMin,Math.min(zMax,camZT))};
+autoZoom7();fitCam();homeCam();let own7=ownedZones(S).length;setInterval(()=>{const n=ownedZones(S).length;if(n!==own7){own7=n;autoZoom7();fitCam()}},2000);const PT7=new Map();let pin7=null;const setZoom=z=>{const [a,b]=ownX7();ZOOM=cl(z,VIS_W/Math.max(4,b-a)*.8,2.6);fitCam()};
 cv.addEventListener('pointerdown',e=>{PT7.set(e.pointerId,{x:e.clientX,y:e.clientY});if(PT7.size===2){const [a,b]=[...PT7.values()];pin7={d:Math.hypot(a.x-b.x,a.y-b.y),z:ZOOM};drag3=null}},true);
 addEventListener('pointermove',e=>{if(!PT7.has(e.pointerId))return;PT7.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pin7&&PT7.size>=2){const [a,b]=[...PT7.values()];setZoom(pin7.z*Math.hypot(a.x-b.x,a.y-b.y)/Math.max(20,pin7.d));drag3=null}},true);
 const end7=e=>{PT7.delete(e.pointerId);if(PT7.size<2)pin7=null};addEventListener('pointerup',end7,true);addEventListener('pointercancel',end7,true);addEventListener('blur',()=>{PT7.clear();pin7=null});
@@ -2227,7 +2232,16 @@ fitCam();
 // ---------- nombres en los botones de abajo ----------
 [['mejoras','Mejoras'],['equipo','Equipo'],['calle','Calle'],['precios','Precios']].forEach(([k,n])=>{const b=document.querySelector(`.dock [data-sheet="${k}"]`);if(b&&!b.querySelector('em'))b.insertAdjacentHTML('beforeend',`<em>${n}</em>`)});
 // ---------- IA: evento sorpresa de vez en cuando ----------
-setInterval(()=>{if(document.hidden||!aiOn())return;aiT-=5;if(aiT>0)return;aiT=240+rint(120);if($('#modal').hidden&&!sheetKind&&!dlgOn)aiEvent()},5000);
+setInterval(()=>{if(document.hidden||!aiOn())return;aiT-=5;if(aiT>0)return;aiT=(240+rint(120))*PC().ai;if($('#modal').hidden&&!sheetKind&&!dlgOn)aiEvent()},5000);
+
+// ---------- ritmo del juego (Tranquilo / Normal / Caótico) ----------
+dayTick=(function(prev){return function(dt){prev(dt*PC().k)}})(dayTick);
+eventTick=(function(prev){return function(dt){const a=evT;prev(dt);if(evT>a+1)evT*=PC().ev}})(eventTick);
+tauntTick=(function(prev){return function(dt){const a=tauntT;prev(dt);if(tauntT>a+1)tauntT*=PC().tt}})(tauntTick);
+openSet=(function(prev){return function(){prev();const c=$('#card');if(!c)return;const ref=c.querySelector('.lkh')||c.lastElementChild;
+  ref.insertAdjacentHTML('beforebegin',`<b class="lkh">⏱️ Ritmo de la vida</b><div class="seg3">${Object.entries(PACE).map(([k,v])=>`<button data-m="pace7" data-v="${k}" class="${(S.pace||'calm')===k?'on':''}">${v.n}</button>`).join('')}</div><p class="note">Tranquilo: días más largos, menos sustos, menos bichos y menos ventanas. El restaurante va igual.</p>`)}})(openSet);
+MA.pace7=b=>{S.pace=b.dataset.v;save();c7=$('#card');c7.querySelectorAll('[data-m="pace7"]').forEach(x=>x.classList.toggle('on',x===b));toast(PACE[S.pace].n)};
+let c7;
 
 </script>
 <script>
