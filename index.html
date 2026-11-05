@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fogones">
-<meta name="theme-color" content="#23262f">
+<meta name="theme-color" content="#ff9a7f">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
@@ -15,7 +15,7 @@
 <title>Guerra de Fogones</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lilita+One&family=Nunito:wght@800;900&display=swap">
 <style>
 /* Layout: el mapa de la calle a pantalla completa; HUD flotando arriba; misión + dock de botones gordos abajo; fichas que suben desde abajo */
 :root{
@@ -360,6 +360,92 @@ body{background:#23262f;padding-left:0;padding-right:0}
 .stepn{display:inline-block;background:#ffe2a8;border-radius:99px;padding:3px 10px}
 .vtabs button.on{box-shadow:0 2px 0 rgba(0,0,0,.15)}
 .toast{box-shadow:0 6px 18px rgba(0,0,0,.25)!important}
+/*==== TEMA CUTE v30 ====*/
+:root{--f-d:'Fredoka','Lilita One','Arial Rounded MT Bold',system-ui,sans-serif;--f-b:'Fredoka','Nunito',-apple-system,system-ui,sans-serif;--cream:#fffaf2;--ol:#5a3a2e;
+ --c-peach:#ffe3cc;--c-coral:#ff8a7a;--c-pink:#ff9ec4;--c-mint:#7fdcb4;--c-sky:#86c9ff;--c-lilac:#b9a2ff;--c-butter:#ffd56b;--c-ink:#5a3a2e}
+html,body{background:#fff4e8!important}
+body,button,input{font-family:var(--f-b)}
+/* barra de arriba */
+.topbar{background:linear-gradient(#ff9a7f,#ff8796)!important;border:0!important;box-shadow:0 4px 0 #e8706f,0 8px 18px rgba(255,120,120,.25);border-radius:0 0 26px 26px;padding-left:10px!important;padding-right:10px!important;padding-bottom:8px!important;position:relative;z-index:6}
+.topbar .pill{background:#fff!important;border:0!important;box-shadow:0 3px 0 rgba(160,60,60,.25)!important;border-radius:99px!important;color:var(--c-ink)!important}
+.topbar .pill b,.topbar .cashv{font-family:var(--f-d)!important;font-weight:700!important;color:var(--c-ink)!important}
+.topbar .cashv small{color:#c57a5a!important;font-weight:600!important}
+.topbar .coin{background:radial-gradient(circle at 35% 30%,#ffe9a0,#ffc23d 60%,#f0a020)!important;border:3px solid #fff!important;box-shadow:0 3px 0 rgba(160,90,0,.35)!important;color:#a8650c!important;font-family:var(--f-d)!important}
+.topbar .coin.star{background:radial-gradient(circle at 35% 30%,#e7dcff,#a98bff 60%,#7d5cf0)!important}
+.topbar .gear{background:#fff!important;border-radius:50%!important;box-shadow:0 3px 0 rgba(160,60,60,.25)!important;width:44px;height:44px;font-size:22px!important;border:0!important;filter:none!important}
+/* botones laterales */
+.sb{background:#fff!important;border:0!important;border-radius:22px!important;box-shadow:0 4px 0 #f0c9a8,0 6px 14px rgba(150,80,40,.18)!important}
+.side .sb span{filter:drop-shadow(0 2px 0 rgba(0,0,0,.08))}
+/* misión y sueño */
+.mission{background:#fff!important;border-radius:20px!important;box-shadow:0 4px 0 #f0c9a8,0 6px 14px rgba(150,80,40,.15)!important}
+.mission *{font-family:var(--f-b)}
+.mission .pb{background:#ffe6d1!important;border:0!important}.mission .pb i{background:linear-gradient(90deg,#7fdcb4,#5fc99a)!important;border-radius:99px}
+.goalc{background:rgba(255,255,255,.95)!important;border-radius:99px!important;box-shadow:0 3px 0 #f0c9a8!important;color:var(--c-ink)}
+/* dock */
+.dock{background:#fff4e8!important;border:0!important;box-shadow:0 -6px 18px rgba(150,80,40,.12);border-radius:26px 26px 0 0;padding-top:10px!important;gap:8px!important}
+.dock .db{border:0!important;border-radius:20px!important;color:#fff!important;font-family:var(--f-d)!important}
+.dock .db em{font-family:var(--f-d)!important;font-weight:600;font-size:11px!important;text-shadow:0 1px 0 rgba(0,0,0,.18)!important}
+.dock .db[data-sheet="mejoras"]{background:linear-gradient(#ffc27a,#ffa24f)!important;box-shadow:0 5px 0 #e07f2c!important}
+.dock .db[data-sheet="equipo"]{background:linear-gradient(#9fd6ff,#6db8ff)!important;box-shadow:0 5px 0 #3f8fe0!important}
+.dock .db[data-sheet="calle"]{background:linear-gradient(#cbb8ff,#a48aff)!important;box-shadow:0 5px 0 #7a5fe0!important}
+.dock .db[data-sheet="precios"]{background:linear-gradient(#9be8c6,#6fd3a6)!important;box-shadow:0 5px 0 #3fae7f!important}
+.dock .db.wide{background:linear-gradient(#ffb3cf,#ff7fae)!important;box-shadow:0 5px 0 #e0558c!important}
+.dock .db.wide b{font-family:var(--f-d)!important;font-weight:700!important;text-shadow:0 2px 0 rgba(180,40,90,.35)!important}
+.dock .db:active{transform:translateY(4px)!important;box-shadow:0 1px 0 rgba(0,0,0,.2)!important}
+/* ventanas */
+.modal{background:rgba(90,50,40,.35)!important}
+.card{background:#fffaf3!important;border:0!important;border-radius:28px!important;box-shadow:0 8px 0 #f0c9a8,0 18px 40px rgba(90,40,20,.3)!important;color:var(--c-ink)!important}
+.card h2{font-family:var(--f-d)!important;font-weight:700!important;color:var(--c-ink)!important;letter-spacing:.2px}
+.card p{color:#7a5646}
+@keyframes boing{0%{transform:scale(.4) rotate(-12deg)}60%{transform:scale(1.15) rotate(4deg)}100%{transform:scale(1)}}
+.card .emo{animation:boing .45s cubic-bezier(.3,1.6,.5,1);display:inline-block;filter:drop-shadow(0 4px 0 rgba(0,0,0,.08))}
+.choice button{background:#fff!important;border:3px solid #ffe0c4!important;border-radius:20px!important;box-shadow:0 4px 0 #f3c9a3!important;color:var(--c-ink)!important;font-family:var(--f-b)!important;font-weight:600!important}
+.choice button small{color:#b08a72!important;font-weight:500!important}
+.choice button:active{transform:translateY(3px)!important;box-shadow:0 1px 0 #f3c9a3!important}
+.cb{border:0!important;border-radius:16px!important;font-family:var(--f-d)!important;font-weight:700!important;color:#fff!important;background:linear-gradient(#8ee6a8,#5fd08a)!important;box-shadow:0 4px 0 #3aa865!important;text-shadow:0 1px 0 rgba(0,0,0,.15)}
+.cb.o{background:linear-gradient(#ffc27a,#ffa24f)!important;box-shadow:0 4px 0 #e07f2c!important}
+.cb.b{background:linear-gradient(#9fd6ff,#6db8ff)!important;box-shadow:0 4px 0 #3f8fe0!important}
+.cb.no{background:#e9ddd2!important;box-shadow:0 4px 0 #cdbbab!important;color:#a08878!important;text-shadow:none}
+.cb:active{transform:translateY(3px)!important;box-shadow:0 1px 0 rgba(0,0,0,.2)!important}
+.lnk{color:#c0806a!important;font-family:var(--f-b)!important;font-weight:600}
+.note{color:#b08a72!important;font-weight:500!important}
+.keep span,.illc,.tomc{border-radius:16px!important}
+/* panel inferior */
+.sheet{background:#fff7ee!important;border:0!important;border-radius:30px 30px 0 0!important;box-shadow:0 -8px 30px rgba(90,40,20,.25)!important}
+.sheet h2,.sheet .sh b{font-family:var(--f-d)!important;font-weight:700!important;color:var(--c-ink)!important}
+.sheet .it{background:#fff!important;border:0!important;border-radius:20px!important;box-shadow:0 3px 0 #f0d9c3!important;color:var(--c-ink)}
+.sheet .it b{font-family:var(--f-b);font-weight:700;color:var(--c-ink)}.sheet .it small{color:#b08a72!important;font-weight:500}
+.sheet .it .ic{background:#fff1e3;border-radius:14px}
+.vtabs{background:#ffe9d6!important;border-radius:99px!important;padding:4px!important;border:0!important}
+.vtabs button{border-radius:99px!important;font-family:var(--f-b)!important;font-weight:600!important;color:#a7806a!important;border:0!important;background:transparent!important}
+.vtabs button.on{background:#fff!important;color:var(--c-ink)!important;box-shadow:0 3px 0 #f0c9a8!important}
+.hp{background:#ffe6d1!important;border:0!important;border-radius:99px!important}.hp i{border-radius:99px}
+.needs7 span,.at8 span,.frl8 span{border:0!important;box-shadow:0 3px 0 #f0d9c3;border-radius:18px!important}
+.cat8{border:0!important;background:linear-gradient(#ffe3a6,#ffd27a)!important;box-shadow:0 4px 0 #e8b04f!important;border-radius:18px!important;font-family:var(--f-d)!important;font-weight:600!important;color:var(--c-ink)!important}
+.chips8 span{border:0!important;background:#fff!important;box-shadow:0 2px 0 #f0d9c3}
+.seg3 button{border:3px solid #ffe0c4!important;border-radius:14px!important;font-family:var(--f-b)!important;font-weight:600!important}.seg3 button.on{background:#ffe2a8!important;border-color:#ffb86b!important;box-shadow:none!important}
+.lkin{border:3px solid #ffe0c4!important;border-radius:16px!important;font-family:var(--f-b)!important;font-weight:600!important;color:var(--c-ink)}
+.stepn{background:#ffe0ec!important;color:#d0567f!important;font-family:var(--f-b)!important;font-weight:700!important}
+/* avisos */
+.toast{background:#fff!important;color:var(--c-ink)!important;border:0!important;border-radius:22px!important;box-shadow:0 5px 0 #f0c9a8,0 10px 24px rgba(90,40,20,.25)!important;font-family:var(--f-b)!important;font-weight:700!important}
+.big{font-family:var(--f-d)!important}
+.dlg .dbx{background:#fff!important;border:0!important;border-radius:24px!important;box-shadow:0 5px 0 #f0c9a8,0 10px 24px rgba(90,40,20,.25)!important;color:var(--c-ink)}
+.dlg .dbx b{font-family:var(--f-d);color:#ff7a8f}
+/*v30 vida*/
+.yearb{position:absolute;right:10px;bottom:14px;z-index:5;width:82px;height:82px;border-radius:50%;border:0;padding:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--f-d);color:#fff;filter:drop-shadow(0 5px 0 #d94f7f) drop-shadow(0 8px 12px rgba(160,40,80,.3))}
+.yearb .yr{position:absolute;inset:0;border-radius:50%}
+.yearb::before{content:'';position:absolute;inset:6px;border-radius:50%;background:linear-gradient(#ffb3cf,#ff7fae)}
+.yearb span,.yearb b,.yearb small{position:relative;line-height:1}.yearb span{font-size:24px}.yearb b{font-size:14px;font-weight:700;text-shadow:0 1px 0 rgba(160,30,70,.4)}.yearb small{font-size:10px;font-weight:600;opacity:.9}
+.yearb.ready{animation:yb9 1s infinite}.yearb.ready::before{background:linear-gradient(#ffd56b,#ff9f43)}
+@keyframes yb9{50%{transform:scale(1.09) rotate(-4deg)}}
+.yl9{display:flex;flex-direction:column;gap:6px;margin:8px 0;text-align:left}.yl9 div{background:#fff;border-radius:14px;padding:8px 10px;box-shadow:0 2px 0 #f0d9c3;font-weight:600;font-size:14px}
+.df9{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin:6px 0 10px}.df9 span{border-radius:99px;padding:4px 10px;font-weight:700;font-size:13px}.df9 .up{background:#dcf7e6;color:#2b8a50}.df9 .dn{background:#ffe1e1;color:#c0392b}
+.job9{background:#fff;border-radius:22px;padding:12px;box-shadow:0 3px 0 #f0d9c3;display:flex;flex-direction:column;gap:8px}
+.job9 .jh{display:flex;gap:10px;align-items:center}.job9 .jh>span{font-size:34px;background:#fff1e3;border-radius:16px;width:54px;height:54px;display:flex;align-items:center;justify-content:center}
+.job9 .jh b{font-family:var(--f-d);font-size:18px;display:block}.job9 .jh small{color:#b08a72;font-weight:500}
+.job9 .jr{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:8px;font-size:13px;font-weight:600}.job9 .jr b{font-size:13px}
+.lock9{opacity:.6}
+.bl9{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 6px}.bl9 span{background:linear-gradient(#ffe0ec,#ffd0e2);border-radius:99px;padding:5px 11px;font-size:13px;color:#8a3a5a}
 </style>
 
 <div id="app">
@@ -1113,7 +1199,7 @@ function openSet(){openModal(`<h2>Ajustes</h2>
   <button class="tog ${S.music?'on':''}" data-m="tMusic"><span>🎵 Música</span><i></i></button>
   <button class="tog ${S.sound?'on':''}" data-m="tSound"><span>🔊 Sonido</span><i></i></button>
   <button class="cb b" data-m="help">CÓMO SE JUEGA</button>
-  <p style="font-size:12px;color:#8a6a40">Versión 29 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
+  <p style="font-size:12px;color:#8a6a40">Versión 30 · Franquicia ${S.fr+1} · ${fmtM(S.earned)} € ganados · ${S.served} clientes</p>
   <button class="lnk" style="color:#d8352a" data-m="wipe">Borrar partida</button>
   <button class="cb" data-m="close">SEGUIR</button>`)}
 MA.tMusic=()=>{S.music=!S.music;music();openSet();save()};MA.tSound=()=>{S.sound=!S.sound;music();openSet();save()};
@@ -1578,7 +1664,7 @@ const _dayTick=dayTick;dayTick=function(dt){_dayTick(dt);const L=L2();if(L.day==
   if(L.rent>0){const r=gain(L.rent);lines.push('🏠 Alquileres: +'+fmtM(r)+' €')}
   const ic=car('infl').lv;if(ic>0){const r=gain(ECO(2)*ic*ic);lines.push('📱 Patrocinios: +'+fmtM(r)+' €')}
   if(L.love&&L.love.lv>=2)hap(4);hap(-3);if(L.pop>8)pop(-1.5);
-  if(L.day%2===0){L.age++;lines.push('🎂 ¡Cumples '+L.age+' años!');logL('🎂','Cumples '+L.age+' años.')}
+  if(false){L.age++;lines.push('🎂 ¡Cumples '+L.age+' años!');logL('🎂','Cumples '+L.age+' años.')}
   if(L.stup&&L.day>=L.stup.day){const s=L.stup;L.stup=null;const r=Math.random();
     if(r<.2)setTimeout(()=>withRes('🦄','¡LA STARTUP TRIUNFA!',()=>{gain(s.amt*12);hap(20);return`«${s.n}» la compra una multinacional. Tu primo Jonatan se compra un yate. Tú, otro.`}),800);
     else if(r<.5)setTimeout(()=>withRes('📊','La startup sobrevive',()=>{gain(s.amt*1.5);return`«${s.n}» da beneficios. Pocos, pero da.`}),800);
@@ -2057,7 +2143,7 @@ const esc7=s=>String(s??'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&am
 const RV=j=>({n:ZONES[j].name,e:ZONES[j].e,o:CAST[RK[j-1]].n,k:RK[j-1]});
 const openRiv=()=>[1,2,3].filter(j=>S.zones[j].open&&!S.zones[j].own);
 // texto con el género del personaje
-function gtxt(s){const g=V7().id.g;return String(s).replace(/\b(\p{L}+?)o\/a(s?)\b/gu,(_,w,pl)=>w+(g==='m'?'o':g==='f'?'a':'e')+pl).replace(/\bel\/la\b/g,g==='m'?'el':g==='f'?'la':'le').replace(/\bun\/una\b/g,g==='m'?'un':g==='f'?'una':'une')}
+function gtxt(s){const g=V7().id.g;return String(s).replace(/\b(\p{L}+?)e\/a(s?)\b/gu,(_,w,pl)=>w+(g==='f'?'a':'e')+pl).replace(/\b(\p{L}+?[rnl])\/a(s?)\b/gu,(_,w,pl)=>w+(g==='f'?'a':g==='n'?'e':'')+pl).replace(/\b(\p{L}+?)o\/a(s?)\b/gu,(_,w,pl)=>w+(g==='m'?'o':g==='f'?'a':'e')+pl).replace(/\bel\/la\b/g,g==='m'?'el':g==='f'?'la':'le').replace(/\bun\/una\b/g,g==='m'?'un':g==='f'?'una':'une')}
 const _wr7=withRes;withRes=function(ic,t,fn){return _wr7(ic,gtxt(t),()=>gtxt(fn()||''))};
 // ---------- efectos temporales en el restaurante (lo que haces en tu vida se nota en el local) ----------
 function buff(k,v,secs,label){const L=V7();L.buf.push({k,v,until:Date.now()+secs*1000,label});applyItems();toast(gtxt(`☀️ ${label} · ${Math.round(secs/60)} min`),2600)}
@@ -2363,12 +2449,152 @@ PLANS.push(
 // ---------- planes ordenados por categorías ----------
 const CAT8=[['🧍','Cuidarte',['eat','shower','gym','beauty','study','doc']],['🫂','Gente',['friend8','friends','party','hparty','abu','pet8']],['🎈','Ocio',['games','trip','car8','pride']],['🍳','Tu negocio',['flyer','course','social','market','spy','sab','fumi','pand']],['🦋','Tú',['idg','out']]];
 let open8=(()=>{try{return JSON.parse(localStorage.getItem('gf-cat8'))||{'Cuidarte':1}}catch(e){return{'Cuidarte':1}}})();
-function plansHtml8(){const vis=PLANS.filter(p=>!p.ok||p.ok()),used=new Set();let h='<p class="note">Planes: pequeñas historias con decisiones. Lo que haces se nota en el restaurante.</p>';
+function plansHtml8(){const vis=PLANS.filter(p=>!p.ok||p.ok()),used=new Set();let h='';
   const row=p=>{const l=planLeft(p);return`<div class="it"><span class="ic">${p.ic}</span><span class="tx"><b>${p.n}</b><small>${p.d}</small></span><button class="cb ${l>0?'no':'o'}" data-a="plan:${p.id}">${l>0?'⏳ '+Math.ceil(l)+' s':'IR'}</button></div>`};
   const cats=CAT8.map(([e,n,ids])=>[e,n,vis.filter(p=>ids.includes(p.id))]);const rest=vis.filter(p=>!CAT8.some(c=>c[2].includes(p.id)));if(rest.length)cats.push(['✨','Otros',rest]);
   for(const [e,n,ps] of cats){if(!ps.length)continue;const o=open8[n];const ready=ps.filter(p=>planLeft(p)<=0).length;h+=`<button class="cat8 ${o?'on':''}" data-a="cat8:${n}"><span>${e} ${n}</span><small>${ready}/${ps.length} listos ${o?'▾':'▸'}</small></button>`;if(o)h+=ps.map(row).join('')}
   return h}
 act=(function(prev){return function(a){if(a.startsWith('cat8:')){const n=a.slice(5);open8[n]=open8[n]?0:1;try{localStorage.setItem('gf-cat8',JSON.stringify(open8))}catch(e){}const l=$('#sheet .list');if(l)delete l.dataset.d7;renderSheet(1);return false}return prev(a)}})(act);
+
+// ================= VIDA 9: BitLife de verdad — años, trabajos, estudios, sucesos =================
+function V9(){const L=V8();L.edu=L.edu||{deg:[],mas:0,cur:null,eff:'norm'};L.job=L.job===undefined?null:L.job;if(L.yc==null)L.yc=0;L.yr=L.yr||{earn0:S.earned,ev:[]};if(L.retired==null)L.retired=0;return L}
+V9();
+const YT=()=>({calm:150,norm:110,chaos:70}[S.pace]||150);
+// ---------- estudios ----------
+const DEG9={med:['🩺','Medicina',6],der:['⚖️','Derecho',4],emp:['📈','Empresariales',4],per:['📰','Periodismo',4],gas:['🍳','Gastronomía',3],inf:['💻','Informática',4],art:['🎨','Bellas Artes',4],fis:['🏃','Ciencias del Deporte',4]};
+const hasDeg=k=>V9().edu.deg.includes(k);
+// ---------- trabajos ----------
+// [id, emoji, nombre, requisitos, efecto en el restaurante, puestos [nombre, sueldo/año en "ECO"]]
+const R9=(...n)=>n;
+const JOBS9=[
+ ['cam','🍺','Camarero/a',{},['pm',.012,'💶 más por plato'],R9(['Friegaplatos',3],['Camarero/a en prácticas',4],['Camarero/a',5],['Camarero/a de terraza',6],['Jefe/a de sala',8],['Maître',11],['Maître de hotel de lujo',15],['Director/a de sala',20])],
+ ['rep','🛵','Repartidor/a',{},['sp',.012,'📣 más clientes'],R9(['Repartidor/a en bici',3],['Repartidor/a en moto',4],['Rider veterano/a',5],['Jefe/a de zona',7],['Coordinador/a de flota',10],['Director/a de logística',14],['Rey/Reina del delivery',20])],
+ ['dep','🛍️','Dependiente/a',{},['pm',.01,'💶 más por plato'],R9(['Reponedor/a',3],['Cajero/a',4],['Dependiente/a',5],['Encargado/a de sección',7],['Encargado/a de tienda',9],['Jefe/a regional',13],['Director/a comercial',18])],
+ ['coc','👨‍🍳','Cocinero/a de hotel',{},['ck',.015,'🍳 cocina más rápido'],R9(['Pinche',3],['Ayudante de cocina',4],['Cocinero/a de línea',6],['Jefe/a de partida',8],['Sous-chef',11],['Jefe/a de cocina',15],['Chef ejecutivo/a',21],['Chef de cadena hotelera',28])],
+ ['pol9','👮','Policía',{fit:45},['fame',2,'⭐ fama cada año'],R9(['Agente en prácticas',5],['Agente',7],['Agente primero/a',9],['Subinspector/a',12],['Inspector/a',16],['Comisario/a',22],['Comisario/a jefe/a',30],['Director/a General',40])],
+ ['bom','🚒','Bombero/a',{fit:60},['hp',3,'❤️ salud cada año'],R9(['Bombero/a en prácticas',5],['Bombero/a',7],['Cabo',9],['Sargento',12],['Suboficial',15],['Oficial',19],['Jefe/a de bomberos',26])],
+ ['enf','💉','Enfermero/a',{deg:'med'},['hp',3,'❤️ salud cada año'],R9(['Enfermero/a en prácticas',6],['Enfermero/a',8],['Enfermero/a de urgencias',10],['Supervisor/a',13],['Jefe/a de enfermería',17],['Director/a de enfermería',23])],
+ ['med','🩺','Médico/a',{deg:'med',int:60},['hp',5,'❤️ salud cada año'],R9(['Médico/a residente',8],['Médico/a de familia',12],['Especialista',17],['Jefe/a de servicio',24],['Cirujano/a estrella',34],['Director/a del hospital',46],['Premio Nobel de Medicina',70])],
+ ['abo','⚖️','Abogado/a',{deg:'der'},['riv',.04,'😈 tus rivales pierden caja'],R9(['Becario/a',5],['Abogado/a junior',9],['Abogado/a',13],['Asociado/a sénior',19],['Socio/a',28],['Socio/a director/a',40],['Juez/a del Supremo',55])],
+ ['per9','📰','Periodista',{deg:'per'},['fame',4,'⭐ fama cada año'],R9(['Becario/a de redacción',4],['Redactor/a',6],['Reportero/a',8],['Columnista',11],['Presentador/a de informativos',17],['Director/a del periódico',25],['Leyenda del periodismo',35])],
+ ['prog','💻','Programador/a',{deg:'inf'},['sp',.015,'📣 app de reservas: más clientes'],R9(['Becario/a',6],['Programador/a junior',10],['Programador/a',14],['Programador/a sénior',19],['Tech lead',25],['CTO',35],['Fundador/a de unicornio',55])],
+ ['ban','🏦','Banquero/a',{deg:'emp'},['pm',.018,'💶 más por plato'],R9(['Becario/a',6],['Analista',10],['Gestor/a',14],['Director/a de oficina',19],['Director/a regional',27],['Vicepresidente/a',38],['Presidente/a del banco',60])],
+ ['mich','⭐','Chef de alta cocina',{deg:'gas',int:45},['ck',.025,'🍳 cocina mucho más rápido'],R9(['Commis',6],['Jefe/a de partida',9],['Sous-chef',13],['Chef',18],['Chef con 1 estrella Michelin',26],['Chef con 2 estrellas',36],['Chef con 3 estrellas Michelin',50],['Mejor chef del mundo',75])],
+ ['insp','🕵️','Inspector/a de sanidad',{anyDeg:1},['riv',.05,'😈 tus rivales pierden caja'],R9(['Inspector/a en prácticas',5],['Inspector/a',8],['Inspector/a jefe/a',12],['Director/a de inspección',17],['Terror de los restaurantes',24])],
+ ['art9','🎨','Artista',{deg:'art'},['fame',3,'⭐ fama cada año'],R9(['Pintor/a callejero/a',2],['Ilustrador/a',5],['Artista en galería',9],['Artista consagrado/a',15],['Artista en el MoMA',26],['Leyenda del arte',42])],
+ ['entr','🏋️','Entrenador/a personal',{deg:'fis',fit:55},['sp',.01,'📣 más clientes'],R9(['Monitor/a de gimnasio',4],['Entrenador/a personal',7],['Entrenador/a de famosos',12],['Preparador/a olímpico/a',19],['Gurú del fitness',28])],
+ ['astro','🚀','Astronauta',{deg:'inf',int:80,fit:65},['fame',8,'⭐ muchísima fama cada año'],R9(['Aspirante a astronauta',10],['Astronauta en formación',14],['Astronauta',20],['Comandante de misión',32],['Primera persona en freír croquetas en Marte',60])]];
+const J9=id=>JOBS9.find(j=>j[0]===id);
+function reqTxt(r){const t=[];if(r.deg)t.push(DEG9[r.deg][0]+' '+DEG9[r.deg][1]);if(r.anyDeg)t.push('🎓 cualquier carrera');if(r.int)t.push('🧠 '+r.int);if(r.look)t.push('✨ '+r.look);if(r.fit)t.push('💪 '+r.fit);return t.join(' · ')}
+function meets(r){const L=V9();return(!r.deg||hasDeg(r.deg))&&(!r.anyDeg||L.edu.deg.length>0)&&(!r.int||L.at.int>=r.int)&&(!r.look||L.at.look>=r.look)&&(!r.fit||L.at.fit>=r.fit)}
+const salary=()=>{const L=V9(),j=L.job;if(!j)return 0;const J=J9(j.id);return ECO(J[5][j.r][1]*8*(1+(j.bon||0))*(L.edu.mas?1.2:1))};
+// el trabajo se nota en tu restaurante
+applyItems=(function(prev){return function(){prev();const j=V9().job;if(!j)return;const P=J9(j.id)[4],v=1+P[1]*(j.r+1);if(P[0]==='pm')S.it.pm*=v;if(P[0]==='sp')S.it.sp*=v;if(P[0]==='ck')S.it.ck*=v}})(applyItems);
+// ---------- botón +1 AÑO ----------
+const yb=document.createElement('button');yb.className='yearb';yb.innerHTML='<i class="yr"></i><span>🎂</span><b>+1 AÑO</b><small></small>';stageEl.appendChild(yb);
+yb.addEventListener('pointerdown',e=>{e.stopPropagation();const L=V9();if(L.dead)return;if(L.yc<YT()){toast(`🎂 Tu año aún no ha terminado: faltan ${Math.ceil(YT()-L.yc)} s. Mientras, cocina y haz planes.`,2600);return}if(!$('#modal').hidden)return;sfx.tap();ageUp()});
+setInterval(()=>{if(document.hidden)return;const L=V9();if(L.yc<YT())L.yc+=1;const p=Math.min(1,L.yc/YT());yb.querySelector('.yr').style.background=`conic-gradient(#ff7fae ${p*360}deg,rgba(255,255,255,.55) 0)`;yb.classList.toggle('ready',p>=1);yb.querySelector('small').textContent=p>=1?'¡LISTO!':Math.round(p*100)+' %';yb.querySelector('b').textContent='+1 AÑO'},1000);
+// ---------- el año ----------
+let YQ=[],YL=[];
+function ageUp(){const L=V9();L.yc=0;closeSheet();YL=[];const a0=L.age;L.age++;for(const k of L.kids)k.born-=2;
+  // trabajo
+  if(L.job){const j=L.job,J=J9(j.id),eff={vago:-12,norm:5,tope:14}[j.eff||'norm'];j.perf=cl((j.perf??50)+eff+(L.at.int-50)/10+rint(17)-8,0,100);j.yrs=(j.yrs||0)+1;
+    if(j.eff==='tope'){hap(-6);hp7(-3)}if(j.eff==='vago')hap(4);
+    const s=gain(salary());YL.push(`💼 Sueldo de ${gtxt(J[5][j.r][0])}: +${fmtM(s)} €`);const P=J[4];
+    if(P[0]==='fame'){S.fame+=P[1]*(j.r+1);YL.push(`⭐ Tu trabajo da fama al restaurante: +${P[1]*(j.r+1)}`)}if(P[0]==='hp')hp7(P[1]);if(P[0]==='riv'){openRiv().forEach(k=>S.zones[k].cash*=1-P[1]*(j.r+1)*.5);YL.push('😈 Tus rivales pierden caja por tu trabajo')}
+    if(j.perf>=70&&j.yrs>=1&&j.r<J[5].length-1&&Math.random()<.6){j.r++;j.yrs=0;j.perf=55;YL.push(`🎉 ¡ASCENSO! Ahora eres ${gtxt(J[5][j.r][0])}`);logL(J[1],'Ascenso: '+gtxt(J[5][j.r][0])+'.');hap(15)}
+    else if(j.perf<20&&Math.random()<.6){YL.push(`🔥 Te han despedido de ${gtxt(J[2])}`);logL('📦','Despido.');L.job=null;hap(-15)}}
+  else if(L.retired)YL.push(`👴 Pensión: +${fmtM(gain(ECO(40)))} €`);
+  // estudios
+  const c=L.edu.cur;if(c){const D=c.k==='mas'?['🎓','Máster',1]:DEG9[c.k];const cost=ECO(c.k==='mas'?100:30);lose(cost);const eff=L.edu.eff;at8('int',eff==='empo'?9:eff==='norm'?5:2);if(eff==='empo')hap(-6);if(eff==='pasar')hap(4);
+    const fail=Math.random()<(eff==='pasar'?.3:eff==='norm'?.08:.02);if(fail)YL.push(`📉 Suspendes el curso de ${D[1]}. Repites año.`);else{c.y++;YL.push(`📚 Apruebas ${c.y}º de ${D[1]}`)}
+    if(c.y>=D[2]){if(c.k==='mas')L.edu.mas=1;else L.edu.deg.push(c.k);L.edu.cur=null;YL.push(`🎓 ¡TE GRADÚAS EN ${D[1].toUpperCase()}!`);logL('🎓','Te gradúas en '+D[1]+'.');hap(20);pop(4)}}
+  // cuerpo
+  if(L.age>35)at8('fit',-2);if(L.age>45)at8('look',-2);if(L.age>55)hp7(-3);
+  const earn=S.earned-(L.yr.earn0||S.earned);L.yr.earn0=S.earned;YL.unshift(`🍳 Tu restaurante ha ganado ${fmtM(Math.max(0,earn))} € este año`);
+  logL('🎂','Cumples '+L.age+' años.');save();
+  // sucesos del año
+  const pool=YEV.filter(e=>{try{return!e.ok||e.ok(L)}catch(_){return false}});YQ=[];const n=1+(Math.random()<.65?1:0)+(Math.random()<.2?1:0);
+  for(let i=0;i<n&&pool.length;i++){let tot=pool.reduce((a,e)=>a+(e.w||1),0),r=Math.random()*tot,ix=0;for(;ix<pool.length;ix++){r-=pool[ix].w||1;if(r<0)break}YQ.push(pool.splice(Math.min(ix,pool.length-1),1)[0])}
+  if(aiOn()&&Math.random()<.5)YQ.push('ai');
+  // muerte
+  if(L.age>=62){const p=Math.max(0,(L.age-60)/40)*(1.7-L.hp/100);if(Math.random()<p||L.hp<=0){L.dead=1;YQ=[];yearCard(()=>setTimeout(showDeath,400));return}}
+  yearCard(nextYev)}
+function yearCard(then){const L=V9();sfx.big&&sfx.big();window._yc9=then;
+  openModal(`<div class="stepn">🎂 Resumen del año</div><div class="emo">🎂</div><h2>¡Cumples ${L.age} años!</h2><div class="yl9">${YL.map(l=>`<div>${l}</div>`).join('')}</div>${YQ.length?`<p class="note">Este año te han pasado ${YQ.length} cosa${YQ.length>1?'s':''}…</p>`:''}<button class="cb" data-m="yc9">${YQ.length?'VER QUÉ PASÓ ▸':'¡A POR OTRO AÑO!'}</button>`)}
+MA.yc9=()=>{closeModal();const f=window._yc9;window._yc9=null;if(f)f()};
+function nextYev(){const e=YQ.shift();if(!e)return;if(e==='ai'){aiEvent();return}const L=V9();const o=typeof e.o==='function'?e.o(L):e.o;window._ye9=o;
+  openModal(`<div class="stepn">📅 Año ${L.age} · ${YQ.length?'quedan '+YQ.length:'último suceso'}</div><div class="emo">${e.e}</div><h2>${gtxt(typeof e.t==='function'?e.t(L):e.t)}</h2><div class="choice">${o.map((x,i)=>`<button data-m="ye9" data-i="${i}"><span>${x[0]}</span><span style="font-size:15px">${gtxt(x[1])}</span></button>`).join('')}</div>`)}
+MA.ye9=b=>{const o=window._ye9[+b.dataset.i];const a=snap9();let t='';try{t=o[2](V9())||''}catch(err){t='…'}const d=diff9(a);
+  openModal(`<div class="emo">${o[0]}</div><h2>${gtxt(o[1])}</h2><p>${gtxt(t)}</p>${d}<button class="cb" data-m="yn9">${YQ.length?'SIGUIENTE ▸':'¡VALE!'}</button>`)};
+MA.yn9=()=>{closeModal();save();if(YQ.length)setTimeout(nextYev,150)};
+const snap9=()=>{const L=V9();return{m:S.money,h:L.hap,hp:L.hp,p:L.pop,f:S.fame}};
+function diff9(a){const b=snap9(),L=[];const f=(v,ic,n,fm)=>{if(Math.abs(v)>=.5)L.push(`<span class="${v>0?'up':'dn'}">${ic} ${v>0?'+':''}${fm?fm(v):Math.round(v)} ${n}</span>`)};
+  f(b.m-a.m,'💶','€',v=>(v<0?'−':'')+fmtM(Math.abs(v)));f(b.h-a.h,'😊','felicidad');f(b.hp-a.hp,'❤️','salud');f(b.p-a.p,'⭐','popularidad');f(b.f-a.f,'🏆','fama');return L.length?`<div class="df9">${L.join('')}</div>`:''}
+// ---------- sucesos del año ----------
+const Y$=v=>ECO(v*4);
+const YEV=[
+ {e:'🧾',t:'Hacienda te hace una inspección',w:1.2,ok:()=>S.money>Y$(30),o:[['💶','Pagar todo religiosamente',L=>{lose(Y$(12));rep(4);return'El inspector se emociona: «Hacía años que nadie pagaba sin llorar».'}],['🛏️','Esconder el dinero en el colchón',L=>{if(Math.random()<.5){hap(5);return'No lo encuentran. Duermes sobre billetes, incomodísimo.'}lose(Y$(30));rep(-6);return'Lo encuentran. Y te multan. Y se llevan el colchón.'}],['🍤','Sobornarle con croquetas',L=>Math.random()<.4?(lose(Y$(2)),'Acepta. Vuelve cada martes a por más.'):(lose(Y$(20)),rep(-5),'Es alérgico a la bechamel. Multa doble.')]]},
+ {e:'🎟️',t:'¡Te ha tocado la lotería de Navidad!',w:.35,o:[['👨‍👩‍👧','Repartirlo con la familia',L=>{gain(Y$(40));rel('abu',20);hap(15);return'La abuela se compra un patinete eléctrico. Lo conduce fatal.'}],['🛥️','Comprarte un yate',L=>{gain(Y$(80));lose(Y$(60));hap(25);pop(8);return'Le pones «La Croqueta Flotante». Te mareas en el puerto.'}],['🏦','Invertirlo todo en el restaurante',L=>{gain(Y$(90));buff('money',1.3,300,'🎟️ Inversión de la lotería: +30 %');return'Reformas el local. Tiene hasta fuente de chocolate.'}]]},
+ {e:'💔',t:'Tu ex aparece en el restaurante',w:1,o:[['🥰','Hablar un rato',L=>{hap(Math.random()<.5?8:-8);return pk(['Os reís como antes. Peligroso.','Te recuerda por qué rompisteis. Pide la cuenta.'])}],['🍲','Tirarle la sopa encima',L=>{rep(-6);pop(5);hap(8);return'Se hace viral. Te llaman «la/el de la sopa». Vendes más sopa que nunca.'}],['🥷','Esconderte en la cámara frigorífica',L=>{hp7(-5);return'Dos horas a -18 °C. Valió la pena.'}]]},
+ {e:'🦹',t:'Te atracan por la calle',w:.8,o:[['👛','Darle la cartera',L=>{lose(Y$(5));return'Se lleva la cartera… y te devuelve el DNI con una nota: «Ánimo».'}],['🥋','Hacerle una llave de kárate',L=>{if(L.at.fit>55){pop(8);return'Lo inmovilizas. Sales en las noticias como héroe del barrio.'}hp7(-15);lose(Y$(5));return'No sabes kárate. Ahora lo sabes.'}],['🍤','Gritar «¡CROQUETA!» muy fuerte',L=>{hap(5);return'El atracador huye confundido. Nunca sabrás por qué funcionó.'}]]},
+ {e:'📜',t:'Un tío lejano de Cuenca te deja una herencia',w:.7,o:[['💶','Aceptarla',L=>{gain(Y$(25));return'Te deja dinero… y 40 gallinas. Las gallinas te odian.'}],['🏚️','Pedir solo la casa del pueblo',L=>{gain(Y$(10));hap(10);return'Una casa con un fantasma muy simpático que cocina migas.'}]]},
+ {e:'📺',t:'Un reality quiere grabar en tu restaurante: «Pesadilla en tu Fogón»',w:.9,o:[['🎬','¡Aceptar!',L=>{if(Math.random()<.6){S.fame+=25;pop(10);buff('spawn',1.5,300,'📺 Saliste en la tele: +50 % clientes');return'El chef de la tele llora probando tus croquetas. Audiencia récord.'}rep(-8);return'Te grita «¡ESTO ESTÁ CRUDO!» durante 40 minutos. Pero sales en la tele.'}],['🙅','Rechazarlo',L=>{rep(3);return'Lo graban en el restaurante rival. Sale fatal. Te ríes mucho.'}]]},
+ {e:'👽',t:'Unos extraterrestres te abducen',w:.4,o:[['🍤','Ofrecerles croquetas',L=>{gain(Y$(15));L.f2.alien=1;return'Les encantan. Te pagan en oro de Saturno y prometen volver.'}],['🧪','Dejar que te examinen',L=>{at8('int',10);hp7(-5);return'Te devuelven más listo/a, pero con el ombligo del revés.'}],['🏃','Huir de la nave',L=>{at8('fit',6);return'Corres 40 km. Acabas en Albacete.'}]]},
+ {e:'🏢',t:'Una cadena te ofrece comprar tu marca de croquetas',w:.6,ok:()=>S.fame>40,o:[['🤝','Vender la receta',L=>{gain(Y$(50));rel('abu',-15);return'Te forras. La abuela no te habla en un mes.'}],['🙅','Ni de broma',L=>{rel('abu',10);pop(5);return'La abuela te abraza: «Eso es tener principios».'}]]},
+ {e:'🏠',t:'Tu vecino denuncia el olor a fritura',w:.8,o:[['🍤','Llevarle un táper de croquetas',L=>{rep(4);return'Retira la denuncia y pide que le reserves mesa los viernes.'}],['⚖️','Ir a juicio',L=>{if(hasDeg('der')||L.job&&L.job.id==='abo'){pop(5);return'Te defiendes tú mismo/a. Ganas. El juez pide la receta.'}lose(Y$(8));return'Pierdes. Te obligan a poner un ambientador de lavanda.'}],['🎺','Ponerle una charanga en la puerta',L=>{rep(-6);hap(10);return'Guerra abierta. La charanga cobra por horas.'}]]},
+ {e:'🤝',t:'Un rival te propone una tregua',w:.6,ok:()=>openRiv().length>0,o:[['🕊️','Aceptar la tregua',L=>{RK.forEach(k=>rel(k,15));hap(5);return'Os tomáis algo juntos. Os caéis bien. Qué raro.'}],['😈','Fingir que aceptas',L=>{const j=openRiv()[0];R.sab[j]=60;rep(-8);return'Mientras brindáis, tu primo le cambia la sal por azúcar.'}]]},
+ {e:'👵',t:'La abuela Lola cumple años',w:.7,o:[['🎂','Tarta gigante en el restaurante',L=>{rel('abu',15);buff('spawn',1.2,240,'🎂 Fiesta de la abuela: +20 %');return'Sopla las velas y apaga también la cocina. Fiesta épica.'}],['💃','Llevarla a bailar',L=>{rel('abu',20);at8('fit',3);return'Baila mejor que tú. Liga más que tú.'}],['📱','Regalarle un móvil',L=>{rel('abu',8);return'Ahora te manda 80 audios al día. Todos sobre su vecina.'}]]},
+ {e:'🩺',t:'Chequeo médico anual',w:.8,ok:L=>L.age>35,o:[['👨‍⚕️','Ir al médico',L=>{lose(ECO(3));hp7(10);return pk(['Todo bien, pero el colesterol pide que dejes de probar tanta salsa.','El médico te recomienda menos fritura. Te ríes en su cara.'])}],['🙈','Pasar del médico',L=>{if(Math.random()<.3){hp7(-15);return'Mala idea. Acabas en urgencias con una croqueta atascada.'}return'Esta vez te libras.'}]]},
+ {e:'💼',t:'Tu jefe te pide trabajar en Navidad',w:1,ok:L=>!!L.job,o:[['😇','Vale, sin problema',L=>{L.job.perf=cl(L.job.perf+15,0,100);hap(-8);return'Cenas un bocadillo en la oficina. Tu jefe te mira con respeto.'}],['🎄','Ni loco/a',L=>{L.job.perf=cl(L.job.perf-10,0,100);hap(8);return'Navidad con la familia. Tu jefe te manda un emoji de calavera.'}]]},
+ {e:'🕵️',t:'Un compañero de trabajo te roba una idea',w:.9,ok:L=>!!L.job,o:[['😤','Denunciarle a RRHH',L=>{if(Math.random()<.5){L.job.perf=cl(L.job.perf+12,0,100);return'Le pillan. Te dan las gracias y un pin.'}L.job.perf-=8;return'RRHH es su primo.'}],['🍤','Vengarte en la cena de empresa',L=>{hap(10);return'Le cambias el vino por vinagre. Nadie sabe que fuiste tú.'}],['🧘','Dejarlo pasar',L=>{hap(-4);return'Le ascienden con tu idea. Karma, haz tu trabajo.'}]]},
+ {e:'💘',t:'Te gusta alguien del trabajo',w:.6,ok:L=>!!L.job&&!L.love,o:[['😏','Lanzarte',L=>{if(Math.random()<.5+L.at.look/250){const m=L.id.o==='cro'?pk(OBJ7):pk(LOV7.filter(likes7));L.love={n:m[0],e:m[1],bio:typeof m[2]==='string'&&m[2].length>2?m[2]:'compañero/a de trabajo',lv:2};hap(15);return`¡Funciona! Empiezas a salir con ${m[0]}.`}hap(-8);return'Te dice que «mejor como amigos» delante de la máquina de café.'}],['🙈','Disimular',L=>'Le miras de reojo durante años. Muy cine francés.']]},
+ {e:'💍',t:p=>`${V9().love.n} quiere ir a vivir a otra ciudad`,w:.6,ok:L=>L.love&&L.love.lv>=2,o:[['❤️','Os quedáis aquí juntos',L=>{hap(5);return'Lo habláis con calma y os quedáis. Estáis más unidos.'}],['✈️','Que se vaya, relación a distancia',L=>{if(Math.random()<.5){const n=L.love.n;L.love=null;hap(-20);return`No funciona. ${n} y tú lo dejáis por videollamada.`}return'Funciona. Os mandáis croquetas por mensajero.'}]]},
+ {e:'🎒',t:p=>`Tu hijo/a ${V9().kids[0].n} ha suspendido 5 asignaturas`,w:.8,ok:L=>L.kids.length>0&&kAge(L.kids[0])>=8&&kAge(L.kids[0])<=18,o:[['📚','Clases particulares',L=>{lose(ECO(5));L.kids[0].rel+=5;return'Aprueba todo con 5. Récord familiar.'}],['🍳','Ponerle a trabajar en el restaurante',L=>{L.kids[0].work=true;L.kids[0].rel-=10;return'No estudia, pero hace unas patatas bravas de escándalo.'}],['🫂','Hablar con cariño',L=>{L.kids[0].rel+=10;return'Te confiesa que quiere ser influencer de croquetas.'}]]},
+ {e:'🐾',t:p=>`${V9().pet.n} se ha comido algo raro`,w:.6,ok:L=>!!L.pet,o:[['🏥','Al veterinario',L=>{lose(ECO(4));L.pet.mood=90;return`${L.pet.n} se recupera. Era un calcetín.`}],['👵','Remedio de la abuela',L=>{L.pet.mood=60;return'Manzanilla y caricias. Funciona.'}]]},
+ {e:'🎤',t:'Te invitan a un concurso de talentos de la tele',w:.6,o:[['💃','Bailar',L=>{if(L.at.fit>50||Math.random()<.4){pop(10);S.fame+=10;return'¡Pasas a la final! El jurado llora.'}pop(-3);return'Te caes en el primer giro. Meme nacional.'}],['🍳','Cocinar en directo',L=>{S.fame+=15;buff('spawn',1.3,240,'🎤 Saliste en la tele: +30 %');return'Haces croquetas en 3 minutos. Ganas el concurso.'}],['🙅','Rechazarlo',L=>'Tu vecina va en tu lugar. Gana. Te lo restriega.']]},
+ {e:'🏚️',t:'Se te inunda la casa',w:.6,o:[['🔧','Llamar al fontanero',L=>{lose(ECO(6));return'El fontanero tarda 3 días y te cobra hasta el café.'}],['🏊','Montar una piscina',L=>{hap(10);hp7(-5);return'Fiesta acuática en el salón. Los vecinos de abajo no opinan igual.'}]]},
+ {e:'📈',t:'Tu amigo te propone invertir en una criptomoneda: CroquetaCoin',w:.7,o:[['🚀','Meter todo',L=>{if(Math.random()<.35){gain(ECO(45));return'¡Sube un 4000 %! Vendes justo a tiempo.'}lose(ECO(18));return'Baja a cero en una hora. El logo era una croqueta con gafas de sol. Era evidente.'}],['🙅','Pasar',L=>'Sube un 4000 %. Tu amigo se compra un Ferrari. Tú, una croqueta.']]},
+ {e:'🧓',t:'Te da una crisis de los 40',w:1,ok:L=>L.age>=39&&L.age<=44,o:[['🏍️','Comprarte una moto',L=>{lose(ECO(8));hap(12);return'No sabes conducirla. La aparcas en el salón.'}],['🎸','Montar un grupo de rock',L=>{hap(10);pop(3);return'Os llamáis «Los Freidores». Tocáis en tu restaurante.'}],['🧘','Retiro espiritual en el Tíbet',L=>{lose(ECO(10));hap(20);at8('int',5);return'Vuelves en paz. Dura 2 días.'}]]},
+ {e:'⭐',t:'Un famoso entra en tu restaurante',w:.9,o:[['🤳','Pedirle un selfi',L=>{pop(6);buff('spawn',1.2,240,'🤳 Selfi con famoso: +20 %');return'La foto se hace viral. Cola en la puerta.'}],['😎','Tratarle como a uno más',L=>{S.fame+=12;return'Le encanta que no le hagas caso. Vuelve cada semana.'}],['💸','Cobrarle el doble',L=>{gain(ECO(5));rep(-5);return'Paga sin mirar. Luego lo cuenta en una entrevista.'}]]},
+];
+// ---------- pestañas nuevas en Vida ----------
+{const ci=VT.findIndex(t=>t[0]==='car');if(ci>=0)VT[ci]=['car','⭐ Fama'];VT.splice(2,0,['job','💼 Trabajo'],['edu','🎓 Estudios'])}
+// más niveles en las carreras de fama
+(()=>{const ex={actor:['Actor/Actriz de culto','Director/a de cine','Productor/a de Hollywood','Estatua en el Paseo de la Fama','Leyenda eterna del cine','Inmortal del séptimo arte'],infl:['50 millones','100 millones','Tu cara en los billetes','Influencer interplanetario/a','El algoritmo eres tú','Dios/a de internet'],sing:['Gira mundial','Estadios llenos','Disco de diamante','Holograma en Las Vegas','Himno nacional de las croquetas','Leyenda de la música'],pol:['Ministro/a de Croquetas','Vicepresidente/a','Presidente/a de Europa','Secretario/a General de la ONU','Emperador/a de la Galaxia Fogonera','Dios/a de la política']};for(const k in ex)if(CAREERS[k]&&CAREERS[k].lv.length<8)CAREERS[k].lv.push(...ex[k])})();
+let sc9=0;renderSheet=(function(prev){return function(force){const ol=$('#sheet .list');if(ol&&ol.dataset.d9)sc9=ol.scrollTop;prev(force);if(sheetKind!=='vida'||(vtab!=='job'&&vtab!=='edu'))return;const list=$('#sheet .list');if(!list||list.dataset.d9)return;list.dataset.d9=1;
+  const L=V9();let h='';
+  if(vtab==='job'){if(L.job){const j=L.job,J=J9(j.id),P=J[4];h+=`<div class="job9"><div class="jh"><span>${J[1]}</span><div><b>${gtxt(J[5][j.r][0])}</b><small>${gtxt(J[2])} · puesto ${j.r+1}/${J[5].length} · ${j.yrs||0} año${j.yrs===1?'':'s'} en el puesto</small></div></div>
+      <div class="jr"><span>💶 Sueldo</span><b>${fmtM(salary())} €/año</b></div><div class="jr"><span>📊 Rendimiento</span>${bar7(j.perf??50,(j.perf??50)<25?'#ff5a4e':(j.perf??50)>=70?'#5fd08a':'#ffb23f')}</div><div class="jr"><span>🧑‍💼 Tu jefe</span>${bar7(j.boss??50,'#86c9ff')}</div>
+      <div class="jr"><span>🍳 En tu restaurante</span><b>${P[0]==='fame'||P[0]==='hp'?'+'+P[1]*(j.r+1):'+'+Math.round(P[1]*(j.r+1)*100)+' %'} ${P[2]}</b></div>
+      <b class="lkh">¿Cuánto te esfuerzas este año?</b><div class="seg3">${[['vago','😴 Lo justo'],['norm','🙂 Normal'],['tope','🔥 A tope']].map(([k,n])=>`<button data-a="jeff:${k}" class="${(j.eff||'norm')===k?'on':''}">${n}</button>`).join('')}</div>
+      <p class="note">El rendimiento se decide al pulsar 🎂 +1 AÑO. Con más de 70 te pueden ascender; con menos de 20, despedir.</p></div>
+      ${[['raise','💶','Pedir un aumento','Si tu jefe te quiere y rindes'],['boot','🍎','Hacer la pelota al jefe','Le caes mejor'],['promo','⬆️','Pedir un ascenso','Mejor con rendimiento alto'],['quit','🚪','Dimitir','Adiós, jefe']].concat(L.age>=60?[['retire','👴','Jubilarte','Cobras pensión cada año']]:[]).map(([k,e,n,d])=>`<div class="it"><span class="ic">${e}</span><span class="tx"><b>${n}</b><small>${d}</small></span><button class="cb ${k==='quit'?'no':'o'}" data-a="job:${k}">IR</button></div>`).join('')}`}
+    else h+=`<p class="note">${L.retired?'Estás jubilado/a, pero puedes volver a trabajar. ':''}Elige un trabajo. Cada uno paga un sueldo cada año 🎂 y mejora algo de tu restaurante. Algunos piden estudios o atributos.</p>`+JOBS9.map(J=>{const ok=meets(J[3]);return`<div class="it ${ok?'':'lock9'}"><span class="ic">${J[1]}</span><span class="tx"><b>${gtxt(J[2])}</b><small>${fmtM(ECO(J[5][0][1]*8))} €/año al empezar · ${J[4][2]}${J[3]&&Object.keys(J[3]).length?'<br>Requisitos: '+reqTxt(J[3]):''}</small></span><button class="cb ${ok?'':'no'}" data-a="japply:${J[0]}">${ok?'ENTREVISTA':'🔒'}</button></div>`}).join('')}
+  else{const e=L.edu;h+=`<div class="chips8">${e.deg.length?e.deg.map(k=>`<span>${DEG9[k][0]} ${DEG9[k][1]}</span>`).join(''):'<span>🎒 Bachillerato</span>'}${e.mas?'<span>🎓 Máster (+20 % de sueldo)</span>':''}</div>`;
+    if(e.cur){const D=e.cur.k==='mas'?['🎓','Máster',1]:DEG9[e.cur.k];h+=`<div class="job9"><div class="jh"><span>${D[0]}</span><div><b>Estudiando ${D[1]}</b><small>Curso ${e.cur.y+1} de ${D[2]} · ${fmtM(ECO(e.cur.k==='mas'?100:30))} € por año</small></div></div>${bar7(e.cur.y/D[2]*100,'#b9a2ff')}
+      <b class="lkh">¿Cómo estudias este año?</b><div class="seg3">${[['pasar','😴 Aprobar raspado'],['norm','🙂 Normal'],['empo','🤓 Empollón']].map(([k,n])=>`<button data-a="eeff:${k}" class="${e.eff===k?'on':''}">${n}</button>`).join('')}</div><p class="note">Cada 🎂 +1 AÑO pasas un curso (o lo repites si te lo tomas a broma).</p></div><div class="it"><span class="ic">🚪</span><span class="tx"><b>Dejar los estudios</b><small>Lo que llevas no se pierde… mentira, sí</small></span><button class="cb no" data-a="edu:drop">IR</button></div>`}
+    else h+=`<p class="note">Estudiar abre trabajos mejores. Puedes estudiar y trabajar a la vez.</p>`+Object.entries(DEG9).filter(([k])=>!e.deg.includes(k)).map(([k,D])=>`<div class="it"><span class="ic">${D[0]}</span><span class="tx"><b>${D[1]}</b><small>${D[2]} años · ${fmtM(ECO(30))} €/año · abre: ${JOBS9.filter(J=>J[3].deg===k).map(J=>J[1]).join(' ')||'—'}</small></span><button class="cb o" data-a="edu:${k}">EMPEZAR</button></div>`).join('')+(e.deg.length&&!e.mas?`<div class="it"><span class="ic">🎓</span><span class="tx"><b>Máster</b><small>1 año · ${fmtM(ECO(100))} € · +20 % de sueldo para siempre</small></span><button class="cb o" data-a="edu:mas">EMPEZAR</button></div>`:'')}
+  if(list._h9!==h){list.innerHTML=h;list._h9=h}list.scrollTop=sc9}})(renderSheet);
+const rer9=()=>{const l=$('#sheet .list');if(l)delete l.dataset.d9;renderSheet(1)};
+act=(function(prev){return function(a){const [k,x]=a.split(':');const L=V9();
+  if(k==='jeff'){L.job.eff=x;rer9();return false}if(k==='eeff'){L.edu.eff=x;rer9();return false}
+  if(k==='edu'){if(x==='drop'){L.edu.cur=null;rer9();return false}if(L.edu.cur)return false;L.edu.cur={k:x,y:0};logL('🎒','Empiezas '+(x==='mas'?'un máster':DEG9[x][1])+'.');toast('🎒 ¡A estudiar! Cada 🎂 +1 AÑO pasas un curso.',3000);rer9();return false}
+  if(k==='japply'){const J=J9(x);if(!meets(J[3])){toast('🔒 Te falta: '+reqTxt(J[3]),2600);return false}interview(J);return false}
+  if(k==='job'){const j=L.job;if(!j)return false;const J=J9(j.id);closeSheet();
+    if(x==='raise'){if(Math.random()<((j.perf??50)+(j.boss??50))/220){j.bon=(j.bon||0)+.12;withRes('💶','¡Aumento!',()=>'Te suben el sueldo un 12 %. Tu jefe te da una palmadita incómoda.')}else{j.boss=cl((j.boss??50)-12,0,100);withRes('😬','Ni hablar',()=>'Tu jefe se ríe tanto que se le cae el café.')}}
+    if(x==='boot'){if((L.cd.boot9||0)>Date.now()){toast('⏳ Demasiada pelota levanta sospechas');return false}L.cd.boot9=Date.now()+90000;j.boss=cl((j.boss??50)+12,0,100);withRes('🍎','Pelota nivel experto',()=>pk(['Le llevas croquetas caseras. Te llama «crack».','Te ríes de su chiste malo durante 2 minutos. Funciona.']))}
+    if(x==='promo'){if(j.r>=J[5].length-1){toast('¡Ya estás en lo más alto!');return false}if(Math.random()<((j.perf??50)>=55?.5:.15)+((j.boss??50)-50)/250){j.r++;j.yrs=0;withRes('🎉','¡ASCENSO!',()=>{hap(12);logL(J[1],'Ascenso: '+J[5][j.r][0]+'.');return'Ahora eres '+J[5][j.r][0]+'. Te dan una taza que lo dice.'})}else{j.perf=cl((j.perf??50)-6,0,100);withRes('🙅','Aún no',()=>'«Sigue así y ya veremos». Traducción: no.')}}
+    if(x==='quit'){L.job=null;withRes('🚪','Has dimitido',()=>{hap(6);return'Sales por la puerta como en las películas. Te olvidas el abrigo.'})}
+    if(x==='retire'){L.job=null;L.retired=1;withRes('👴','¡Jubilación!',()=>{hap(15);return'Te regalan un reloj y una tarta. Ahora a dedicarte a tu restaurante.'})}
+    applyItems();save();return false}
+  return prev(a)}})(act);
+function interview(J){closeSheet();story(J[1]+' Entrevista: '+J[2],[{e:'🧑‍💼',t:'«¿Por qué quieres trabajar aquí?»',o:[['💼','«Me apasiona este sector»'],['💶','«Por el dinero, para qué mentir»'],['🍤','«Mi abuela me dijo que viniera»'],['🎤','Cantas tu currículum']]},{e:'🤔',t:'«¿Cuál es tu mayor defecto?»',o:[['😇','«Soy demasiado perfeccionista»'],['🍟','«Como demasiadas patatas»'],['🦸','«No tengo defectos»'],['😭','Te pones a llorar']]}],
+  v=>{const L=V9();let ch=.55+(L.at.int-50)/200+(L.at.look-50)/300;if(v[0].includes('apasiona'))ch+=.1;if(v[0].includes('dinero'))ch+=Math.random()<.5?.15:-.15;if(v[0].includes('Cantas'))ch+=Math.random()<.5?.25:-.25;if(v[1].includes('perfeccionista'))ch-=.05;if(v[1].includes('patatas'))ch+=.08;if(v[1].includes('llorar'))ch+=Math.random()<.5?.2:-.2;
+   if(Math.random()<cl(ch,.1,.95)){L.job={id:J[0],r:0,perf:55,yrs:0,boss:50,eff:'norm'};applyItems();logL(J[1],'Nuevo trabajo: '+gtxt(J[5][0][0])+'.');withRes(J[1],'¡Te han contratado!',()=>{hap(12);return`Empiezas como ${J[5][0][0]}. Cobras ${fmtM(salary())} € cada año 🎂 y tu restaurante gana: ${J[4][2]}.`})}
+   else withRes('📩','No te han cogido',()=>{hap(-6);return pk(['«Ya te llamaremos». No te llamarán.','Contratan al sobrino del jefe.','Te confunden con el repartidor y te firman un albarán.'])});save()})}
+// ---------- en Mi día: lo que tu vida da al restaurante ----------
+const _s8=stats8;stats8=function(){const L=V9();let h=_s8();const j=L.job,e=L.edu;h=`<div class="bl9"><span>🎂 <b>${L.age} años</b></span><span>${j?J9(j.id)[1]+' <b>'+gtxt(J9(j.id)[5][j.r][0])+'</b>':L.retired?'👴 <b>Jubilado/a</b>':'💼 <b>Sin trabajo</b>'}</span><span>${e.cur?'🎒 <b>Estudiando</b>':e.deg.length?'🎓 <b>'+e.deg.length+' carrera'+(e.deg.length>1?'s':'')+'</b>':'🎒 <b>Bachillerato</b>'}</span></div>`+h;return h};
 
 </script>
 <script>
